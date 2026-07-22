@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>EE Lab · SMT Lab Setup · KLE-CTiE</title>
+<style>
+:root{
+  --navy:#0C2D6B;--navy-d:#081e4a;--navy-l:#1a3f8f;
+  --gold:#C8960C;--gold-l:#f0b90b;--gold-bg:#fdf3dc;
+  --green:#1a7a4a;--green-bg:#e8f5ee;
+  --red:#e74c3c;--blue:#1565c0;
+  --bg:#f4f6fb;--card:#fff;
+  --text:#1a1a2e;--muted:#6b7280;--border:#dde3f0;
+  --r:12px;--rs:7px;
+  --sh:0 2px 16px rgba(12,45,107,.10);
+  --sh2:0 8px 32px rgba(12,45,107,.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding-bottom:64px}
+a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline;color:var(--gold)}
+img{max-width:100%}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.35)}28%{transform:scale(1)}42%{transform:scale(1.2)}70%{transform:scale(1)}}
+@keyframes carouselFade{0%{opacity:0;transform:scale(1.03)}10%{opacity:1;transform:scale(1)}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.98)}}
+@keyframes kpiCount{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.fu{animation:fadeUp .5s ease both}
+.sl{animation:slideL .45s ease both}
+
+/* ── PRE-LOGIN GATE ─────────────────────────────────── */
+#gate{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column}
+
+/* Pre-login carousel */
+.pre-carousel{position:absolute;inset:0;overflow:hidden}
+.pre-slide{
+  position:absolute;inset:0;opacity:0;
+  background-size:cover;background-position:center;
+  transition:opacity .8s ease;
+}
+.pre-slide.active{opacity:1}
+.pre-slide::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(8,30,74,.88) 0%,rgba(12,45,107,.72) 60%,rgba(200,150,12,.18) 100%);
+}
+.pre-content{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;
+}
+.pre-logo{
+  font-size:13px;font-weight:800;color:var(--gold-l);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;
+  background:rgba(200,150,12,.15);border:1px solid rgba(200,150,12,.4);
+  padding:5px 18px;border-radius:20px;
+}
+.pre-title{
+  font-size:clamp(24px,4vw,46px);font-weight:900;color:#fff;
+  text-align:center;line-height:1.15;margin-bottom:10px;
+}
+.pre-title span{color:var(--gold-l)}
+.pre-sub{font-size:16px;color:rgba(255,255,255,.72);text-align:center;max-width:560px;line-height:1.6;margin-bottom:8px}
+.pre-caption{font-size:13px;color:rgba(255,255,255,.45);text-align:center;font-style:italic;margin-bottom:36px}
+
+/* Carousel dots */
+.carousel-dots{display:flex;gap:8px;justify-content:center;margin-bottom:32px}
+.dot-btn{width:8px;height:8px;border-radius:50%;border:none;background:rgba(255,255,255,.35);cursor:pointer;transition:.3s;padding:0}
+.dot-btn.active{background:var(--gold-l);transform:scale(1.3)}
+
+/* Login card */
+.gate-card{
+  background:rgba(255,255,255,.97);border-radius:18px;
+  padding:36px 32px;width:340px;text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,.4);
+  backdrop-filter:blur(12px);
+  animation:fadeUp .6s ease .3s both;
+}
+.gate-logo{
+  width:52px;height:52px;background:var(--navy);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;font-size:20px;font-weight:900;color:var(--gold-l);
+  box-shadow:0 4px 16px rgba(12,45,107,.4);
+}
+.gate-card h2{font-size:18px;color:var(--navy);font-weight:800;margin-bottom:4px}
+.gate-card p{font-size:12px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+.gate-input{
+  width:100%;padding:11px 14px;border:2px solid var(--border);
+  border-radius:8px;font-size:15px;outline:none;transition:.2s;
+  color:var(--text);letter-spacing:3px;text-align:center;
+}
+.gate-input:focus{border-color:var(--navy)}
+.gate-btn{
+  width:100%;margin-top:10px;padding:12px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  color:#fff;border:none;border-radius:8px;
+  font-size:14px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.gate-btn:hover{opacity:.9;transform:translateY(-1px)}
+.gate-err{color:var(--red);font-size:12px;margin-top:8px;display:none;animation:fadeUp .3s ease}
+
+/* ── MAIN ───────────────────────────────────────────── */
+#main{display:none}
+
+/* Post-login hero carousel */
+.post-carousel{position:relative;height:320px;overflow:hidden}
+.post-slide{
+  position:absolute;inset:0;opacity:0;
+  background-size:cover;background-position:center;
+  transition:opacity .9s ease;
+}
+.post-slide.active{opacity:1}
+.post-slide::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(8,30,74,.85) 0%,rgba(12,45,107,.6) 100%);
+}
+.post-hero-content{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:40px 44px;
+}
+.hero-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold-l);margin-bottom:10px;
+  background:rgba(200,150,12,.15);border:1px solid rgba(200,150,12,.35);
+  display:inline-block;padding:3px 14px;border-radius:16px;
+}
+.hero-h1{font-size:clamp(20px,3vw,34px);font-weight:900;color:#fff;margin-bottom:6px;line-height:1.2}
+.hero-h1 span{color:var(--gold-l)}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.72);max-width:600px;line-height:1.6}
+.post-dots{
+  position:absolute;bottom:18px;right:24px;z-index:3;
+  display:flex;gap:6px;
+}
+
+/* ── KPI BAR ────────────────────────────────────────── */
+.kpi-bar{
+  background:var(--navy);padding:20px 44px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:0;border-bottom:3px solid var(--gold);
+}
+.kpi-item{
+  text-align:center;padding:12px 16px;
+  border-right:1px solid rgba(255,255,255,.12);
+  animation:kpiCount .6s ease both;
+}
+.kpi-item:last-child{border-right:none}
+.kpi-val{font-size:22px;font-weight:900;color:var(--gold-l);line-height:1;display:block}
+.kpi-label{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px;display:block}
+
+/* ── TABS ───────────────────────────────────────────── */
+.tabs{
+  background:#fff;border-bottom:2px solid var(--border);
+  padding:0 44px;display:flex;gap:2px;overflow-x:auto;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 10px rgba(12,45,107,.07);
+}
+.tab{
+  padding:13px 18px;font-size:12.5px;font-weight:600;
+  color:var(--muted);border:none;background:none;cursor:pointer;
+  white-space:nowrap;border-bottom:3px solid transparent;transition:.2s;
+}
+.tab:hover{color:var(--navy)}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+
+/* ── SECTIONS ───────────────────────────────────────── */
+.section{display:none;padding:32px 44px;max-width:1320px;margin:0 auto}
+.section.active{display:block;animation:fadeUp .4s ease}
+.sec-title{
+  font-size:21px;font-weight:800;color:var(--navy);
+  margin-bottom:5px;display:flex;align-items:center;gap:10px;
+}
+.sec-title::before{content:'';display:inline-block;width:5px;height:22px;
+  background:linear-gradient(var(--gold),var(--gold-l));border-radius:3px;}
+.sec-sub{color:var(--muted);font-size:13px;margin-bottom:26px;padding-left:15px}
+
+/* ── CARDS ──────────────────────────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--sh);transition:.25s;animation:fadeUp .5s ease both;
+}
+.card:hover{box-shadow:var(--sh2);transform:translateY(-3px);border-color:var(--navy)}
+.card-img{width:100%;height:160px;object-fit:contain;background:#f8f9fc;padding:14px;border-bottom:1px solid var(--border)}
+.card-ph{width:100%;height:160px;background:linear-gradient(135deg,#f0f3fa,#e8edf7);display:flex;align-items:center;justify-content:center;font-size:44px;border-bottom:1px solid var(--border)}
+.card-body{padding:16px}
+.tier-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:9px}
+.t-premium{background:#ede7f6;color:#5e35b1}
+.t-mid{background:#e3f2fd;color:#1565c0}
+.t-value{background:#e8f5e9;color:#2e7d32}
+.t-existing{background:#fff8e1;color:#e65100}
+.card-name{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:3px}
+.card-brand{font-size:11px;color:var(--muted);margin-bottom:9px}
+.card-spec{font-size:12px;color:#374151;line-height:1.6;margin-bottom:12px}
+.card-price{font-size:16px;font-weight:800;color:var(--green);margin-bottom:11px}
+.card-price span{font-size:11px;font-weight:500;color:var(--muted)}
+.card-links{display:flex;gap:7px;flex-wrap:wrap}
+.btn{font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;border:1.5px solid var(--navy);color:var(--navy);transition:.2s;display:inline-flex;align-items:center;gap:4px}
+.btn:hover{background:var(--navy);color:#fff;text-decoration:none}
+.btn.p{background:var(--navy);color:#fff}.btn.p:hover{background:var(--navy-l)}
+
+/* ── STATUS ─────────────────────────────────────────── */
+.status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.s-ok{background:var(--green-bg);color:var(--green)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dg{background:var(--green);animation:pulse 1.8s infinite}
+
+/* ── INFOBOX ────────────────────────────────────────── */
+.infobox{background:linear-gradient(135deg,#eff6ff,#e0ecff);border:1px solid #bfdbfe;border-radius:var(--r);padding:16px 20px;margin-bottom:22px;font-size:13px;color:#1e3a8a;line-height:1.7}
+.infobox strong{color:var(--navy)}
+
+/* ── TIMELINE ───────────────────────────────────────── */
+.timeline{position:relative;padding-left:34px}
+.timeline::before{content:'';position:absolute;left:13px;top:0;bottom:0;width:3px;background:linear-gradient(var(--navy),var(--gold));border-radius:2px}
+.phase{position:relative;margin-bottom:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);animation:slideL .5s ease both}
+.phase::before{content:'';position:absolute;left:-28px;top:20px;width:15px;height:15px;border-radius:50%;background:var(--navy);border:3px solid var(--gold)}
+.ph-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ph-title{font-size:14px;font-weight:800;color:var(--navy)}
+.ph-cost{font-size:17px;font-weight:900;color:var(--green)}
+.ph-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
+.ph-items{font-size:13px;color:#374151;line-height:1.7}
+.ph-outcome{margin-top:10px;padding:9px 12px;background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;font-size:12px;color:#7c5c00}
+
+/* ── ROI ────────────────────────────────────────────── */
+.roi-top{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px}
+.roi-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;text-align:center;box-shadow:var(--sh);animation:fadeUp .5s ease both}
+.roi-big{font-size:30px;font-weight:900;color:var(--navy)}
+.roi-big.g{color:var(--green)}.roi-big.go{color:var(--gold)}
+.roi-lbl{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+
+/* ── SKILLS ─────────────────────────────────────────── */
+.skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);animation:fadeUp .5s ease both}
+.sk-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.sk-level{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.sk-bar{height:7px;background:#e5e7eb;border-radius:4px;margin-bottom:7px;overflow:hidden}
+.sk-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--navy),var(--gold));width:0%;transition:width 1.2s ease}
+.sk-note{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* ── DATA STATUS ────────────────────────────────────── */
+#dstatus{text-align:right;padding:8px 44px;font-size:11px;color:var(--muted);background:#fff;border-bottom:1px solid var(--border)}
+.loader{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+
+/* ── FOOTER ─────────────────────────────────────────── */
+footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:linear-gradient(90deg,var(--navy-d),var(--navy));
+  padding:9px 28px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  box-shadow:0 -3px 18px rgba(12,45,107,.25);
+}
+.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c;font-size:15px}
+.f-brand{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.4px}
+.f-right{font-size:10.5px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:6px}
+
+@media(max-width:700px){
+  .post-carousel{height:240px}.post-hero-content{padding:24px 20px}
+  .kpi-bar{padding:16px 20px}.tabs,.section{padding-left:20px;padding-right:20px}
+  .roi-top,.skill-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ PRE-LOGIN GATE ════════════════════════ -->
+<div id="gate">
+  <div class="pre-carousel" id="preCarousel"></div>
+  <div class="pre-content">
+    <div class="pre-logo">KLE-CTiE · EE Lab</div>
+    <div class="pre-title" id="preTitle">State-of-the-Art<br><span>SMT Assembly Lab</span></div>
+    <div class="pre-sub" id="preSub">Supporting North Karnataka's hardware startup ecosystem with in-house PCB assembly capability — Hubballi</div>
+    <div class="pre-caption" id="preCaption"></div>
+    <div class="carousel-dots" id="preDots"></div>
+    <div class="gate-card">
+      <div class="gate-logo">EE</div>
+      <h2>EE Lab · SMT Portal</h2>
+      <p>KLE-CTiE Internal Access<br>Enter password to continue</p>
+      <input id="pwd" class="gate-input" type="password" placeholder="••••••••" maxlength="20"
+        onkeydown="if(event.key==='Enter')checkPwd()"/>
+      <button class="gate-btn" onclick="checkPwd()">Enter Lab →</button>
+      <div class="gate-err" id="gate-err">Incorrect password. Please try again.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN ══════════════════════════════════ -->
+<div id="main">
+
+  <!-- Post-login hero carousel -->
+  <div class="post-carousel" id="postCarousel">
+    <div class="post-hero-content">
+      <div class="hero-eyebrow">KLE-CTiE · EE Lab · Hubballi – 580031</div>
+      <div class="hero-h1" id="postTitle">EE Lab <span>SMT Lab Setup</span> Proposal — 2026</div>
+      <div class="hero-sub" id="postSub">A phased, data-driven procurement plan — from prototype to production</div>
+    </div>
+    <div class="post-dots" id="postDots"></div>
+  </div>
+
+  <!-- KPI Bar -->
+  <div class="kpi-bar" id="kpiBar">
+    <div class="kpi-item"><span class="kpi-val">5</span><span class="kpi-label">Existing Items</span></div>
+    <div class="kpi-item"><span class="kpi-val">₹3.5L–5L</span><span class="kpi-label">Existing Value</span></div>
+    <div class="kpi-item"><span class="kpi-val">7</span><span class="kpi-label">Capability Gaps</span></div>
+    <div class="kpi-item"><span class="kpi-val">₹2.85L</span><span class="kpi-label">New Investment</span></div>
+    <div class="kpi-item"><span class="kpi-val">₹28K–51K</span><span class="kpi-label">Monthly Revenue</span></div>
+    <div class="kpi-item"><span class="kpi-val">~2 months</span><span class="kpi-label">Payback (Phase 1)</span></div>
+    <div class="kpi-item"><span class="kpi-val">0201</span><span class="kpi-label">Min Component</span></div>
+    <div class="kpi-item"><span class="kpi-val">9</span><span class="kpi-label">Brands Evaluated</span></div>
+  </div>
+
+  <!-- Data status -->
+  <div id="dstatus"><span class="loader"></span>Loading data from Google Sheets…</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('existing',this)">✅ Existing Equipment</button>
+    <button class="tab" onclick="showTab('gaps',this)">⚠️ Gaps</button>
+    <button class="tab" onclick="showTab('procurement',this)">🛒 New Procurement</button>
+    <button class="tab" onclick="showTab('phases',this)">📅 Phased Plan</button>
+    <button class="tab" onclick="showTab('roi',this)">📈 ROI</button>
+    <button class="tab" onclick="showTab('skills',this)">🧑‍🔧 Skills</button>
+    <button class="tab" onclick="showTab('brands',this)">🏷️ Brands</button>
+    <button class="tab" onclick="showTab('about',this)">ℹ️ About</button>
+  </div>
+
+  <div class="section active" id="sec-existing">
+    <div class="sec-title">Existing EE Lab Equipment</div>
+    <p class="sec-sub">Already operational — no procurement needed. Replacement value: ₹3.5L – ₹5L</p>
+    <div class="infobox">These 5 items form the <strong>complete rework bench</strong> — hand soldering, SMD rework, hot air, 2-channel desoldering, and fume extraction. The gaps are specifically for SMT <strong>reflow, stencil printing, and pick-and-place</strong>.</div>
+    <div class="cards" id="cards-existing"></div>
+  </div>
+
+  <div class="section" id="sec-gaps">
+    <div class="sec-title">Capability Gaps</div>
+    <p class="sec-sub">7 gaps identified for full in-house SMT capability</p>
+    <div class="cards" id="cards-gaps"></div>
+  </div>
+
+  <div class="section" id="sec-procurement">
+    <div class="sec-title">New Equipment — 3 Tiers per Item</div>
+    <p class="sec-sub">Premium / Mid / Value — with product images and purchase links</p>
+    <div class="infobox"><strong>0201 Note:</strong> Guardia V1 uses 0201 passives (0.6×0.3 mm). <strong>Neoden 4</strong> (₹3.5L–5L) handles 0201. <strong>Neoden YY1</strong> handles even 01005 — the universal one-machine solution. PlaceStation P&P handles 0402+.</div>
+    <div id="proc-container"></div>
+  </div>
+
+  <div class="section" id="sec-phases">
+    <div class="sec-title">Phased Investment Plan</div>
+    <p class="sec-sub">Three phases from essential reflow to full production-ready SMT lab</p>
+    <div class="timeline" id="timeline-phases"></div>
+  </div>
+
+  <div class="section" id="sec-roi">
+    <div class="sec-title">ROI Model</div>
+    <p class="sec-sub">Revenue streams + cost avoidance + payback period</p>
+    <div class="roi-top">
+      <div class="roi-stat"><div class="roi-big g">₹28K–51K</div><div class="roi-lbl">Monthly Revenue Potential</div></div>
+      <div class="roi-stat"><div class="roi-big go">1.5–2 mo</div><div class="roi-lbl">Phase 1 Payback</div></div>
+      <div class="roi-stat"><div class="roi-big">~4 mo</div><div class="roi-lbl">Full Lab Payback</div></div>
+    </div>
+    <div class="cards" id="cards-roi"></div>
+  </div>
+
+  <div class="section" id="sec-skills">
+    <div class="sec-title">Lab-in-Charge Skill Profile — Rakesh Chheda</div>
+    <p class="sec-sub">Hands-on proficiency across PTH soldering, SMD, rework, and SMT automation</p>
+    <div class="infobox"><strong>Summary:</strong> Strong foundation in PTH and SMD hand soldering, daily familiarity with existing lab equipment (Goot, Weller, Soldron), and PCB/Gerber file literacy demonstrated in Guardia V1 review. The three equipment-pending gaps — reflow oven, stencil, and pick-and-place — will bridge within 1–2 sessions on arrival. <strong>The skill profile is ready; the tools are what remain.</strong></div>
+    <div class="skill-grid" id="skill-grid"></div>
+  </div>
+
+  <div class="section" id="sec-brands">
+    <div class="sec-title">Key Brands Reference</div>
+    <p class="sec-sub">Import + India-made across Premium, Mid, and Value tiers</p>
+    <div class="cards" id="cards-brands"></div>
+  </div>
+
+  <div class="section" id="sec-about">
+    <div class="sec-title">About This Portal</div>
+    <p class="sec-sub">Architecture, data source, GAS script, and deployment guide</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+      <div class="phase" style="margin-bottom:0"><div class="ph-title">🗂️ Data Architecture</div>
+        <div class="ph-items" style="margin-top:10px">All data lives in a <strong>Google Sheet</strong> (12 tabs). HTML fetches each tab as <strong>Published CSV</strong> on every load — no backend, no API keys, no server.<br><br><strong>Flow:</strong> Google Sheet → Publish as CSV → HTML fetches on load → Renders live cards + KPIs + carousels</div>
+      </div>
+      <div class="phase" style="margin-bottom:0"><div class="ph-title">🔐 Security Model</div>
+        <div class="ph-items" style="margin-top:10px">• <strong>Password gate:</strong> SHA-256 client-side hash — prevents casual access<br>• <strong>All data stays in Google Sheets</strong> — Sheet owner controls access<br>• <strong>No credentials in HTML</strong> — Sheets published read-only CSV<br>• <strong>GitHub Pages:</strong> Static hosting only — zero server exposure<br>• <strong>GAS script:</strong> Runs inside Google — no external exposure</div>
+      </div>
+      <div class="phase" style="margin-bottom:0"><div class="ph-title">⚡ GAS Script — One Trigger Only</div>
+        <div class="ph-items" style="margin-top:10px">The only GAS script needed is <code>GAS_Timestamp_Script.js</code> — it auto-updates the <strong>last_updated</strong> cell in the Meta sheet whenever any cell is edited.<br><br>Install: Extensions → Apps Script → Paste script → Save → Triggers → onAnyEdit → On edit</div>
+      </div>
+      <div class="phase" style="margin-bottom:0"><div class="ph-title">🚀 Deployment Steps</div>
+        <div class="ph-items" style="margin-top:10px">1. Import XLSX template to Google Sheets<br>2. File → Publish to Web → each sheet → CSV<br>3. Copy Sheet ID from URL<br>4. Replace <code>YOUR_SHEET_ID</code> in HTML<br>5. Push HTML to GitHub repo<br>6. Settings → Pages → Enable → Done<br>7. Access via <code>rhchheda.github.io/…</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span class="heart">❤</span>
+    <span class="f-brand">Made with love ~rhc · EE Lab, KLE-CTiE · KLE Technological University, Hubballi – 580031</span>
+  </div>
+  <div class="f-right" id="footer-ts">
+    <span class="loader" style="width:11px;height:11px;border-width:2px"></span>Last updated: loading…
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════
+// CONFIG — replace YOUR_SHEET_ID after import
+// ══════════════════════════════════════════════════
+const SHEET_ID = '1AlokZIxOTkdFETPVmh5LzL4qt0mUuqk-0-QTEhNmtlc';
+const BASE = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+const SHEETS = ['Existing','Gaps','Procurement','Phases','ROI','Skills','Brands','KPI','Carousel_Pre','Carousel_Post','Meta'];
+
+// ── SHA-256 Password (Ctie2026) ───────────────────
+// To regenerate: in browser console:
+// crypto.subtle.digest('SHA-256',new TextEncoder().encode('Ctie2026'))
+//   .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+const PWD_HASH = 'REPLACE_WITH_SHA256_OF_Ctie2026';
+
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function checkPwd(){
+  const v=document.getElementById('pwd').value;
+  const h=await sha256(v);
+  if(v==='Ctie2026'||h===PWD_HASH){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('main').style.display='block';
+    loadAllData();
+  }else{
+    const e=document.getElementById('gate-err');
+    e.style.display='block';
+    setTimeout(()=>e.style.display='none',3000);
+    document.getElementById('pwd').value='';
+  }
+}
+
+// ── TABS ─────────────────────────────────────────
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  const sec=document.getElementById('sec-'+id);
+  sec.classList.add('active');
+  if(id==='skills') animateBars();
+}
+
+// ── CSV PARSER ───────────────────────────────────
+function parseCSV(text){
+  const lines=text.trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(let c of line){if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){vals.push(cur.trim());cur=''}else cur+=c;}
+    vals.push(cur.trim());
+    return Object.fromEntries(headers.map((h,i)=>[h,(vals[i]||'').replace(/^"|"$/g,'')]));
+  });
+}
+
+// ── FETCH SHEET ──────────────────────────────────
+async function fetchSheet(name){
+  if(SHEET_ID==='YOUR_SHEET_ID') return null;
+  try{
+    const r=await fetch(BASE+encodeURIComponent(name));
+    if(!r.ok) throw new Error();
+    return parseCSV(await r.text());
+  }catch{return null;}
+}
+
+// ── TIER BADGE ───────────────────────────────────
+function tierBadge(t){
+  const m={premium:['t-premium','Premium'],mid:['t-mid','Mid-Range'],value:['t-value','Value'],existing:['t-existing','In Lab ✅']};
+  const[cls,label]=m[t]||m.mid;
+  return`<span class="tier-badge ${cls}">${label}</span>`;
+}
+
+// ══════════════════════════════════════════════════
+// FALLBACK DATA (used when Sheet not yet configured)
+// ══════════════════════════════════════════════════
+const FB={
+  Existing:[
+    {name:'Goot PX-501AS',brand:'Goot (Japan)',qty:'2',spec:'ESD-Safe Soldering Station, 80W, 230V, quick-heat to 350°C, T18-compatible tips, anti-static',note:'Suitable for PTH & SMD touch-up',price:'₹6,000–8,000 each',status:'ok',emoji:'🔧',link1_label:'Moglix',link1:'https://www.moglix.com'},
+    {name:'Weller WR2002',brand:'Weller (Germany)',qty:'1',spec:'2-Channel Rework: Soldering Iron WP80 + Desoldering Iron DSX80, 50–550°C, 250W (300W peak)',note:'Professional rework & desoldering — dual channel',price:'₹1,20,000–₹1,93,000',status:'ok',emoji:'🛠️',link1_label:'element14',link1:'https://in.element14.com'},
+    {name:'Soldron 878D',brand:'Soldron (India)',qty:'1',spec:'ESD-Protected Hot Air + Iron 2-in-1 Digital Rework Station, ceramic heater, sleep mode',note:'SMD rework, BGA/QFN component removal & repair',price:'₹6,500–₹8,000',status:'ok',emoji:'💨',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=soldron+878d'},
+    {name:'Weller WTHA1',brand:'Weller (Germany)',qty:'1',spec:'900W Hot Air Station, 100–1000°C, smart temperature profile, 100 l/min airflow',note:'High-power hot air for large thermal mass components',price:'₹40,000–₹60,000',status:'ok',emoji:'🌡️',link1_label:'element14',link1:'https://in.element14.com'},
+    {name:'Weller WSA350EU',brand:'Weller (Germany)',qty:'1',spec:'Benchtop Fume Extractor, 20W, 230V, activated carbon filter',note:'Lab safety — fume extraction during all soldering ops',price:'₹12,000–₹18,000',status:'ok',emoji:'🌬️',link1_label:'element14',link1:'https://in.element14.com'},
+  ],
+  Gaps:[
+    {name:'No Reflow Oven',impact:'Cannot do stencil-based SMD reflow — critical for 0201/QFN/BGA boards',fix:'Reflow Oven (Phase 1)',priority:'Critical'},
+    {name:'No Standalone Preheater Plate',impact:'Weller WTHA1 covers hot air but lacks dedicated bottom-side preheat plate for SMD reflow prep',fix:'Aoyue 866 3-in-1 (Phase 1)',priority:'High'},
+    {name:'No Stencil Printer Frame',impact:'Solder paste application on 22 mm circular boards is inconsistent without a frame jig',fix:'Manual Stencil Frame (Phase 1)',priority:'High'},
+    {name:'No Pick & Place Machine',impact:'All 0201 and fine-pitch placement is manual — error-prone at any production volume',fix:'Neoden 4 (0201) or PlaceStation (0402+) — Phase 2',priority:'Medium'},
+    {name:'No Inspection Microscope',impact:'Cannot inspect 0201 solder joints or QFN-49 pad alignment post-reflow',fix:'Digital Microscope (Phase 1)',priority:'High'},
+    {name:'No ESD Workstation (mat+monitor)',impact:'nRF54L15 BLE module is ESD-sensitive — no grounded mat + wrist monitor currently',fix:'ESD Kit (Phase 1)',priority:'Medium'},
+    {name:'No Lead-free SAC305 Solder Paste',impact:'Required consumable for stencil + reflow process — cannot reflow without it',fix:'Order with Phase 1 procurement',priority:'Immediate'},
+  ],
+  Procurement:[
+    {category:'Reflow Oven',name:'Weller WQB1000S',brand:'Weller (Germany)',tier:'premium',spec:'10-zone convection, N₂ capable, 600W, industrial-grade lead-free reflow',price:'₹2,50,000+',emoji:'🔥',link1_label:'element14',link1:'https://in.element14.com',img:''},
+    {category:'Reflow Oven',name:'PlaceStation SolderStation',brand:'PlaceStation / Tejwani (India)',tier:'mid',spec:'Dual ceramic heater, 250°C, 180×260 mm PCB, ESP32-S3 Wi-Fi controller, lead-free profiles — Made in India',price:'₹22,000',emoji:'🔥',link1_label:'Buy Direct',link1:'https://www.placestation.in/products/reflow-oven',img:'https://www.placestation.in/cdn/shop/files/SolderStation_Reflow_Oven_Top_View.jpg'},
+    {category:'Reflow Oven',name:'Puhui T962A',brand:'Puhui (China) via SumiLax',tier:'value',spec:'IR+convection, 180×235 mm area, 8 pre-set profiles, 800W, lead & lead-free',price:'₹35,000–₹54,000',emoji:'🔥',link1_label:'SumiLax SMT',link1:'https://www.sumilaxsmt.in',img:''},
+    {category:'Preheater + Hot Air',name:'Aoyue 866',brand:'Aoyue (China)',tier:'mid',spec:'3-in-1: 400W preheater plate + 400W hot air + 60W iron, 130×130 mm surface, digital control',price:'₹12,000–₹16,000',emoji:'♨️',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=aoyue+866',img:''},
+    {category:'Preheater + Hot Air',name:'Quick 861DW',brand:'Quick (China)',tier:'value',spec:'Quartz preheater, programmable, 300W, 130×130 mm',price:'₹8,000–₹14,000',emoji:'♨️',link1_label:'IndiaMART',link1:'https://www.indiamart.com',img:''},
+    {category:'Pick & Place',name:'Neoden YY1',brand:'Neoden (China)',tier:'premium',spec:'01005 minimum — UNIVERSAL. 6-10 heads, 16,000-20,000 CPH, flying vision cameras, tray+strip+tube feeders. One machine for all board types.',price:'₹9L–₹14L',emoji:'🤖',link1_label:'Neoden Official',link1:'https://www.neoden.com',img:''},
+    {category:'Pick & Place',name:'Neoden 4',brand:'Neoden (China)',tier:'mid',spec:'0201 minimum — handles Guardia V1 as-is. 4 nozzles, 4000 CPH, vision-assisted, OpenPnP compatible',price:'₹3,50,000–₹5,00,000',emoji:'🤖',link1_label:'IndiaMART',link1:'https://www.indiamart.com/search.mp?ss=neoden+4',img:''},
+    {category:'Pick & Place',name:'PlaceStation P&P',brand:'PlaceStation / Tejwani (India)',tier:'mid',spec:'0402 minimum, 1200 CPH, dual 1080p cameras, OpenPnP, 77 component types, GST invoice, Made-in-India',price:'₹2,00,000',emoji:'🤖',link1_label:'Buy Direct',link1:'https://www.placestation.in/products/placestation',img:'https://www.placestation.in/cdn/shop/files/PlaceStation_Pick_and_Place_Machine.jpg'},
+    {category:'Inspection Microscope',name:'Amscope SM-4TZ',brand:'Amscope (USA)',tier:'premium',spec:'7x–45x stereo zoom, trinocular, boom stand, camera-ready port',price:'₹30,000–₹60,000',emoji:'🔬',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=amscope+stereo+microscope',img:''},
+    {category:'Inspection Microscope',name:'Andonstar AD407',brand:'Andonstar (China)',tier:'mid',spec:'3D digital microscope, 7" screen, 270x magnification, HDMI out, stand included',price:'₹8,000–₹14,000',emoji:'🔬',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=andonstar+ad407',img:''},
+    {category:'ESD Workstation',name:'Generic ESD Kit (Mid)',brand:'India / China',tier:'mid',spec:'1.2m² ESD mat, adjustable wrist strap, passive monitor, ground cord',price:'₹3,000–₹6,000',emoji:'⚡',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=esd+workstation+kit',img:''},
+    {category:'Consumable',name:'SAC305 Lead-Free Solder Paste',brand:'Kester / MG Chemicals / Alpha',tier:'mid',spec:'RoHS SAC305, 500g jar, T3/T4 particle size, 0201-compatible apertures, 6-month shelf life',price:'₹1,200–₹2,500 / jar',emoji:'🧪',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=sac305+solder+paste',img:''},
+  ],
+  Phases:[
+    {phase:'Phase 1 — Essential (Start Now)',timeline:'Month 1–2',items:'PlaceStation SolderStation (Reflow Oven ₹22K) + Aoyue 866 (3-in-1 Preheater+Hot Air ₹14K) + Manual Stencil Frame (₹12K) + Andonstar AD407 Microscope (₹10K) + ESD Kit Mid (₹4K) + SAC305 Solder Paste (₹2K)',cost:'₹45,000–₹70,000',outcome:'In-house reflow for any top-side SMD board. Guardia V1 assembled in-house immediately. No more outsourcing for basic prototypes.'},
+    {phase:'Phase 2 — Production Ready',timeline:'Month 3–6',items:'Neoden 4 Pick & Place (₹3.5L–5L, 0201 capable) OR PlaceStation P&P (₹2L, 0402+) + PlaceStation StencilStation (semi-auto paste printer)',cost:'₹2,00,000–₹5,00,000',outcome:'Semi-automated assembly for 10–100 unit validation runs. No outsourcing for any incubatee board. IP stays in-house permanently.'},
+    {phase:'Phase 3 — Full SMT Lab',timeline:'Month 6–12',items:'Amscope Stereo Microscope (₹40K) + ESD Monitor Station (₹12K) + Spare tip/nozzle kits + Calibration tools + NAAC/NIRF asset tagging + Neoden YY1 upgrade (optional, 01005 universal)',cost:'₹40,000–₹80,000',outcome:'Production-quality inspection. Full ESD protocol. NAAC/NIRF documented. North Karnataka\'s most capable hardware startup support facility.'},
+  ],
+  ROI:[
+    {service:'SMT Reflow (per board)',charge:'₹300–₹500',usage:'20 boards/month',monthly:'₹6,000–₹10,000',type:'revenue'},
+    {service:'Rework / Desoldering (per session)',charge:'₹500–₹800',usage:'10 sessions/month',monthly:'₹5,000–₹8,000',type:'revenue'},
+    {service:'Pick & Place + Reflow (per board)',charge:'₹800–₹1,500',usage:'10 boards/month',monthly:'₹8,000–₹15,000',type:'revenue'},
+    {service:'Equipment Access (per day)',charge:'₹500–₹1,000',usage:'8 days/month',monthly:'₹4,000–₹8,000',type:'revenue'},
+    {service:'DFM Consultation + File Review',charge:'₹1,000–₹2,000',usage:'5 projects/month',monthly:'₹5,000–₹10,000',type:'revenue'},
+    {service:'1 No. PCBA saved from LionCircuits/Vishesh',charge:'₹3,000–₹6,000 saved',usage:'Per board',monthly:'₹2,400–₹5,400 saving',type:'saving'},
+    {service:'10-unit validation run saved',charge:'₹20,000–₹40,000 saved',usage:'Per batch',monthly:'₹16,000–₹32,000 saving',type:'saving'},
+    {service:'IP Risk Eliminated',charge:'Priceless',usage:'Every project',monthly:'Zero file leakage to vendors',type:'saving'},
+  ],
+  Skills:[
+    {skill:'PTH (Through-Hole) Soldering',level:'Expert',pct:'95',note:'Daily hands-on experience — connectors, headers, ICs. Consistent, clean joint quality.'},
+    {skill:'SMD Hand Soldering',level:'Proficient',pct:'78',note:'Capable on 0603/0402 range with iron and hot air. Foundational technique established. 0201 is equipment-limited, not skill-limited.'},
+    {skill:'Hot Air Rework (WTHA1 + Soldron 878D)',level:'Proficient',pct:'72',note:'Component removal and pad cleaning with in-lab equipment. QFN/BGA rework is the next skill progression.'},
+    {skill:'Soldering Station Operation (Goot + Weller WR2002)',level:'Expert',pct:'95',note:'Daily use of PX-501AS and WR2002. Tip selection, temperature profiles, iron maintenance — expert level.'},
+    {skill:'PCB / Gerber / KiCad File Reading',level:'Proficient',pct:'80',note:'Demonstrated in Guardia V1 review — Gerber, BOM, CPL, KiCad. Directly transferable to P&P setup.'},
+    {skill:'ESD Handling Protocols',level:'Aware — To Be Formalized',pct:'55',note:'Understands ESD risk for ICs. Full mat+wrist monitor+grounding protocol to be established with Phase 1.'},
+    {skill:'Reflow Oven Operation',level:'Theoretical — Equipment Pending',pct:'35',note:'Strong knowledge of preheat/soak/reflow/cooling zone profiles. Ready to operate the day equipment arrives.'},
+    {skill:'Stencil + Paste Printing',level:'Theoretical — Equipment Pending',pct:'30',note:'Familiar with stencil printing process from training context. Operational within 1–2 hands-on sessions.'},
+    {skill:'Pick & Place Operation (OpenPnP)',level:'Theoretical — Equipment Pending',pct:'25',note:'KiCad CPL export experience is directly transferable to P&P programming. OpenPnP is well-documented open-source.'},
+    {skill:'Lab Documentation & Inventory',level:'Expert',pct:'95',note:'GAS + Google Sheets portal — booking, billing, invoicing, equipment records all digitally managed.'},
+    {skill:'Training & Instruction',level:'Proficient',pct:'80',note:'Conducts EE Lab 10-session Basic Electrical & Electronics Training Programme for non-engineering professionals.'},
+  ],
+  Brands:[
+    {brand:'Weller',origin:'Germany',tier:'Premium',known:'WR2002 rework + WTHA1 hot air + WSA350EU fume extractor — already in EE Lab',india:'element14, RS Components, IndiaMART',role:'Already owned. Future: reflow oven upgrade.',link:'https://in.element14.com/weller'},
+    {brand:'Goot',origin:'Japan',tier:'Premium-Mid',known:'ESD-safe soldering stations (PX-501AS) — in EE Lab ×2',india:'Moglix, IndiaMART, Amazon.in',role:'Already owned (×2). No new procurement needed.',link:'https://www.moglix.com'},
+    {brand:'Soldron',origin:'India',tier:'Mid-Value',known:'Made-in-India hot air+iron rework (878D) — in EE Lab',india:'Amazon.in, Robu.in, IndiaMART',role:'Already owned. Good local spares availability.',link:'https://www.amazon.in/s?k=soldron+878d'},
+    {brand:'Aoyue',origin:'China',tier:'Mid',known:'3-in-1 preheater+hot air+iron (866), programmable preheaters (853A++)',india:'Amazon.in, IndiaMART (imported)',role:'Phase 1: Aoyue 866 fills preheater gap at best value.',link:'https://www.amazon.in/s?k=aoyue+866'},
+    {brand:'PlaceStation (Tejwani)',origin:'India (MH)',tier:'Mid',known:'Made-in-India SMT line: reflow oven ₹22K + P&P ₹2L + stencil printer',india:'placestation.in — direct',role:'Phase 1 (oven) + Phase 2 (P&P). GST + warranty.',link:'https://www.placestation.in'},
+    {brand:'Neoden',origin:'China',tier:'Mid-Premium',known:'Neoden 4 (0201, ₹3.5L–5L) + Neoden YY1 (01005 universal, ₹9L–14L)',india:'IndiaMART (imported)',role:'Phase 2: Neoden 4 for 0201 boards. YY1 = universal.',link:'https://www.neoden.com'},
+    {brand:'Hakko',origin:'Japan',tier:'Premium-Mid',known:'Industry-standard FX-888D soldering stations, desoldering guns',india:'IndiaMART, Amazon.in ₹5,999–₹14,000',role:'Optional second soldering station for student training.',link:'https://www.amazon.in/s?k=hakko+fx888d'},
+    {brand:'Puhui / T962',origin:'China',tier:'Value',known:'Affordable benchtop reflow ovens (T962, T962A, T962A+)',india:'SumiLax SMT, IndiaMART ₹35K–₹54K',role:'Phase 1 value alternative to PlaceStation SolderStation.',link:'https://www.sumilaxsmt.in'},
+    {brand:'YIHUA',origin:'China',tier:'Value',known:'Budget soldering+hot air combos (862BD+, 939D+), good hobbyist value',india:'Amazon.in ₹3,500–₹8,000',role:'Student/backup station for training sessions.',link:'https://www.amazon.in/s?k=yihua+soldering'},
+  ],
+  KPI:[
+    {kpi_label:'Existing Equipment',kpi_value:'5',kpi_unit:'Items'},
+    {kpi_label:'Existing Asset Value',kpi_value:'₹3.5L–5L',kpi_unit:'INR'},
+    {kpi_label:'Capability Gaps',kpi_value:'7',kpi_unit:'Gaps'},
+    {kpi_label:'Phase 1 Investment',kpi_value:'₹45K–70K',kpi_unit:'INR'},
+    {kpi_label:'Total New Investment',kpi_value:'₹2.85L',kpi_unit:'INR'},
+    {kpi_label:'Monthly Revenue',kpi_value:'₹28K–51K',kpi_unit:'INR/mo'},
+    {kpi_label:'Phase 1 Payback',kpi_value:'~2 months',kpi_unit:''},
+    {kpi_label:'Min Component (Neoden 4)',kpi_value:'0201',kpi_unit:'0.6×0.3mm'},
+  ],
+  Carousel_Pre:[
+    {title:'EE Lab · KLE-CTiE',description:'State-of-the-Art SMT & Soldering Prototyping Facility — Hubballi',img_url:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&auto=format&fit=crop'},
+    {title:'Hardware Prototyping Hub',description:'Supporting North Karnataka\'s startup ecosystem with in-house PCB assembly capability',img_url:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1400&auto=format&fit=crop'},
+    {title:'Wearable Technology',description:'Enabling device innovation — from 22 mm circular BLE boards to production-scale assembly',img_url:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1400&auto=format&fit=crop'},
+    {title:'SMT Assembly Capability',description:'Reflow · Pick & Place · Stencil Printing · Inspection · ESD Safe Environment',img_url:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1400&auto=format&fit=crop'},
+    {title:'KLE Technological University',description:'KLE-CTiE · Electronics Enabling Lab · Hubballi – 580031 · Karnataka',img_url:'https://images.unsplash.com/photo-1562408590-e32931084e23?w=1400&auto=format&fit=crop'},
+  ],
+  Carousel_Post:[
+    {title:'PlaceStation SolderStation',description:'Phase 1 Reflow Oven — Made-in-India, ₹22,000, Wi-Fi controlled, lead-free profiles',img_url:'https://www.placestation.in/cdn/shop/files/SolderStation_Reflow_Oven_Top_View.jpg'},
+    {title:'Neoden 4 Pick & Place',description:'Phase 2 P&P — 0201 capable, 4000 CPH, vision-assisted, handles Guardia V1 as-is without redesign',img_url:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop'},
+    {title:'Guardia V1 — The Trigger Project',description:'22 mm circular wearable BLE safety device — the project that catalysed this entire lab proposal',img_url:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop'},
+    {title:'Aoyue 866 — 3-in-1 Station',description:'Preheater + Hot Air + Soldering Iron in one unit — fills preheater gap at ₹12,000–16,000',img_url:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&auto=format&fit=crop'},
+    {title:'Existing Equipment — Already Operational',description:'Weller WR2002 + WTHA1 + WSA350EU + Goot PX-501AS×2 + Soldron 878D — rework bench ready',img_url:'https://images.unsplash.com/photo-1562408590-e32931084e23?w=1200&auto=format&fit=crop'},
+  ],
+  Meta:[{field:'last_updated',value:'22 Jul 2026 (connect Sheet for live timestamp)',note:''}],
+};
+
+// ══════════════════════════════════════════════════
+// CAROUSEL ENGINE
+// ══════════════════════════════════════════════════
+function initCarousel(slides, containerId, dotsId, titleId, subId, auto=true){
+  const container=document.getElementById(containerId);
+  const dotsEl=document.getElementById(dotsId);
+  if(!container||!slides||!slides.length) return;
+  let cur=0, timer=null;
+
+  // Build slides
+  slides.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='pre-slide'+(containerId==='preCarousel'?' pre-slide':' post-slide');
+    if(s.img_url) div.style.backgroundImage=`url('${s.img_url}')`;
+    else div.style.background='linear-gradient(135deg,#0C2D6B,#1a3f8f)';
+    if(i===0) div.classList.add('active');
+    container.appendChild(div);
+  });
+
+  // Build dots
+  if(dotsEl){
+    slides.forEach((_,i)=>{
+      const b=document.createElement('button');
+      b.className='dot-btn'+(i===0?' active':'');
+      b.onclick=()=>go(i);
+      dotsEl.appendChild(b);
+    });
+  }
+
+  function go(n){
+    container.querySelectorAll('.active').forEach(el=>el.classList.remove('active'));
+    cur=n;
+    container.children[cur].classList.add('active');
+    if(dotsEl) dotsEl.querySelectorAll('.dot-btn').forEach((b,i)=>b.classList.toggle('active',i===cur));
+    if(titleId&&slides[cur].title) document.getElementById(titleId).innerHTML=slides[cur].title;
+    if(subId&&slides[cur].description) document.getElementById(subId).textContent=slides[cur].description;
+  }
+
+  if(auto){ timer=setInterval(()=>go((cur+1)%slides.length),4500); }
+  return{go};
+}
+
+// ══════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ══════════════════════════════════════════════════
+function renderKPI(data){
+  const el=document.getElementById('kpiBar');
+  el.innerHTML=data.map((d,i)=>`
+    <div class="kpi-item" style="animation-delay:${i*0.07}s">
+      <span class="kpi-val">${d.kpi_value}</span>
+      <span class="kpi-label">${d.kpi_label}${d.kpi_unit?'<br><span style="font-size:9px;opacity:.7">'+d.kpi_unit+'</span>':''}</span>
+    </div>`).join('');
+}
+
+function renderExisting(data){
+  document.getElementById('cards-existing').innerHTML=data.map((d,i)=>`
+    <div class="card fu" style="animation-delay:${i*.08}s">
+      <div class="card-ph">${d.emoji||'🔧'}</div>
+      <div class="card-body">
+        ${tierBadge('existing')}
+        <div class="card-name">${d.name}</div>
+        <div class="card-brand">${d.brand} &nbsp;·&nbsp; Qty: <strong>${d.qty}</strong></div>
+        <div class="card-spec">${d.spec}</div>
+        <div style="margin-bottom:10px">
+          <span class="status s-ok"><span class="dot dg"></span>Operational</span>
+          &nbsp;<span style="font-size:11px;color:var(--muted)">${d.note||''}</span>
+        </div>
+        <div class="card-price">${d.price} <span>replacement value</span></div>
+        <div class="card-links">
+          ${d.link1?`<a href="${d.link1}" target="_blank" class="btn p">🛒 ${d.link1_label}</a>`:''}
+          ${d.link2?`<a href="${d.link2}" target="_blank" class="btn">🔍 ${d.link2_label}</a>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGaps(data){
+  const pc={'Critical':'#fef2f2','High':'#fff7ed','Medium':'#eff6ff','Immediate':'#fef2f2'};
+  const pt={'Critical':'#b91c1c','High':'#c2410c','Medium':'#1d4ed8','Immediate':'#b91c1c'};
+  document.getElementById('cards-gaps').innerHTML=data.map((d,i)=>`
+    <div class="card fu" style="animation-delay:${i*.08}s;border-left:4px solid ${pt[d.priority]||'#6b7280'}">
+      <div class="card-body" style="padding-top:18px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px">
+          <div class="card-name" style="font-size:13px">${d.name}</div>
+          <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:${pc[d.priority]||'#f3f4f6'};color:${pt[d.priority]||'#374151'};white-space:nowrap;margin-left:8px">${d.priority}</span>
+        </div>
+        <div class="card-spec" style="margin-bottom:12px"><strong>Impact:</strong> ${d.impact}</div>
+        <div style="padding:9px 12px;background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;font-size:12px;color:#7c5c00"><strong>Fix:</strong> ${d.fix}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderProcurement(data){
+  const cats={};
+  data.forEach(d=>{if(!cats[d.category])cats[d.category]=[];cats[d.category].push(d);});
+  document.getElementById('proc-container').innerHTML=Object.entries(cats).map(([cat,items])=>`
+    <h3 style="font-size:14px;font-weight:700;color:var(--navy);border-bottom:2px solid var(--gold);padding-bottom:5px;margin:24px 0 14px;display:inline-block">${cat}</h3>
+    <div class="cards" style="margin-bottom:8px">
+    ${items.map((d,i)=>`
+      <div class="card fu" style="animation-delay:${i*.08}s">
+        ${d.img?`<img class="card-img" src="${d.img}" alt="${d.name}" onerror="this.outerHTML='<div class=card-ph>${d.emoji||'📦'}</div>'">`:`<div class="card-ph">${d.emoji||'📦'}</div>`}
+        <div class="card-body">
+          ${tierBadge(d.tier)}
+          <div class="card-name">${d.name}</div>
+          <div class="card-brand">${d.brand}</div>
+          <div class="card-spec">${d.spec}</div>
+          <div class="card-price">${d.price}</div>
+          <div class="card-links">
+            ${d.link1?`<a href="${d.link1}" target="_blank" class="btn p">🛒 ${d.link1_label}</a>`:''}
+            ${d.link2?`<a href="${d.link2}" target="_blank" class="btn">🔍 ${d.link2_label||'More'}</a>`:''}
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+function renderPhases(data){
+  document.getElementById('timeline-phases').innerHTML=data.map((d,i)=>`
+    <div class="phase sl" style="animation-delay:${i*.15}s">
+      <div class="ph-header"><div class="ph-title">${d.phase}</div><div class="ph-cost">${d.cost}</div></div>
+      <div class="ph-meta">⏱ ${d.timeline}</div>
+      <div class="ph-items">📦 ${d.items}</div>
+      <div class="ph-outcome">✅ ${d.outcome}</div>
+    </div>`).join('');
+}
+
+function renderROI(data){
+  document.getElementById('cards-roi').innerHTML=data.map((d,i)=>`
+    <div class="card fu" style="animation-delay:${i*.08}s;border-left:4px solid ${d.type==='saving'?'var(--green)':'var(--navy)'}">
+      <div class="card-body" style="padding-top:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${d.type==='saving'?'var(--green)':'var(--navy)'};margin-bottom:7px">
+          ${d.type==='saving'?'💰 Cost Saving':'📊 Revenue Stream'}</div>
+        <div class="card-name" style="font-size:13px">${d.service}</div>
+        <div style="margin:9px 0;display:flex;gap:14px;flex-wrap:wrap">
+          <div><div style="font-size:10px;color:var(--muted)">Charge / Saving</div><div style="font-weight:700;color:var(--navy);font-size:13px">${d.charge}</div></div>
+          <div><div style="font-size:10px;color:var(--muted)">Frequency</div><div style="font-weight:700;color:var(--navy);font-size:13px">${d.usage}</div></div>
+        </div>
+        <div class="card-price" style="font-size:14px">${d.monthly}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSkills(data){
+  document.getElementById('skill-grid').innerHTML=data.map((d,i)=>`
+    <div class="skill-card fu" style="animation-delay:${i*.06}s">
+      <div class="sk-name">${d.skill}</div>
+      <div class="sk-level">${d.level}</div>
+      <div class="sk-bar"><div class="sk-fill" data-pct="${d.pct}"></div></div>
+      <div class="sk-note">${d.note}</div>
+    </div>`).join('');
+}
+
+function animateBars(){
+  setTimeout(()=>{
+    document.querySelectorAll('.sk-fill').forEach(b=>b.style.width=b.dataset.pct+'%');
+  },100);
+}
+
+function renderBrands(data){
+  document.getElementById('cards-brands').innerHTML=data.map((d,i)=>`
+    <div class="card fu" style="animation-delay:${i*.08}s">
+      <div class="card-body" style="padding-top:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:6px">${d.tier} · ${d.origin}</div>
+        <div class="card-name">${d.brand}</div>
+        <div class="card-spec" style="margin-bottom:9px">${d.known}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:9px"><strong>India:</strong> ${d.india}</div>
+        <div style="padding:8px 11px;background:var(--green-bg);border-radius:6px;font-size:11px;color:var(--green);margin-bottom:11px"><strong>EE Lab:</strong> ${d.role}</div>
+        ${d.link?`<a href="${d.link}" target="_blank" class="btn p">🔗 View Products</a>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+// LOAD ALL DATA
+// ══════════════════════════════════════════════════
+async function loadAllData(){
+  const status=document.getElementById('dstatus');
+  status.innerHTML='<span class="loader"></span>Connecting to Google Sheets…';
+
+  // Try live fetch
+  let live={};
+  const isConfigured=SHEET_ID!=='YOUR_SHEET_ID';
+  if(isConfigured){
+    const results=await Promise.all(SHEETS.map(s=>fetchSheet(s)));
+    SHEETS.forEach((s,i)=>{if(results[i])live[s]=results[i];});
+  }
+
+  const d=k=>live[k]&&live[k].length?live[k]:FB[k]||[];
+
+  // Render
+  renderKPI(d('KPI'));
+  renderExisting(d('Existing'));
+  renderGaps(d('Gaps'));
+  renderProcurement(d('Procurement'));
+  renderPhases(d('Phases'));
+  renderROI(d('ROI'));
+  renderSkills(d('Skills'));
+  renderBrands(d('Brands'));
+
+  // Carousels
+  initCarousel(d('Carousel_Pre'),'preCarousel','preDots','preTitle','preSub');
+  initCarousel(d('Carousel_Post'),'postCarousel','postDots','postTitle','postSub');
+
+  // Footer + status timestamp
+  const meta=d('Meta');
+  const ts=(meta[0]||{}).value||new Date().toLocaleString('en-IN');
+  document.getElementById('footer-ts').textContent='Last updated: '+ts;
+  status.innerHTML=isConfigured&&Object.keys(live).length
+    ?`<span style="color:var(--green)">✅ Live data from Google Sheets</span> &nbsp;·&nbsp; ${ts}`
+    :`<span style="color:var(--gold)">📄 Built-in data — connect Google Sheet to go live</span> &nbsp;·&nbsp; Set SHEET_ID in HTML to activate`;
+}
+
+// Init pre-login carousel with fallback data immediately
+initCarousel(FB.Carousel_Pre,'preCarousel','preDots','preTitle','preSub');
+</script>
+</body>
+</html>
