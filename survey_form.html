@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>EE Lab · PCB Assembly Needs Assessment · KLE-CTiE</title>
+<style>
+:root{
+  --navy:#0C2D6B;--navy-d:#081e4a;--navy-l:#1a3f8f;
+  --gold:#C8960C;--gold-l:#f0b90b;--gold-bg:#fdf3dc;
+  --green:#1a7a4a;--green-bg:#e8f5ee;
+  --red:#e74c3c;--border:#dde3f0;
+  --bg:#f4f6fb;--card:#fff;--text:#1a1a2e;--muted:#6b7280;
+  --r:12px;--rs:8px;
+  --sh:0 2px 16px rgba(12,45,107,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding-bottom:60px}
+
+/* ── HEADER ─────────────────────────────────────── */
+.header{
+  background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy) 60%,var(--navy-l) 100%);
+  padding:0;position:relative;overflow:hidden;
+}
+.header::before{
+  content:'';position:absolute;inset:0;opacity:.04;
+  background-image:radial-gradient(circle at 20% 50%,#fff 1px,transparent 1px),
+    radial-gradient(circle at 80% 20%,#fff 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 40px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.logo-block{display:flex;align-items:center;gap:12px}
+.logo-img{width:52px;height:52px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.12);padding:4px}
+.logo-text{display:flex;flex-direction:column}
+.logo-name{font-size:13px;font-weight:800;color:#fff;letter-spacing:.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.5px}
+.header-center{text-align:center;flex:1;padding:0 20px}
+.header-badge{
+  display:inline-block;background:rgba(200,150,12,.2);
+  border:1px solid var(--gold);color:var(--gold-l);
+  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:3px 14px;border-radius:20px;margin-bottom:22px;margin-top:8px;
+}
+.header-title{font-size:clamp(18px,3vw,30px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:6px}
+.header-title span{color:var(--gold-l)}
+.header-desc{font-size:13px;color:rgba(255,255,255,.7);max-width:500px;margin:0 auto 18px;line-height:1.6}
+
+/* Steps indicator */
+.steps{display:flex;justify-content:center;gap:0;padding:0 40px 24px;position:relative}
+.steps::before{content:'';position:absolute;top:16px;left:50%;transform:translateX(-50%);width:60%;height:2px;background:rgba(255,255,255,.2);z-index:0}
+.step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;max-width:120px;position:relative;z-index:1}
+.step-num{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:rgba(255,255,255,.6);
+  transition:.3s;
+}
+.step.active .step-num{background:var(--gold);border-color:var(--gold-l);color:var(--navy-d)}
+.step.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-label{font-size:10px;color:rgba(255,255,255,.5);text-align:center;letter-spacing:.5px;text-transform:uppercase}
+.step.active .step-label{color:var(--gold-l)}
+.step.done .step-label{color:rgba(255,255,255,.7)}
+
+/* ── FORM BODY ──────────────────────────────────── */
+.form-wrap{max-width:760px;margin:32px auto;padding:0 20px}
+
+.form-section{display:none;animation:fadeUp .4s ease}
+.form-section.active{display:block}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.35)}28%{transform:scale(1)}42%{transform:scale(1.2)}70%{transform:scale(1)}}
+
+.sec-card{
+  background:var(--card);border-radius:var(--r);
+  padding:32px 36px;box-shadow:var(--sh);
+  border:1px solid var(--border);margin-bottom:20px;
+}
+.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid var(--gold-bg)}
+.sec-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.sec-title{font-size:17px;font-weight:800;color:var(--navy)}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Fields */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field-grid.full{grid-template-columns:1fr}
+.field-grid.three{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.3px;text-transform:uppercase}
+.field label .req{color:var(--red);margin-left:2px}
+.field input,.field select,.field textarea{
+  padding:11px 14px;border:2px solid var(--border);border-radius:var(--rs);
+  font-size:14px;color:var(--text);outline:none;transition:.2s;
+  background:#fff;font-family:inherit;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(12,45,107,.08)}
+.field textarea{resize:vertical;min-height:90px}
+.field-hint{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* Radio / Checkbox groups */
+.radio-group,.check-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.radio-opt,.check-opt{
+  display:flex;align-items:center;gap:7px;
+  padding:9px 15px;border:2px solid var(--border);border-radius:var(--rs);
+  cursor:pointer;transition:.2s;font-size:13px;font-weight:500;
+  background:#fff;color:var(--text);user-select:none;
+}
+.radio-opt:hover,.check-opt:hover{border-color:var(--navy);background:var(--gold-bg)}
+.radio-opt input,.check-opt input{display:none}
+.radio-opt.selected,.check-opt.selected{
+  border-color:var(--navy);background:var(--navy);color:#fff;
+}
+.radio-opt .dot-ind{
+  width:14px;height:14px;border-radius:50%;border:2px solid currentColor;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.radio-opt.selected .dot-ind::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:block}
+
+/* Component size visual */
+.comp-visual{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px;
+}
+.comp-opt{
+  border:2px solid var(--border);border-radius:var(--rs);padding:12px 8px;
+  text-align:center;cursor:pointer;transition:.2s;background:#fff;
+}
+.comp-opt:hover{border-color:var(--navy);background:var(--gold-bg)}
+.comp-opt.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.comp-size{font-size:18px;font-weight:900;display:block;margin-bottom:4px}
+.comp-mm{font-size:10px;opacity:.7;display:block;margin-bottom:6px}
+.comp-chip{
+  width:100%;height:6px;border-radius:3px;background:currentColor;opacity:.3;
+  margin:0 auto;transition:.2s;
+}
+.comp-opt.selected .comp-chip{opacity:.8}
+
+/* Progress bar */
+.progress-wrap{background:rgba(255,255,255,.15);height:4px;border-radius:2px;margin-bottom:0}
+.progress-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width .4s ease}
+
+/* Navigation buttons */
+.nav-btns{display:flex;gap:12px;justify-content:space-between;margin-top:24px}
+.btn-back{
+  padding:12px 28px;border:2px solid var(--border);background:#fff;
+  color:var(--muted);border-radius:var(--rs);font-size:14px;font-weight:700;
+  cursor:pointer;transition:.2s;
+}
+.btn-back:hover{border-color:var(--navy);color:var(--navy)}
+.btn-next{
+  padding:12px 36px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;
+  cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px;
+}
+.btn-next:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(12,45,107,.3)}
+.btn-submit{
+  padding:14px 40px;
+  background:linear-gradient(135deg,var(--green),#2d9e6e);
+  color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:800;
+  cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;
+}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,122,74,.35)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* Validation */
+.field-err{font-size:11px;color:var(--red);margin-top:3px;display:none}
+.field.error input,.field.error select,.field.error textarea{border-color:var(--red)}
+.field.error .field-err{display:block}
+
+/* Success screen */
+#success{display:none;text-align:center;padding:60px 20px;animation:fadeUp .6s ease}
+.success-icon{font-size:64px;margin-bottom:20px;animation:heartbeat 1.5s ease 3}
+.success-title{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:10px}
+.success-sub{font-size:15px;color:var(--muted);max-width:480px;margin:0 auto 28px;line-height:1.7}
+.success-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:24px 28px;max-width:500px;margin:0 auto 24px;box-shadow:var(--sh);text-align:left;
+}
+.ref-num{font-size:22px;font-weight:900;color:var(--navy);font-family:monospace}
+.success-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 28px;background:var(--navy);color:#fff;
+  border-radius:var(--rs);font-size:14px;font-weight:700;
+  text-decoration:none;transition:.2s;
+}
+.success-btn:hover{background:var(--navy-l);text-decoration:none;color:#fff}
+
+/* Info strip */
+.info-strip{
+  background:linear-gradient(135deg,var(--gold-bg),#fff8e8);
+  border:1px solid var(--gold);border-radius:var(--rs);
+  padding:12px 16px;font-size:12px;color:#7c5c00;
+  display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;line-height:1.6;
+}
+
+/* Loader */
+.loader{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+/* Footer */
+footer{
+  background:linear-gradient(90deg,var(--navy-d),var(--navy));
+  padding:10px 32px;display:flex;align-items:center;justify-content:space-between;
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  box-shadow:0 -3px 18px rgba(12,45,107,.25);
+}
+.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c}
+.f-text{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.88)}
+.f-right{font-size:11px;color:rgba(255,255,255,.45)}
+
+@media(max-width:600px){
+  .header-inner{padding:14px 20px}
+  .sec-card{padding:22px 20px}
+  .field-grid,.field-grid.three{grid-template-columns:1fr}
+  .comp-visual{grid-template-columns:repeat(2,1fr)}
+  .steps{padding:0 20px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────── -->
+<div class="header">
+  <div class="header-inner">
+    <!-- LHS Logo: KLE-CTiE -->
+    <div class="logo-block">
+      <img class="logo-img" src="https://raw.githubusercontent.com/rhchheda/rhchheda/main/klectie_logo.png"
+        onerror="this.outerHTML='<div style=\'width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--gold-l);text-align:center;padding:4px\'>KLE CTiE</div>'"
+        alt="KLE-CTiE"/>
+      <div class="logo-text">
+        <span class="logo-name">KLE-CTiE</span>
+        <span class="logo-sub">Centre for Tech Innovation</span>
+      </div>
+    </div>
+
+    <!-- CENTER Title -->
+    <div class="header-center">
+      <div class="header-badge">EE Lab · Hardware Needs Assessment</div>
+      <div class="header-title">PCB Assembly <span>Needs Assessment</span></div>
+      <div class="header-desc">Help us understand your project requirements so we can recommend the right assembly path for your board.</div>
+    </div>
+
+    <!-- RHS Logo: KLE-TU -->
+    <div class="logo-block" style="flex-direction:row-reverse">
+      <img class="logo-img" src="https://raw.githubusercontent.com/rhchheda/rhchheda/main/kletu_logo.png"
+        onerror="this.outerHTML='<div style=\'width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--gold-l);text-align:center;padding:4px\'>KLE TU</div>'"
+        alt="KLE Tech Univ"/>
+      <div class="logo-text" style="text-align:right">
+        <span class="logo-name">KLE Tech Univ</span>
+        <span class="logo-sub">Hubballi – 580031</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar" style="width:25%"></div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div>
+      <div class="step-label">Profile</div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div>
+      <div class="step-label">Project</div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <div class="step-label">Assembly</div>
+    </div>
+    <div class="step" id="step4">
+      <div class="step-num">4</div>
+      <div class="step-label">Scale</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FORM ────────────────────────────────────── -->
+<div class="form-wrap">
+
+  <!-- SECTION 1: PROFILE -->
+  <div class="form-section active" id="sec1">
+    <div class="sec-card">
+      <div class="sec-header">
+        <div class="sec-icon">👤</div>
+        <div><div class="sec-title">Respondent Profile</div><div class="sec-sub">Tell us who you are and how to reach you</div></div>
+      </div>
+      <div class="field-grid">
+        <div class="field" id="f-name">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="name" placeholder="e.g. Irshad Hussain"/>
+          <span class="field-err">Please enter your full name</span>
+        </div>
+        <div class="field" id="f-org">
+          <label>Organisation / Startup <span class="req">*</span></label>
+          <input type="text" id="org" placeholder="e.g. Guardia Technologies"/>
+          <span class="field-err">Please enter your organisation</span>
+        </div>
+        <div class="field" id="f-email">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="e.g. irshad@example.com"/>
+          <span class="field-err">Please enter a valid email</span>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="e.g. +91 98765 43210"/>
+        </div>
+        <div class="field">
+          <label>Visitor ID / Registration No.</label>
+          <input type="text" id="visitor_id" placeholder="e.g. 636356 / 12496"/>
+          <span class="field-hint">From your visit register at KLE-CTiE reception</span>
+        </div>
+        <div class="field">
+          <label>Are you a KLE-CTiE Incubatee? <span class="req">*</span></label>
+          <div class="radio-group" id="rg-incubatee">
+            <div class="radio-opt" onclick="selectRadio('incubatee','Yes',this)"><div class="dot-ind"></div>Yes — Incubatee</div>
+            <div class="radio-opt" onclick="selectRadio('incubatee','No',this)"><div class="dot-ind"></div>No — External Visitor</div>
+            <div class="radio-opt" onclick="selectRadio('incubatee','Student',this)"><div class="dot-ind"></div>KLE Student</div>
+          </div>
+          <input type="hidden" id="incubatee"/>
+          <span class="field-err" id="err-incubatee">Please select one</span>
+        </div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <div></div>
+      <button class="btn-next" onclick="nextSection(1)">Next — Project Details <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: PROJECT -->
+  <div class="form-section" id="sec2">
+    <div class="sec-card">
+      <div class="sec-header">
+        <div class="sec-icon">📋</div>
+        <div><div class="sec-title">Project Details</div><div class="sec-sub">Tell us about your PCB and device</div></div>
+      </div>
+
+      <div class="field-grid full" style="margin-bottom:18px">
+        <div class="field" id="f-project">
+          <label>Project / Product Name <span class="req">*</span></label>
+          <input type="text" id="project" placeholder="e.g. Guardia V1 — Wearable Women's Safety Device"/>
+          <span class="field-err">Please enter your project name</span>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:18px">
+        <label>Device / Application Type <span class="req">*</span></label>
+        <div class="radio-group" id="rg-device_type">
+          <div class="radio-opt" onclick="selectRadio('device_type','Wearable',this)"><div class="dot-ind"></div>Wearable</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','IoT / Embedded',this)"><div class="dot-ind"></div>IoT / Embedded</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','Medical',this)"><div class="dot-ind"></div>Medical</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','Industrial',this)"><div class="dot-ind"></div>Industrial</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','Consumer Electronics',this)"><div class="dot-ind"></div>Consumer Electronics</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','R&D / Academic',this)"><div class="dot-ind"></div>R&D / Academic</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','Other',this)"><div class="dot-ind"></div>Other</div>
+        </div>
+        <input type="hidden" id="device_type"/>
+        <span class="field-err" id="err-device_type">Please select device type</span>
+      </div>
+
+      <div class="field-grid three" style="margin-bottom:18px">
+        <div class="field">
+          <label>PCB Size / Diameter</label>
+          <input type="text" id="pcb_size" placeholder="e.g. 22 mm circular"/>
+          <span class="field-hint">Diameter for circular, W×H for rectangular</span>
+        </div>
+        <div class="field">
+          <label>Number of Layers</label>
+          <select id="layers">
+            <option value="">Select…</option>
+            <option>1 Layer</option>
+            <option>2 Layer</option>
+            <option>4 Layer</option>
+            <option>6+ Layer</option>
+            <option>Not sure</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Approx. Component Count</label>
+          <select id="comp_count">
+            <option value="">Select…</option>
+            <option>1–10</option>
+            <option>11–30</option>
+            <option>31–60</option>
+            <option>61–100</option>
+            <option>100+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:18px">
+        <label>Board Shape</label>
+        <div class="radio-group" id="rg-board_shape">
+          <div class="radio-opt" onclick="selectRadio('board_shape','Circular',this)"><div class="dot-ind"></div>⭕ Circular</div>
+          <div class="radio-opt" onclick="selectRadio('board_shape','Rectangular',this)"><div class="dot-ind"></div>▬ Rectangular</div>
+          <div class="radio-opt" onclick="selectRadio('board_shape','Custom / Irregular',this)"><div class="dot-ind"></div>✦ Custom / Irregular</div>
+        </div>
+        <input type="hidden" id="board_shape"/>
+      </div>
+
+      <div class="field">
+        <label>Microcontroller / Main IC</label>
+        <input type="text" id="main_ic" placeholder="e.g. nRF54L15 BLE Module (Seeed Studio)"/>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevSection(2)">← Back</button>
+      <button class="btn-next" onclick="nextSection(2)">Next — Assembly Needs <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: ASSEMBLY NEEDS -->
+  <div class="form-section" id="sec3">
+    <div class="sec-card">
+      <div class="sec-header">
+        <div class="sec-icon">⚙️</div>
+        <div><div class="sec-title">Assembly Needs</div><div class="sec-sub">Technical details that determine equipment and process</div></div>
+      </div>
+
+      <!-- Component size visual selector -->
+      <div class="field" style="margin-bottom:22px">
+        <label>Smallest Component Package on Board <span class="req">*</span></label>
+        <div class="comp-visual" id="compVisual">
+          <div class="comp-opt" onclick="selectComp('01005','0.4×0.2mm',this)">
+            <span class="comp-size">01005</span>
+            <span class="comp-mm">0.4 × 0.2 mm</span>
+            <div class="comp-chip" style="width:20%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('0201','0.6×0.3mm',this)">
+            <span class="comp-size">0201</span>
+            <span class="comp-mm">0.6 × 0.3 mm</span>
+            <div class="comp-chip" style="width:35%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('0402','1.0×0.5mm',this)">
+            <span class="comp-size">0402</span>
+            <span class="comp-mm">1.0 × 0.5 mm</span>
+            <div class="comp-chip" style="width:55%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('0603','1.6×0.8mm',this)">
+            <span class="comp-size">0603</span>
+            <span class="comp-mm">1.6 × 0.8 mm</span>
+            <div class="comp-chip" style="width:70%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('0805','2.0×1.25mm',this)">
+            <span class="comp-size">0805</span>
+            <span class="comp-mm">2.0 × 1.25 mm</span>
+            <div class="comp-chip" style="width:85%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('1206+','3.2×1.6mm+',this)">
+            <span class="comp-size">1206+</span>
+            <span class="comp-mm">3.2 × 1.6 mm+</span>
+            <div class="comp-chip" style="width:100%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('Through-hole only','PTH',this)">
+            <span class="comp-size" style="font-size:13px">PTH</span>
+            <span class="comp-mm">Through-hole only</span>
+            <div class="comp-chip" style="width:100%"></div>
+          </div>
+          <div class="comp-opt" onclick="selectComp('Not sure','?',this)">
+            <span class="comp-size">?</span>
+            <span class="comp-mm">Not sure</span>
+            <div class="comp-chip" style="width:50%;opacity:.2"></div>
+          </div>
+        </div>
+        <input type="hidden" id="min_component"/>
+        <span class="field-err" id="err-min_component">Please select smallest component size</span>
+      </div>
+
+      <div class="field-grid" style="margin-bottom:18px">
+        <div class="field">
+          <label>Does board have QFN / BGA / Fine-Pitch IC?</label>
+          <div class="radio-group" id="rg-has_qfn">
+            <div class="radio-opt" onclick="selectRadio('has_qfn','Yes',this)"><div class="dot-ind"></div>Yes</div>
+            <div class="radio-opt" onclick="selectRadio('has_qfn','No',this)"><div class="dot-ind"></div>No</div>
+            <div class="radio-opt" onclick="selectRadio('has_qfn','Not sure',this)"><div class="dot-ind"></div>Not sure</div>
+          </div>
+          <input type="hidden" id="has_qfn"/>
+        </div>
+        <div class="field">
+          <label>Solder Process Required <span class="req">*</span></label>
+          <div class="radio-group" id="rg-solder_type">
+            <div class="radio-opt" onclick="selectRadio('solder_type','Lead-free (SAC305 / RoHS)',this)"><div class="dot-ind"></div>Lead-free (SAC305)</div>
+            <div class="radio-opt" onclick="selectRadio('solder_type','Leaded (Sn63Pb37)',this)"><div class="dot-ind"></div>Leaded (Sn63Pb37)</div>
+            <div class="radio-opt" onclick="selectRadio('solder_type','Not sure',this)"><div class="dot-ind"></div>Not sure</div>
+          </div>
+          <input type="hidden" id="solder_type"/>
+          <span class="field-err" id="err-solder_type">Please select solder type</span>
+        </div>
+      </div>
+
+      <div class="field-grid" style="margin-bottom:18px">
+        <div class="field">
+          <label>Component Placement Side</label>
+          <div class="radio-group" id="rg-placement_side">
+            <div class="radio-opt" onclick="selectRadio('placement_side','Top side only',this)"><div class="dot-ind"></div>Top side only</div>
+            <div class="radio-opt" onclick="selectRadio('placement_side','Both sides',this)"><div class="dot-ind"></div>Both sides</div>
+            <div class="radio-opt" onclick="selectRadio('placement_side','Not sure',this)"><div class="dot-ind"></div>Not sure</div>
+          </div>
+          <input type="hidden" id="placement_side"/>
+        </div>
+        <div class="field">
+          <label>Gerber / BOM / CPL Files Ready?</label>
+          <div class="radio-group" id="rg-files_ready">
+            <div class="radio-opt" onclick="selectRadio('files_ready','Yes — all files ready',this)"><div class="dot-ind"></div>Yes — all ready</div>
+            <div class="radio-opt" onclick="selectRadio('files_ready','Partially ready',this)"><div class="dot-ind"></div>Partially ready</div>
+            <div class="radio-opt" onclick="selectRadio('files_ready','No — need help',this)"><div class="dot-ind"></div>No — need help</div>
+          </div>
+          <input type="hidden" id="files_ready"/>
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>Physical Stencil Available?</label>
+          <div class="radio-group" id="rg-stencil_ready">
+            <div class="radio-opt" onclick="selectRadio('stencil_ready','Yes',this)"><div class="dot-ind"></div>Yes</div>
+            <div class="radio-opt" onclick="selectRadio('stencil_ready','No',this)"><div class="dot-ind"></div>No</div>
+            <div class="radio-opt" onclick="selectRadio('stencil_ready','Not applicable',this)"><div class="dot-ind"></div>Not applicable</div>
+          </div>
+          <input type="hidden" id="stencil_ready"/>
+        </div>
+        <div class="field">
+          <label>Components / Parts in Hand?</label>
+          <div class="radio-group" id="rg-parts_ready">
+            <div class="radio-opt" onclick="selectRadio('parts_ready','Yes — all in hand',this)"><div class="dot-ind"></div>Yes — all in hand</div>
+            <div class="radio-opt" onclick="selectRadio('parts_ready','Partially sourced',this)"><div class="dot-ind"></div>Partially sourced</div>
+            <div class="radio-opt" onclick="selectRadio('parts_ready','No — need sourcing',this)"><div class="dot-ind"></div>No — need sourcing</div>
+          </div>
+          <input type="hidden" id="parts_ready"/>
+        </div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevSection(3)">← Back</button>
+      <button class="btn-next" onclick="nextSection(3)">Next — Scale & Timeline <span>→</span></button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: SCALE -->
+  <div class="form-section" id="sec4">
+    <div class="sec-card">
+      <div class="sec-header">
+        <div class="sec-icon">📈</div>
+        <div><div class="sec-title">Scale, Timeline & Service</div><div class="sec-sub">Help us plan the right resource and approach</div></div>
+      </div>
+
+      <div class="field" style="margin-bottom:20px">
+        <label>Quantity Required <span class="req">*</span></label>
+        <div class="radio-group" id="rg-quantity">
+          <div class="radio-opt" onclick="selectRadio('quantity','1 unit (Prototype)',this)"><div class="dot-ind"></div>1 unit</div>
+          <div class="radio-opt" onclick="selectRadio('quantity','2–5 units',this)"><div class="dot-ind"></div>2–5 units</div>
+          <div class="radio-opt" onclick="selectRadio('quantity','6–10 units (Validation)',this)"><div class="dot-ind"></div>6–10 units</div>
+          <div class="radio-opt" onclick="selectRadio('quantity','11–50 units',this)"><div class="dot-ind"></div>11–50 units</div>
+          <div class="radio-opt" onclick="selectRadio('quantity','50+ units (Production)',this)"><div class="dot-ind"></div>50+ units</div>
+        </div>
+        <input type="hidden" id="quantity"/>
+        <span class="field-err" id="err-quantity">Please select quantity</span>
+      </div>
+
+      <div class="field-grid" style="margin-bottom:20px">
+        <div class="field">
+          <label>When Do You Need This? <span class="req">*</span></label>
+          <div class="radio-group" id="rg-timeline">
+            <div class="radio-opt" onclick="selectRadio('timeline','ASAP (within 1 week)',this)"><div class="dot-ind"></div>ASAP — 1 week</div>
+            <div class="radio-opt" onclick="selectRadio('timeline','2–4 weeks',this)"><div class="dot-ind"></div>2–4 weeks</div>
+            <div class="radio-opt" onclick="selectRadio('timeline','1–3 months',this)"><div class="dot-ind"></div>1–3 months</div>
+            <div class="radio-opt" onclick="selectRadio('timeline','Flexible / Planning',this)"><div class="dot-ind"></div>Flexible</div>
+          </div>
+          <input type="hidden" id="timeline"/>
+          <span class="field-err" id="err-timeline">Please select timeline</span>
+        </div>
+        <div class="field">
+          <label>Estimated Budget (INR)</label>
+          <div class="radio-group" id="rg-budget">
+            <div class="radio-opt" onclick="selectRadio('budget','Under ₹5,000',this)"><div class="dot-ind"></div>Under ₹5K</div>
+            <div class="radio-opt" onclick="selectRadio('budget','₹5,000–₹20,000',this)"><div class="dot-ind"></div>₹5K–20K</div>
+            <div class="radio-opt" onclick="selectRadio('budget','₹20,000–₹50,000',this)"><div class="dot-ind"></div>₹20K–50K</div>
+            <div class="radio-opt" onclick="selectRadio('budget','₹50,000+',this)"><div class="dot-ind"></div>₹50K+</div>
+          </div>
+          <input type="hidden" id="budget"/>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:20px">
+        <label>Service(s) Required <span class="req">*</span></label>
+        <div class="check-group" id="cg-services">
+          <div class="check-opt" onclick="toggleCheck('services','PCB Fabrication',this)">PCB Fabrication</div>
+          <div class="check-opt" onclick="toggleCheck('services','SMT Reflow Assembly',this)">SMT Reflow Assembly</div>
+          <div class="check-opt" onclick="toggleCheck('services','Pick & Place',this)">Pick & Place</div>
+          <div class="check-opt" onclick="toggleCheck('services','Rework / Desoldering',this)">Rework / Desoldering</div>
+          <div class="check-opt" onclick="toggleCheck('services','DFM Review',this)">DFM Review</div>
+          <div class="check-opt" onclick="toggleCheck('services','Component Sourcing',this)">Component Sourcing</div>
+          <div class="check-opt" onclick="toggleCheck('services','Vendor Referral',this)">Vendor Referral</div>
+          <div class="check-opt" onclick="toggleCheck('services','Equipment Access',this)">Equipment Access</div>
+          <div class="check-opt" onclick="toggleCheck('services','Full Consultation',this)">Full Consultation</div>
+        </div>
+        <input type="hidden" id="services"/>
+        <span class="field-err" id="err-services">Please select at least one service</span>
+      </div>
+
+      <div class="field">
+        <label>Additional Notes / Special Requirements</label>
+        <textarea id="notes" placeholder="Any specific requirements, constraints, or questions you have for the EE Lab team…"></textarea>
+      </div>
+    </div>
+
+    <div class="info-strip">
+      <span style="font-size:20px">🔐</span>
+      <span>Your information is stored securely in the KLE-CTiE EE Lab system and used solely for assessing and responding to your PCB assembly requirements. All files shared subsequently will be treated as confidential.</span>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevSection(4)">← Back</button>
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+        <span id="submitText">Submit Assessment ✓</span>
+        <span id="submitLoader" class="loader" style="display:none"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Assessment Submitted!</div>
+    <div class="success-sub">Thank you. Our EE Lab team will review your PCB assembly requirements and reach out within <strong>1 working day</strong>. Check your email for a confirmation.</div>
+    <div class="success-card">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Your Reference Number</div>
+      <div class="ref-num" id="refNum">EEL-2026-XXXX</div>
+      <div style="margin-top:14px;font-size:13px;color:var(--muted)">Keep this for follow-up with the EE Lab team.</div>
+    </div>
+    <a href="mailto:rakesh.chheda@kletech.ac.in" class="success-btn">📧 Contact EE Lab Directly</a>
+  </div>
+
+</div><!-- /form-wrap -->
+
+<footer>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="heart">❤</span>
+    <span class="f-text">Made with love ~rhc · EE Lab, KLE-CTiE · KLE Technological University, Hubballi – 580031</span>
+  </div>
+  <span class="f-right">PCB Assembly Needs Assessment · 2026</span>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════
+// CONFIG — replace with your GAS Web App URL
+// ══════════════════════════════════════════════════
+const GAS_URL = 'YOUR_GAS_WEBAPP_URL';
+
+// ── State ─────────────────────────────────────────
+let currentSection = 1;
+const totalSections = 4;
+const radioValues = {};
+const checkValues = {};
+
+// ── Radio select ──────────────────────────────────
+function selectRadio(field, value, el) {
+  radioValues[field] = value;
+  document.getElementById(field).value = value;
+  const group = el.closest('.radio-group');
+  group.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const errEl = document.getElementById('err-' + field);
+  if (errEl) errEl.style.display = 'none';
+}
+
+// ── Checkbox toggle ───────────────────────────────
+function toggleCheck(field, value, el) {
+  if (!checkValues[field]) checkValues[field] = [];
+  const idx = checkValues[field].indexOf(value);
+  if (idx === -1) { checkValues[field].push(value); el.classList.add('selected'); }
+  else { checkValues[field].splice(idx, 1); el.classList.remove('selected'); }
+  document.getElementById(field).value = checkValues[field].join(', ');
+  const errEl = document.getElementById('err-' + field);
+  if (errEl && checkValues[field].length > 0) errEl.style.display = 'none';
+}
+
+// ── Component size visual selector ────────────────
+function selectComp(value, mm, el) {
+  document.getElementById('min_component').value = value;
+  document.querySelectorAll('.comp-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('err-min_component').style.display = 'none';
+}
+
+// ── Validation per section ────────────────────────
+function validateSection(sec) {
+  let valid = true;
+  if (sec === 1) {
+    const name = document.getElementById('name').value.trim();
+    const org = document.getElementById('org').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const incubatee = document.getElementById('incubatee').value;
+    if (!name) { document.getElementById('f-name').classList.add('error'); valid = false; }
+    else document.getElementById('f-name').classList.remove('error');
+    if (!org) { document.getElementById('f-org').classList.add('error'); valid = false; }
+    else document.getElementById('f-org').classList.remove('error');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('f-email').classList.add('error'); valid = false;
+    } else document.getElementById('f-email').classList.remove('error');
+    if (!incubatee) {
+      document.getElementById('err-incubatee').style.display = 'block'; valid = false;
+    }
+  }
+  if (sec === 2) {
+    const project = document.getElementById('project').value.trim();
+    const device = document.getElementById('device_type').value;
+    if (!project) { document.getElementById('f-project').classList.add('error'); valid = false; }
+    else document.getElementById('f-project').classList.remove('error');
+    if (!device) { document.getElementById('err-device_type').style.display = 'block'; valid = false; }
+  }
+  if (sec === 3) {
+    if (!document.getElementById('min_component').value) {
+      document.getElementById('err-min_component').style.display = 'block'; valid = false;
+    }
+    if (!document.getElementById('solder_type').value) {
+      document.getElementById('err-solder_type').style.display = 'block'; valid = false;
+    }
+  }
+  if (sec === 4) {
+    if (!document.getElementById('quantity').value) {
+      document.getElementById('err-quantity').style.display = 'block'; valid = false;
+    }
+    if (!document.getElementById('timeline').value) {
+      document.getElementById('err-timeline').style.display = 'block'; valid = false;
+    }
+    if (!document.getElementById('services').value) {
+      document.getElementById('err-services').style.display = 'block'; valid = false;
+    }
+  }
+  return valid;
+}
+
+// ── Navigation ────────────────────────────────────
+function nextSection(from) {
+  if (!validateSection(from)) return;
+  document.getElementById('sec' + from).classList.remove('active');
+  currentSection = from + 1;
+  document.getElementById('sec' + currentSection).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevSection(from) {
+  document.getElementById('sec' + from).classList.remove('active');
+  currentSection = from - 1;
+  document.getElementById('sec' + currentSection).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = (currentSection / totalSections) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  for (let i = 1; i <= totalSections; i++) {
+    const el = document.getElementById('step' + i);
+    el.classList.remove('active', 'done');
+    if (i < currentSection) el.classList.add('done');
+    else if (i === currentSection) el.classList.add('active');
+  }
+}
+
+// ── Generate Reference Number ─────────────────────
+function genRef() {
+  const d = new Date();
+  const yr = d.getFullYear();
+  const rnd = Math.floor(1000 + Math.random() * 9000);
+  return `EEL-${yr}-${rnd}`;
+}
+
+// ── Submit ────────────────────────────────────────
+async function submitForm() {
+  if (!validateSection(4)) return;
+  const btn = document.getElementById('submitBtn');
+  document.getElementById('submitText').style.display = 'none';
+  document.getElementById('submitLoader').style.display = 'inline-block';
+  btn.disabled = true;
+
+  const ref = genRef();
+  const ts = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  const payload = {
+    ref, ts,
+    name: document.getElementById('name').value.trim(),
+    org: document.getElementById('org').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    visitor_id: document.getElementById('visitor_id').value.trim(),
+    incubatee: document.getElementById('incubatee').value,
+    project: document.getElementById('project').value.trim(),
+    device_type: document.getElementById('device_type').value,
+    pcb_size: document.getElementById('pcb_size').value.trim(),
+    layers: document.getElementById('layers').value,
+    comp_count: document.getElementById('comp_count').value,
+    board_shape: document.getElementById('board_shape').value,
+    main_ic: document.getElementById('main_ic').value.trim(),
+    min_component: document.getElementById('min_component').value,
+    has_qfn: document.getElementById('has_qfn').value,
+    solder_type: document.getElementById('solder_type').value,
+    placement_side: document.getElementById('placement_side').value,
+    files_ready: document.getElementById('files_ready').value,
+    stencil_ready: document.getElementById('stencil_ready').value,
+    parts_ready: document.getElementById('parts_ready').value,
+    quantity: document.getElementById('quantity').value,
+    timeline: document.getElementById('timeline').value,
+    budget: document.getElementById('budget').value,
+    services: document.getElementById('services').value,
+    notes: document.getElementById('notes').value.trim(),
+  };
+
+  try {
+    if (GAS_URL !== 'YOUR_GAS_WEBAPP_URL') {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+  } catch (e) { console.warn('GAS submission error:', e); }
+
+  // Show success
+  document.getElementById('sec4').classList.remove('active');
+  document.getElementById('success').style.display = 'block';
+  document.getElementById('refNum').textContent = ref;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
