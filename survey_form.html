@@ -12,281 +12,331 @@
   --red:#e74c3c;--border:#dde3f0;
   --bg:#f4f6fb;--card:#fff;--text:#1a1a2e;--muted:#6b7280;
   --r:12px;--rs:8px;
-  --sh:0 2px 16px rgba(12,45,107,.10);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding-bottom:60px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding-bottom:64px}
 
-/* ── HEADER ─────────────────────────────────────── */
-.header{
-  background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy) 60%,var(--navy-l) 100%);
-  padding:0;position:relative;overflow:hidden;
-}
-.header::before{
-  content:'';position:absolute;inset:0;opacity:.04;
-  background-image:radial-gradient(circle at 20% 50%,#fff 1px,transparent 1px),
-    radial-gradient(circle at 80% 20%,#fff 1px,transparent 1px);
-  background-size:40px 40px;
-}
-.header-inner{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 40px;border-bottom:1px solid rgba(255,255,255,.1);
-}
-.logo-block{display:flex;align-items:center;gap:12px}
-.logo-img{width:52px;height:52px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.12);padding:4px}
-.logo-text{display:flex;flex-direction:column}
-.logo-name{font-size:13px;font-weight:800;color:#fff;letter-spacing:.3px}
-.logo-sub{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.5px}
-.header-center{text-align:center;flex:1;padding:0 20px}
-.header-badge{
-  display:inline-block;background:rgba(200,150,12,.2);
-  border:1px solid var(--gold);color:var(--gold-l);
-  font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-  padding:3px 14px;border-radius:20px;margin-bottom:22px;margin-top:8px;
-}
-.header-title{font-size:clamp(18px,3vw,30px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:6px}
-.header-title span{color:var(--gold-l)}
-.header-desc{font-size:13px;color:rgba(255,255,255,.7);max-width:500px;margin:0 auto 18px;line-height:1.6}
-
-/* Steps indicator */
-.steps{display:flex;justify-content:center;gap:0;padding:0 40px 24px;position:relative}
-.steps::before{content:'';position:absolute;top:16px;left:50%;transform:translateX(-50%);width:60%;height:2px;background:rgba(255,255,255,.2);z-index:0}
-.step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;max-width:120px;position:relative;z-index:1}
-.step-num{
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:800;color:rgba(255,255,255,.6);
-  transition:.3s;
-}
-.step.active .step-num{background:var(--gold);border-color:var(--gold-l);color:var(--navy-d)}
-.step.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
-.step-label{font-size:10px;color:rgba(255,255,255,.5);text-align:center;letter-spacing:.5px;text-transform:uppercase}
-.step.active .step-label{color:var(--gold-l)}
-.step.done .step-label{color:rgba(255,255,255,.7)}
-
-/* ── FORM BODY ──────────────────────────────────── */
-.form-wrap{max-width:760px;margin:32px auto;padding:0 20px}
-
-.form-section{display:none;animation:fadeUp .4s ease}
-.form-section.active{display:block}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* ── ANIMATIONS ─────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.35)}28%{transform:scale(1)}42%{transform:scale(1.2)}70%{transform:scale(1)}}
+@keyframes ledPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes armSwing{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(5deg)}}
+@keyframes spark{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+@keyframes smokeRise{0%{opacity:0;transform:translateY(0) scaleX(1)}30%{opacity:.6}100%{opacity:0;transform:translateY(-80px) scaleX(2.5)}}
+@keyframes checkDraw{0%{stroke-dashoffset:100}100%{stroke-dashoffset:0}}
+@keyframes refCount{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 8px rgba(200,150,12,.3)}50%{box-shadow:0 0 24px rgba(200,150,12,.8)}}
+@keyframes componentPlace{0%{transform:translateY(-20px);opacity:0}60%{transform:translateY(2px);opacity:1}100%{transform:translateY(0);opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
-.sec-card{
-  background:var(--card);border-radius:var(--r);
-  padding:32px 36px;box-shadow:var(--sh);
-  border:1px solid var(--border);margin-bottom:20px;
+/* ── HEADER ─────────────────────────────────────── */
+.header{background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy) 60%,var(--navy-l) 100%);padding:0;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:32px 32px}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid rgba(255,255,255,.1)}
+.logo-block{display:flex;align-items:center;gap:10px}
+.logo-img{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,.12);padding:3px;object-fit:contain}
+.logo-text .ln{font-size:12px;font-weight:800;color:#fff}
+.logo-text .ls{font-size:10px;color:rgba(255,255,255,.55)}
+.header-mid{text-align:center;flex:1;padding:0 16px}
+.h-badge{display:inline-block;background:rgba(200,150,12,.2);border:1px solid var(--gold);color:var(--gold-l);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 12px;border-radius:16px;margin-bottom:8px}
+.h-title{font-size:clamp(18px,3vw,28px);font-weight:900;color:#fff;margin-bottom:4px}
+.h-title span{color:var(--gold-l)}
+.h-sub{font-size:12px;color:rgba(255,255,255,.65);max-width:480px;margin:0 auto}
+
+/* ── PCB HERO SCENE ─────────────────────────────── */
+.pcb-scene{
+  height:140px;display:flex;align-items:center;justify-content:center;
+  position:relative;padding:16px 0 8px;
 }
-.sec-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid var(--gold-bg)}
-.sec-icon{
-  width:44px;height:44px;border-radius:10px;
-  background:linear-gradient(135deg,var(--navy),var(--navy-l));
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;flex-shrink:0;
+.pcb-board{
+  width:110px;height:110px;border-radius:50%;
+  border:3px solid rgba(200,150,12,.6);
+  background:radial-gradient(circle,#0d3d1a 0%,#082810 100%);
+  position:relative;animation:float 3s ease-in-out infinite;
+  box-shadow:0 0 20px rgba(200,150,12,.2),inset 0 0 20px rgba(0,0,0,.4);
 }
-.sec-title{font-size:17px;font-weight:800;color:var(--navy)}
+/* SMD components on board */
+.smd{position:absolute;border-radius:1px}
+.smd-r{width:10px;height:5px;background:#c8960c;border:1px solid #f0b90b}
+.smd-c{width:6px;height:6px;background:#1a5276;border:1px solid #2e86c1;border-radius:50%}
+.smd-ic{width:22px;height:20px;background:#1a1a2e;border:2px solid #566573;border-radius:2px}
+.smd-ic::after{content:'';position:absolute;inset:3px;background:rgba(200,150,12,.15);border-radius:1px}
+/* LED indicators */
+.led{position:absolute;width:5px;height:5px;border-radius:50%;animation:ledPulse 1.5s ease-in-out infinite}
+.led-g{background:#22c55e;box-shadow:0 0 6px #22c55e}
+.led-b{background:#3b82f6;box-shadow:0 0 6px #3b82f6;animation-delay:.5s}
+.led-r{background:#ef4444;box-shadow:0 0 6px #ef4444;animation-delay:1s}
+/* Robot arm */
+.robot-arm-wrap{position:absolute;right:-60px;top:10px;transform-origin:top center;animation:armSwing 2.5s ease-in-out infinite}
+.robot-arm{width:4px;height:50px;background:linear-gradient(180deg,#94a3b8,#64748b);border-radius:2px;position:relative;margin:0 auto}
+.robot-arm::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:10px;height:8px;background:#94a3b8;border-radius:2px}
+.robot-head{width:14px;height:10px;background:#cbd5e1;border-radius:3px;margin:0 auto;position:relative;top:-2px}
+.robot-head::before{content:'';position:absolute;top:2px;left:2px;width:4px;height:4px;border-radius:50%;background:var(--gold-l);animation:ledPulse 1s ease-in-out infinite}
+/* Spark on arm */
+.arm-spark{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--gold-l);box-shadow:0 0 8px var(--gold-l);animation:ledPulse .8s ease-in-out infinite;animation-delay:.3s}
+/* Solder points */
+.solder-pt{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(200,150,12,.7);box-shadow:0 0 4px rgba(200,150,12,.5)}
+/* Traces */
+.trace{position:absolute;background:rgba(200,150,12,.25);border-radius:1px}
+
+/* ── PROGRESS ────────────────────────────────────── */
+.progress-wrap{background:rgba(255,255,255,.1);height:3px}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width .4s ease}
+.steps{display:flex;justify-content:center;gap:0;padding:0 40px 20px;position:relative}
+.steps::before{content:'';position:absolute;top:16px;left:50%;transform:translateX(-50%);width:55%;height:2px;background:rgba(255,255,255,.15);z-index:0}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:110px;position:relative;z-index:1}
+.step-num{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:rgba(255,255,255,.5);transition:.3s}
+.step.active .step-num{background:var(--gold);border-color:var(--gold-l);color:var(--navy-d)}
+.step.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-label{font-size:10px;color:rgba(255,255,255,.45);text-align:center;letter-spacing:.5px;text-transform:uppercase}
+.step.active .step-label{color:var(--gold-l)}
+.step.done .step-label{color:rgba(255,255,255,.65)}
+
+/* ── FORM ────────────────────────────────────────── */
+.form-wrap{max-width:760px;margin:28px auto;padding:0 20px}
+.form-section{display:none;animation:slideUp .4s ease}
+.form-section.active{display:block}
+.sec-card{background:var(--card);border-radius:var(--r);padding:28px 32px;box-shadow:0 2px 16px rgba(12,45,107,.1);border:1px solid var(--border);margin-bottom:18px}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--gold-bg)}
+.sec-icon{width:42px;height:42px;border-radius:9px;background:linear-gradient(135deg,var(--navy),var(--navy-l));display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.sec-title{font-size:16px;font-weight:800;color:var(--navy)}
 .sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
 /* Fields */
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field-grid.full{grid-template-columns:1fr}
 .field-grid.three{grid-template-columns:1fr 1fr 1fr}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.3px;text-transform:uppercase}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.3px;text-transform:uppercase}
 .field label .req{color:var(--red);margin-left:2px}
-.field input,.field select,.field textarea{
-  padding:11px 14px;border:2px solid var(--border);border-radius:var(--rs);
-  font-size:14px;color:var(--text);outline:none;transition:.2s;
-  background:#fff;font-family:inherit;
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(12,45,107,.08)}
-.field textarea{resize:vertical;min-height:90px}
+.field input,.field select,.field textarea{padding:10px 13px;border:2px solid var(--border);border-radius:var(--rs);font-size:14px;color:var(--text);outline:none;transition:.2s;background:#fff;font-family:inherit}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(12,45,107,.07)}
+.field textarea{resize:vertical;min-height:80px}
 .field-hint{font-size:11px;color:var(--muted);line-height:1.5}
-
-/* Radio / Checkbox groups */
-.radio-group,.check-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
-.radio-opt,.check-opt{
-  display:flex;align-items:center;gap:7px;
-  padding:9px 15px;border:2px solid var(--border);border-radius:var(--rs);
-  cursor:pointer;transition:.2s;font-size:13px;font-weight:500;
-  background:#fff;color:var(--text);user-select:none;
-}
-.radio-opt:hover,.check-opt:hover{border-color:var(--navy);background:var(--gold-bg)}
-.radio-opt input,.check-opt input{display:none}
-.radio-opt.selected,.check-opt.selected{
-  border-color:var(--navy);background:var(--navy);color:#fff;
-}
-.radio-opt .dot-ind{
-  width:14px;height:14px;border-radius:50%;border:2px solid currentColor;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.radio-opt.selected .dot-ind::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:block}
-
-/* Component size visual */
-.comp-visual{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px;
-}
-.comp-opt{
-  border:2px solid var(--border);border-radius:var(--rs);padding:12px 8px;
-  text-align:center;cursor:pointer;transition:.2s;background:#fff;
-}
-.comp-opt:hover{border-color:var(--navy);background:var(--gold-bg)}
-.comp-opt.selected{border-color:var(--navy);background:var(--navy);color:#fff}
-.comp-size{font-size:18px;font-weight:900;display:block;margin-bottom:4px}
-.comp-mm{font-size:10px;opacity:.7;display:block;margin-bottom:6px}
-.comp-chip{
-  width:100%;height:6px;border-radius:3px;background:currentColor;opacity:.3;
-  margin:0 auto;transition:.2s;
-}
-.comp-opt.selected .comp-chip{opacity:.8}
-
-/* Progress bar */
-.progress-wrap{background:rgba(255,255,255,.15);height:4px;border-radius:2px;margin-bottom:0}
-.progress-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width .4s ease}
-
-/* Navigation buttons */
-.nav-btns{display:flex;gap:12px;justify-content:space-between;margin-top:24px}
-.btn-back{
-  padding:12px 28px;border:2px solid var(--border);background:#fff;
-  color:var(--muted);border-radius:var(--rs);font-size:14px;font-weight:700;
-  cursor:pointer;transition:.2s;
-}
-.btn-back:hover{border-color:var(--navy);color:var(--navy)}
-.btn-next{
-  padding:12px 36px;
-  background:linear-gradient(135deg,var(--navy),var(--navy-l));
-  color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;
-  cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px;
-}
-.btn-next:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(12,45,107,.3)}
-.btn-submit{
-  padding:14px 40px;
-  background:linear-gradient(135deg,var(--green),#2d9e6e);
-  color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:800;
-  cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;
-}
-.btn-submit:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,122,74,.35)}
-.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
-
-/* Validation */
-.field-err{font-size:11px;color:var(--red);margin-top:3px;display:none}
+.field-err{font-size:11px;color:var(--red);margin-top:2px;display:none}
 .field.error input,.field.error select,.field.error textarea{border-color:var(--red)}
 .field.error .field-err{display:block}
 
-/* Success screen */
-#success{display:none;text-align:center;padding:60px 20px;animation:fadeUp .6s ease}
-.success-icon{font-size:64px;margin-bottom:20px;animation:heartbeat 1.5s ease 3}
-.success-title{font-size:28px;font-weight:900;color:var(--navy);margin-bottom:10px}
-.success-sub{font-size:15px;color:var(--muted);max-width:480px;margin:0 auto 28px;line-height:1.7}
-.success-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:24px 28px;max-width:500px;margin:0 auto 24px;box-shadow:var(--sh);text-align:left;
-}
-.ref-num{font-size:22px;font-weight:900;color:var(--navy);font-family:monospace}
-.success-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:12px 28px;background:var(--navy);color:#fff;
-  border-radius:var(--rs);font-size:14px;font-weight:700;
-  text-decoration:none;transition:.2s;
-}
-.success-btn:hover{background:var(--navy-l);text-decoration:none;color:#fff}
+/* Radio / Check */
+.radio-group,.check-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:3px}
+.radio-opt,.check-opt{display:flex;align-items:center;gap:6px;padding:8px 13px;border:2px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:.2s;font-size:13px;font-weight:500;background:#fff;color:var(--text);user-select:none}
+.radio-opt:hover,.check-opt:hover{border-color:var(--navy);background:var(--gold-bg)}
+.radio-opt input,.check-opt input{display:none}
+.radio-opt.selected,.check-opt.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.dot-ind{width:13px;height:13px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.radio-opt.selected .dot-ind::after{content:'';width:5px;height:5px;border-radius:50%;background:#fff;display:block}
+
+/* Component visual */
+.comp-visual{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+.comp-opt{border:2px solid var(--border);border-radius:var(--rs);padding:10px 6px;text-align:center;cursor:pointer;transition:.2s;background:#fff}
+.comp-opt:hover{border-color:var(--navy);background:var(--gold-bg)}
+.comp-opt.selected{border-color:var(--navy);background:var(--navy);color:#fff}
+.comp-size{font-size:16px;font-weight:900;display:block;margin-bottom:3px}
+.comp-mm{font-size:10px;opacity:.7;display:block;margin-bottom:5px}
+.comp-chip{width:100%;height:5px;border-radius:2px;background:currentColor;opacity:.25}
+.comp-opt.selected .comp-chip{opacity:.7}
+
+/* Awareness box */
+.awareness-box{background:linear-gradient(135deg,#fff8e1,#fdf3dc);border:2px solid var(--gold);border-radius:var(--rs);padding:16px 18px;margin-top:4px}
+.awareness-box .aw-title{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.awareness-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:12px;color:#374151;line-height:1.6}
+.awareness-row:last-child{margin-bottom:0}
+.aw-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* ASAP warning */
+.asap-warn{background:#fef2f2;border:2px solid #fca5a5;border-radius:var(--rs);padding:14px 16px;margin-top:16px;display:none}
+.asap-warn.visible{display:block;animation:slideUp .3s ease}
+.asap-warn-title{font-size:13px;font-weight:800;color:#b91c1c;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.asap-warn p{font-size:12px;color:#7f1d1d;line-height:1.6}
+
+/* T&C */
+.tnc-wrap{border:2px solid var(--border);border-radius:var(--rs);overflow:hidden;margin-bottom:16px}
+.tnc-header{padding:12px 16px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.tnc-header:hover{background:var(--navy-l)}
+.tnc-toggle{font-size:18px;transition:.3s}
+.tnc-toggle.open{transform:rotate(180deg)}
+.tnc-body{display:none;padding:16px 18px;background:#fafbff;font-size:12px;color:#374151;line-height:1.8;max-height:280px;overflow-y:auto}
+.tnc-body.open{display:block;animation:slideUp .3s ease}
+.tnc-clause{margin-bottom:10px}
+.tnc-clause strong{color:var(--navy)}
+.tnc-accept{display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding:12px 14px;background:var(--gold-bg);border-radius:var(--rs);cursor:pointer}
+.tnc-accept input[type=checkbox]{width:16px;height:16px;margin-top:2px;cursor:pointer;flex-shrink:0;accent-color:var(--navy)}
+.tnc-accept label{font-size:12px;color:#374151;cursor:pointer;line-height:1.6}
+.tnc-err{font-size:11px;color:var(--red);margin-top:6px;display:none}
+
+/* Nav buttons */
+.nav-btns{display:flex;gap:10px;justify-content:space-between;margin-top:20px}
+.btn-back{padding:11px 24px;border:2px solid var(--border);background:#fff;color:var(--muted);border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-back:hover{border-color:var(--navy);color:var(--navy)}
+.btn-next{padding:11px 32px;background:linear-gradient(135deg,var(--navy),var(--navy-l));color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:7px}
+.btn-next:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 5px 18px rgba(12,45,107,.3)}
+.btn-submit{padding:13px 36px;background:linear-gradient(135deg,var(--green),#2d9e6e);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:8px}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
 /* Info strip */
-.info-strip{
-  background:linear-gradient(135deg,var(--gold-bg),#fff8e8);
-  border:1px solid var(--gold);border-radius:var(--rs);
-  padding:12px 16px;font-size:12px;color:#7c5c00;
-  display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;line-height:1.6;
-}
+.info-strip{background:linear-gradient(135deg,var(--gold-bg),#fff8e8);border:1px solid var(--gold);border-radius:var(--rs);padding:11px 14px;font-size:12px;color:#7c5c00;display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;line-height:1.6}
 
 /* Loader */
-.loader{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.loader{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 
-/* Footer */
+/* ── SUCCESS SCREEN ─────────────────────────────── */
+#success{display:none;padding:40px 20px;position:relative;overflow:hidden}
+
+/* Smoke effect */
+.smoke-container{position:absolute;bottom:180px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:0}
+.smoke{position:absolute;bottom:0;border-radius:50%;filter:blur(8px);opacity:0}
+.smoke-1{width:20px;height:20px;background:rgba(180,180,180,.5);left:-10px;animation:smokeRise 2s ease-out .3s forwards}
+.smoke-2{width:14px;height:14px;background:rgba(200,200,200,.4);left:5px;animation:smokeRise 2.2s ease-out .5s forwards}
+.smoke-3{width:18px;height:18px;background:rgba(160,160,160,.4);left:-20px;animation:smokeRise 1.8s ease-out .7s forwards}
+
+/* Sparks */
+.spark-container{position:absolute;top:50%;left:50%;pointer-events:none;z-index:1}
+.spark{position:absolute;width:6px;height:6px;border-radius:50%;animation:spark .8s ease-out forwards;opacity:0}
+.sp1{background:#f0b90b;--tx:-40px;--ty:-60px;animation-delay:.1s}
+.sp2{background:#f0b90b;--tx:50px;--ty:-50px;animation-delay:.15s}
+.sp3{background:#fff;--tx:-20px;--ty:-80px;animation-delay:.2s}
+.sp4{background:#f0b90b;--tx:60px;--ty:-30px;animation-delay:.05s}
+.sp5{background:#fbbf24;--tx:-60px;--ty:-30px;animation-delay:.25s}
+.sp6{background:#fff;--tx:30px;--ty:-70px;animation-delay:.3s}
+
+/* Success content */
+.success-inner{position:relative;z-index:2;text-align:center;animation:fadeUp .6s ease .4s both}
+.success-check{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),#2d9e6e);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;box-shadow:0 8px 32px rgba(26,122,74,.4);
+}
+.success-check svg{width:40px;height:40px}
+.check-path{stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke-dasharray:100;stroke-dashoffset:100;animation:checkDraw .6s ease .8s forwards}
+.success-title{font-size:26px;font-weight:900;color:var(--navy);margin-bottom:8px}
+.success-sub{font-size:14px;color:var(--muted);max-width:460px;margin:0 auto 24px;line-height:1.7}
+.ref-card{background:var(--card);border:2px solid var(--gold);border-radius:var(--r);padding:20px 24px;max-width:480px;margin:0 auto 20px;box-shadow:0 4px 20px rgba(200,150,12,.15);animation:glowPulse 2s ease-in-out 1s 3}
+.ref-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.ref-num{font-size:24px;font-weight:900;color:var(--navy);font-family:monospace;letter-spacing:2px;animation:refCount .5s ease 1.2s both}
+
+/* What happens next */
+.next-steps{background:#f8f9fd;border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;max-width:480px;margin:0 auto 20px;text-align:left}
+.next-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;text-align:center}
+.next-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
+.next-item:last-child{margin-bottom:0}
+.next-dot{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.next-text{font-size:12px;color:#374151;line-height:1.6}
+.next-text strong{color:var(--navy)}
+
+/* Timeline notice */
+.timeline-notice{background:linear-gradient(135deg,var(--gold-bg),#fffbeb);border:2px solid var(--gold);border-radius:var(--rs);padding:14px 16px;max-width:480px;margin:0 auto 20px;font-size:12px;color:#7c5c00;line-height:1.7;text-align:left}
+.timeline-notice strong{color:var(--navy)}
+
+.success-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+.cta-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 24px;border-radius:var(--rs);font-size:13px;font-weight:700;text-decoration:none;transition:.2s}
+.cta-primary{background:var(--navy);color:#fff}
+.cta-primary:hover{background:var(--navy-l);color:#fff;text-decoration:none}
+.cta-secondary{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.cta-secondary:hover{background:var(--navy);color:#fff;text-decoration:none}
+
+/* ── FOOTER ─────────────────────────────────────── */
 footer{
-  background:linear-gradient(90deg,var(--navy-d),var(--navy));
-  padding:10px 32px;display:flex;align-items:center;justify-content:space-between;
   position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:linear-gradient(90deg,var(--navy-d),var(--navy));
+  padding:10px 32px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
   box-shadow:0 -3px 18px rgba(12,45,107,.25);
 }
-.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c}
-.f-text{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.88)}
-.f-right{font-size:11px;color:rgba(255,255,255,.45)}
+.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c;font-size:14px}
+.f-text{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.88);text-align:center}
 
 @media(max-width:600px){
-  .header-inner{padding:14px 20px}
-  .sec-card{padding:22px 20px}
+  .header-inner{padding:12px 16px}
+  .pcb-scene{height:110px}
+  .robot-arm-wrap{right:-45px}
+  .sec-card{padding:20px 18px}
   .field-grid,.field-grid.three{grid-template-columns:1fr}
   .comp-visual{grid-template-columns:repeat(2,1fr)}
-  .steps{padding:0 20px 20px}
+  footer{padding:9px 16px}
 }
 </style>
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────── -->
+<!-- ── HEADER ──────────────────────────────────────── -->
 <div class="header">
   <div class="header-inner">
-    <!-- LHS Logo: KLE-CTiE -->
+    <!-- LHS: KLE-CTiE -->
     <div class="logo-block">
       <img class="logo-img" src="https://raw.githubusercontent.com/rhchheda/rhchheda/main/klectie_logo.png"
-        onerror="this.outerHTML='<div style=\'width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--gold-l);text-align:center;padding:4px\'>KLE CTiE</div>'"
-        alt="KLE-CTiE"/>
-      <div class="logo-text">
-        <span class="logo-name">KLE-CTiE</span>
-        <span class="logo-sub">Centre for Tech Innovation</span>
-      </div>
+        onerror="this.outerHTML='<div style=\'width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:var(--gold-l);text-align:center;padding:3px\'>KLE<br>CTiE</div>'" alt="KLE-CTiE"/>
+      <div class="logo-text"><div class="ln">KLE-CTiE</div><div class="ls">Centre for Tech Innovation</div></div>
     </div>
-
-    <!-- CENTER Title -->
-    <div class="header-center">
-      <div class="header-badge">EE Lab · Hardware Needs Assessment</div>
-      <div class="header-title">PCB Assembly <span>Needs Assessment</span></div>
-      <div class="header-desc">Help us understand your project requirements so we can recommend the right assembly path for your board.</div>
+    <!-- CENTER -->
+    <div class="header-mid">
+      <div class="h-badge">EE Lab · Hardware Needs Assessment</div>
+      <div class="h-title">PCB Assembly <span>Needs Assessment</span></div>
+      <div class="h-sub">Help us understand your requirements. This is an assessment — not a service booking.</div>
     </div>
-
-    <!-- RHS Logo: KLE-TU -->
+    <!-- RHS: KLE-TU -->
     <div class="logo-block" style="flex-direction:row-reverse">
       <img class="logo-img" src="https://raw.githubusercontent.com/rhchheda/rhchheda/main/kletu_logo.png"
-        onerror="this.outerHTML='<div style=\'width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--gold-l);text-align:center;padding:4px\'>KLE TU</div>'"
-        alt="KLE Tech Univ"/>
-      <div class="logo-text" style="text-align:right">
-        <span class="logo-name">KLE Tech Univ</span>
-        <span class="logo-sub">Hubballi – 580031</span>
+        onerror="this.outerHTML='<div style=\'width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:var(--gold-l);text-align:center;padding:3px\'>KLE<br>Tech U</div>'" alt="KLE Tech University"/>
+      <div class="logo-text" style="text-align:right"><div class="ln">KLE Tech Univ</div><div class="ls">Hubballi – 580031</div></div>
+    </div>
+  </div>
+
+  <!-- PCB Animation Scene -->
+  <div class="pcb-scene">
+    <div style="position:relative">
+      <!-- PCB Board -->
+      <div class="pcb-board" id="pcbBoard">
+        <!-- Traces -->
+        <div class="trace" style="width:2px;height:30px;top:20px;left:50px"></div>
+        <div class="trace" style="width:2px;height:20px;top:60px;left:30px"></div>
+        <div class="trace" style="width:25px;height:2px;top:45px;left:30px"></div>
+        <div class="trace" style="width:20px;height:2px;top:75px;left:45px"></div>
+        <!-- Central IC -->
+        <div class="smd smd-ic" style="top:38px;left:38px">
+          <div style="position:absolute;top:2px;left:2px;right:2px;font-size:5px;color:rgba(200,150,12,.6);font-weight:900;text-align:center;line-height:1.2">SMT<br>IC</div>
+        </div>
+        <!-- Resistors & Caps -->
+        <div class="smd smd-r" style="top:22px;left:20px"></div>
+        <div class="smd smd-r" style="top:22px;left:72px;transform:rotate(90deg)"></div>
+        <div class="smd smd-r" style="top:80px;left:28px"></div>
+        <div class="smd smd-c" style="top:70px;left:72px"></div>
+        <div class="smd smd-c" style="top:28px;left:42px"></div>
+        <!-- LEDs -->
+        <div class="led led-g" style="top:18px;left:58px"></div>
+        <div class="led led-b" style="top:82px;left:62px"></div>
+        <div class="led led-r" style="top:56px;left:18px"></div>
+        <!-- Solder points -->
+        <div class="solder-pt" style="top:44px;left:35px"></div>
+        <div class="solder-pt" style="top:44px;left:65px"></div>
+        <div class="solder-pt" style="top:64px;left:50px"></div>
+      </div>
+      <!-- Robot arm -->
+      <div class="robot-arm-wrap">
+        <div class="robot-head"></div>
+        <div class="robot-arm">
+          <div class="arm-spark"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Progress -->
-  <div class="progress-wrap">
-    <div class="progress-bar" id="progressBar" style="width:25%"></div>
-  </div>
-
+  <!-- Progress bar -->
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:25%"></div></div>
   <!-- Steps -->
   <div class="steps">
-    <div class="step active" id="step1">
-      <div class="step-num">1</div>
-      <div class="step-label">Profile</div>
-    </div>
-    <div class="step" id="step2">
-      <div class="step-num">2</div>
-      <div class="step-label">Project</div>
-    </div>
-    <div class="step" id="step3">
-      <div class="step-num">3</div>
-      <div class="step-label">Assembly</div>
-    </div>
-    <div class="step" id="step4">
-      <div class="step-num">4</div>
-      <div class="step-label">Scale</div>
-    </div>
+    <div class="step active" id="step1"><div class="step-num">1</div><div class="step-label">Profile</div></div>
+    <div class="step" id="step2"><div class="step-num">2</div><div class="step-label">Project</div></div>
+    <div class="step" id="step3"><div class="step-num">3</div><div class="step-label">Assembly</div></div>
+    <div class="step" id="step4"><div class="step-num">4</div><div class="step-label">Scale & T&C</div></div>
   </div>
 </div>
 
-<!-- ── FORM ────────────────────────────────────── -->
+<!-- ── FORM BODY ──────────────────────────────────── -->
 <div class="form-wrap">
 
   <!-- SECTION 1: PROFILE -->
@@ -296,41 +346,54 @@ footer{
         <div class="sec-icon">👤</div>
         <div><div class="sec-title">Respondent Profile</div><div class="sec-sub">Tell us who you are and how to reach you</div></div>
       </div>
-      <div class="field-grid">
+      <div class="field-grid" style="margin-bottom:16px">
         <div class="field" id="f-name">
           <label>Full Name <span class="req">*</span></label>
-          <input type="text" id="name" placeholder="e.g. Irshad Hussain"/>
+          <input type="text" id="name" placeholder="e.g. Priya Sharma"/>
           <span class="field-err">Please enter your full name</span>
         </div>
         <div class="field" id="f-org">
           <label>Organisation / Startup <span class="req">*</span></label>
-          <input type="text" id="org" placeholder="e.g. Guardia Technologies"/>
+          <input type="text" id="org" placeholder="e.g. ABC Technologies"/>
           <span class="field-err">Please enter your organisation</span>
         </div>
         <div class="field" id="f-email">
           <label>Email Address <span class="req">*</span></label>
-          <input type="email" id="email" placeholder="e.g. irshad@example.com"/>
-          <span class="field-err">Please enter a valid email</span>
+          <input type="email" id="email" placeholder="e.g. priya@abctech.in"/>
+          <span class="field-err">Please enter a valid email address</span>
         </div>
         <div class="field">
           <label>Phone Number</label>
           <input type="tel" id="phone" placeholder="e.g. +91 98765 43210"/>
         </div>
-        <div class="field">
-          <label>Visitor ID / Registration No.</label>
-          <input type="text" id="visitor_id" placeholder="e.g. 636356 / 12496"/>
-          <span class="field-hint">From your visit register at KLE-CTiE reception</span>
+      </div>
+      <div class="field" style="margin-bottom:16px" id="f-domain">
+        <label>Applicant Domain / Sector <span class="req">*</span></label>
+        <div class="radio-group" id="rg-domain">
+          <div class="radio-opt" onclick="selectRadio('domain','KLE-CTiE Incubatee',this)"><div class="dot-ind"></div>KLE-CTiE Incubatee</div>
+          <div class="radio-opt" onclick="selectRadio('domain','KLE Student / Faculty',this)"><div class="dot-ind"></div>KLE Student / Faculty</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Startup — External',this)"><div class="dot-ind"></div>Startup — External</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Academic / Research',this)"><div class="dot-ind"></div>Academic / Research</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Industry / Corporate / SME',this)"><div class="dot-ind"></div>Industry / Corporate / SME</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Medical / HealthTech',this)"><div class="dot-ind"></div>Medical / HealthTech</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Defence / Aerospace',this)"><div class="dot-ind"></div>Defence / Aerospace</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Government / PSU',this)"><div class="dot-ind"></div>Government / PSU</div>
+          <div class="radio-opt" onclick="selectRadio('domain','NGO / Social Enterprise',this)"><div class="dot-ind"></div>NGO / Social Enterprise</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Individual / Hobbyist',this)"><div class="dot-ind"></div>Individual / Hobbyist</div>
+          <div class="radio-opt" onclick="selectRadio('domain','Other',this)"><div class="dot-ind"></div>Other</div>
         </div>
-        <div class="field">
-          <label>Are you a KLE-CTiE Incubatee? <span class="req">*</span></label>
-          <div class="radio-group" id="rg-incubatee">
-            <div class="radio-opt" onclick="selectRadio('incubatee','Yes',this)"><div class="dot-ind"></div>Yes — Incubatee</div>
-            <div class="radio-opt" onclick="selectRadio('incubatee','No',this)"><div class="dot-ind"></div>No — External Visitor</div>
-            <div class="radio-opt" onclick="selectRadio('incubatee','Student',this)"><div class="dot-ind"></div>KLE Student</div>
-          </div>
-          <input type="hidden" id="incubatee"/>
-          <span class="field-err" id="err-incubatee">Please select one</span>
+        <input type="hidden" id="domain"/>
+        <span class="field-err" id="err-domain">Please select your domain / sector</span>
+      </div>
+      <div class="field" id="f-incubatee">
+        <label>Are you registered with KLE-CTiE? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-incubatee">
+          <div class="radio-opt" onclick="selectRadio('incubatee','Yes — Incubatee / Registered',this)"><div class="dot-ind"></div>Yes — Incubatee / Registered</div>
+          <div class="radio-opt" onclick="selectRadio('incubatee','No — External Visitor',this)"><div class="dot-ind"></div>No — External Visitor</div>
+          <div class="radio-opt" onclick="selectRadio('incubatee','KLE University Member',this)"><div class="dot-ind"></div>KLE University Member</div>
         </div>
+        <input type="hidden" id="incubatee"/>
+        <span class="field-err" id="err-incubatee">Please select one</span>
       </div>
     </div>
     <div class="nav-btns">
@@ -346,31 +409,29 @@ footer{
         <div class="sec-icon">📋</div>
         <div><div class="sec-title">Project Details</div><div class="sec-sub">Tell us about your PCB and device</div></div>
       </div>
-
-      <div class="field-grid full" style="margin-bottom:18px">
+      <div class="field-grid full" style="margin-bottom:16px">
         <div class="field" id="f-project">
           <label>Project / Product Name <span class="req">*</span></label>
-          <input type="text" id="project" placeholder="e.g. Guardia V1 — Wearable Women's Safety Device"/>
+          <input type="text" id="project" placeholder="e.g. Smart Environmental Sensor Node"/>
           <span class="field-err">Please enter your project name</span>
         </div>
       </div>
-
-      <div class="field" style="margin-bottom:18px">
+      <div class="field" style="margin-bottom:16px" id="f-device_type">
         <label>Device / Application Type <span class="req">*</span></label>
         <div class="radio-group" id="rg-device_type">
           <div class="radio-opt" onclick="selectRadio('device_type','Wearable',this)"><div class="dot-ind"></div>Wearable</div>
           <div class="radio-opt" onclick="selectRadio('device_type','IoT / Embedded',this)"><div class="dot-ind"></div>IoT / Embedded</div>
-          <div class="radio-opt" onclick="selectRadio('device_type','Medical',this)"><div class="dot-ind"></div>Medical</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','Medical Device',this)"><div class="dot-ind"></div>Medical Device</div>
           <div class="radio-opt" onclick="selectRadio('device_type','Industrial',this)"><div class="dot-ind"></div>Industrial</div>
           <div class="radio-opt" onclick="selectRadio('device_type','Consumer Electronics',this)"><div class="dot-ind"></div>Consumer Electronics</div>
+          <div class="radio-opt" onclick="selectRadio('device_type','Defence / Aerospace',this)"><div class="dot-ind"></div>Defence / Aerospace</div>
           <div class="radio-opt" onclick="selectRadio('device_type','R&D / Academic',this)"><div class="dot-ind"></div>R&D / Academic</div>
           <div class="radio-opt" onclick="selectRadio('device_type','Other',this)"><div class="dot-ind"></div>Other</div>
         </div>
         <input type="hidden" id="device_type"/>
         <span class="field-err" id="err-device_type">Please select device type</span>
       </div>
-
-      <div class="field-grid three" style="margin-bottom:18px">
+      <div class="field-grid three" style="margin-bottom:16px">
         <div class="field">
           <label>PCB Size / Diameter</label>
           <input type="text" id="pcb_size" placeholder="e.g. 22 mm circular"/>
@@ -380,27 +441,20 @@ footer{
           <label>Number of Layers</label>
           <select id="layers">
             <option value="">Select…</option>
-            <option>1 Layer</option>
-            <option>2 Layer</option>
-            <option>4 Layer</option>
-            <option>6+ Layer</option>
-            <option>Not sure</option>
+            <option>1 Layer</option><option>2 Layer</option>
+            <option>4 Layer</option><option>6+ Layer</option><option>Not sure</option>
           </select>
         </div>
         <div class="field">
           <label>Approx. Component Count</label>
           <select id="comp_count">
             <option value="">Select…</option>
-            <option>1–10</option>
-            <option>11–30</option>
-            <option>31–60</option>
-            <option>61–100</option>
-            <option>100+</option>
+            <option>1–10</option><option>11–30</option>
+            <option>31–60</option><option>61–100</option><option>100+</option>
           </select>
         </div>
       </div>
-
-      <div class="field" style="margin-bottom:18px">
+      <div class="field" style="margin-bottom:16px">
         <label>Board Shape</label>
         <div class="radio-group" id="rg-board_shape">
           <div class="radio-opt" onclick="selectRadio('board_shape','Circular',this)"><div class="dot-ind"></div>⭕ Circular</div>
@@ -409,10 +463,9 @@ footer{
         </div>
         <input type="hidden" id="board_shape"/>
       </div>
-
       <div class="field">
         <label>Microcontroller / Main IC</label>
-        <input type="text" id="main_ic" placeholder="e.g. nRF54L15 BLE Module (Seeed Studio)"/>
+        <input type="text" id="main_ic" placeholder="e.g. ESP32, STM32F4, nRF52840"/>
       </div>
     </div>
     <div class="nav-btns">
@@ -421,66 +474,31 @@ footer{
     </div>
   </div>
 
-  <!-- SECTION 3: ASSEMBLY NEEDS -->
+  <!-- SECTION 3: ASSEMBLY -->
   <div class="form-section" id="sec3">
     <div class="sec-card">
       <div class="sec-header">
         <div class="sec-icon">⚙️</div>
         <div><div class="sec-title">Assembly Needs</div><div class="sec-sub">Technical details that determine equipment and process</div></div>
       </div>
-
-      <!-- Component size visual selector -->
-      <div class="field" style="margin-bottom:22px">
+      <div class="field" style="margin-bottom:20px">
         <label>Smallest Component Package on Board <span class="req">*</span></label>
         <div class="comp-visual" id="compVisual">
-          <div class="comp-opt" onclick="selectComp('01005','0.4×0.2mm',this)">
-            <span class="comp-size">01005</span>
-            <span class="comp-mm">0.4 × 0.2 mm</span>
-            <div class="comp-chip" style="width:20%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('0201','0.6×0.3mm',this)">
-            <span class="comp-size">0201</span>
-            <span class="comp-mm">0.6 × 0.3 mm</span>
-            <div class="comp-chip" style="width:35%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('0402','1.0×0.5mm',this)">
-            <span class="comp-size">0402</span>
-            <span class="comp-mm">1.0 × 0.5 mm</span>
-            <div class="comp-chip" style="width:55%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('0603','1.6×0.8mm',this)">
-            <span class="comp-size">0603</span>
-            <span class="comp-mm">1.6 × 0.8 mm</span>
-            <div class="comp-chip" style="width:70%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('0805','2.0×1.25mm',this)">
-            <span class="comp-size">0805</span>
-            <span class="comp-mm">2.0 × 1.25 mm</span>
-            <div class="comp-chip" style="width:85%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('1206+','3.2×1.6mm+',this)">
-            <span class="comp-size">1206+</span>
-            <span class="comp-mm">3.2 × 1.6 mm+</span>
-            <div class="comp-chip" style="width:100%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('Through-hole only','PTH',this)">
-            <span class="comp-size" style="font-size:13px">PTH</span>
-            <span class="comp-mm">Through-hole only</span>
-            <div class="comp-chip" style="width:100%"></div>
-          </div>
-          <div class="comp-opt" onclick="selectComp('Not sure','?',this)">
-            <span class="comp-size">?</span>
-            <span class="comp-mm">Not sure</span>
-            <div class="comp-chip" style="width:50%;opacity:.2"></div>
-          </div>
+          <div class="comp-opt" onclick="selectComp('01005','0.4×0.2mm',this)"><span class="comp-size">01005</span><span class="comp-mm">0.4×0.2 mm</span><div class="comp-chip" style="width:20%"></div></div>
+          <div class="comp-opt" onclick="selectComp('0201','0.6×0.3mm',this)"><span class="comp-size">0201</span><span class="comp-mm">0.6×0.3 mm</span><div class="comp-chip" style="width:35%"></div></div>
+          <div class="comp-opt" onclick="selectComp('0402','1.0×0.5mm',this)"><span class="comp-size">0402</span><span class="comp-mm">1.0×0.5 mm</span><div class="comp-chip" style="width:55%"></div></div>
+          <div class="comp-opt" onclick="selectComp('0603','1.6×0.8mm',this)"><span class="comp-size">0603</span><span class="comp-mm">1.6×0.8 mm</span><div class="comp-chip" style="width:70%"></div></div>
+          <div class="comp-opt" onclick="selectComp('0805','2.0×1.25mm',this)"><span class="comp-size">0805</span><span class="comp-mm">2.0×1.25 mm</span><div class="comp-chip" style="width:82%"></div></div>
+          <div class="comp-opt" onclick="selectComp('1206+','3.2×1.6mm+',this)"><span class="comp-size">1206+</span><span class="comp-mm">3.2×1.6 mm+</span><div class="comp-chip" style="width:100%"></div></div>
+          <div class="comp-opt" onclick="selectComp('Through-hole only','PTH',this)"><span class="comp-size" style="font-size:12px">PTH Only</span><span class="comp-mm">Through-hole</span><div class="comp-chip" style="width:100%"></div></div>
+          <div class="comp-opt" onclick="selectComp('Not sure','?',this)"><span class="comp-size">?</span><span class="comp-mm">Not sure</span><div class="comp-chip" style="width:50%;opacity:.2"></div></div>
         </div>
         <input type="hidden" id="min_component"/>
         <span class="field-err" id="err-min_component">Please select smallest component size</span>
       </div>
-
-      <div class="field-grid" style="margin-bottom:18px">
+      <div class="field-grid" style="margin-bottom:16px">
         <div class="field">
-          <label>Does board have QFN / BGA / Fine-Pitch IC?</label>
+          <label>QFN / BGA / Fine-Pitch IC on Board?</label>
           <div class="radio-group" id="rg-has_qfn">
             <div class="radio-opt" onclick="selectRadio('has_qfn','Yes',this)"><div class="dot-ind"></div>Yes</div>
             <div class="radio-opt" onclick="selectRadio('has_qfn','No',this)"><div class="dot-ind"></div>No</div>
@@ -488,23 +506,22 @@ footer{
           </div>
           <input type="hidden" id="has_qfn"/>
         </div>
-        <div class="field">
+        <div class="field" id="f-solder_type">
           <label>Solder Process Required <span class="req">*</span></label>
           <div class="radio-group" id="rg-solder_type">
             <div class="radio-opt" onclick="selectRadio('solder_type','Lead-free (SAC305 / RoHS)',this)"><div class="dot-ind"></div>Lead-free (SAC305)</div>
-            <div class="radio-opt" onclick="selectRadio('solder_type','Leaded (Sn63Pb37)',this)"><div class="dot-ind"></div>Leaded (Sn63Pb37)</div>
+            <div class="radio-opt" onclick="selectRadio('solder_type','Leaded (Sn63Pb37)',this)"><div class="dot-ind"></div>Leaded</div>
             <div class="radio-opt" onclick="selectRadio('solder_type','Not sure',this)"><div class="dot-ind"></div>Not sure</div>
           </div>
           <input type="hidden" id="solder_type"/>
           <span class="field-err" id="err-solder_type">Please select solder type</span>
         </div>
       </div>
-
-      <div class="field-grid" style="margin-bottom:18px">
+      <div class="field-grid" style="margin-bottom:16px">
         <div class="field">
           <label>Component Placement Side</label>
           <div class="radio-group" id="rg-placement_side">
-            <div class="radio-opt" onclick="selectRadio('placement_side','Top side only',this)"><div class="dot-ind"></div>Top side only</div>
+            <div class="radio-opt" onclick="selectRadio('placement_side','Top side only',this)"><div class="dot-ind"></div>Top only</div>
             <div class="radio-opt" onclick="selectRadio('placement_side','Both sides',this)"><div class="dot-ind"></div>Both sides</div>
             <div class="radio-opt" onclick="selectRadio('placement_side','Not sure',this)"><div class="dot-ind"></div>Not sure</div>
           </div>
@@ -520,14 +537,13 @@ footer{
           <input type="hidden" id="files_ready"/>
         </div>
       </div>
-
       <div class="field-grid">
         <div class="field">
           <label>Physical Stencil Available?</label>
           <div class="radio-group" id="rg-stencil_ready">
             <div class="radio-opt" onclick="selectRadio('stencil_ready','Yes',this)"><div class="dot-ind"></div>Yes</div>
             <div class="radio-opt" onclick="selectRadio('stencil_ready','No',this)"><div class="dot-ind"></div>No</div>
-            <div class="radio-opt" onclick="selectRadio('stencil_ready','Not applicable',this)"><div class="dot-ind"></div>Not applicable</div>
+            <div class="radio-opt" onclick="selectRadio('stencil_ready','Not applicable',this)"><div class="dot-ind"></div>N/A</div>
           </div>
           <input type="hidden" id="stencil_ready"/>
         </div>
@@ -544,19 +560,19 @@ footer{
     </div>
     <div class="nav-btns">
       <button class="btn-back" onclick="prevSection(3)">← Back</button>
-      <button class="btn-next" onclick="nextSection(3)">Next — Scale & Timeline <span>→</span></button>
+      <button class="btn-next" onclick="nextSection(3)">Next — Scale & T&C <span>→</span></button>
     </div>
   </div>
 
-  <!-- SECTION 4: SCALE -->
+  <!-- SECTION 4: SCALE + T&C -->
   <div class="form-section" id="sec4">
     <div class="sec-card">
       <div class="sec-header">
         <div class="sec-icon">📈</div>
-        <div><div class="sec-title">Scale, Timeline & Service</div><div class="sec-sub">Help us plan the right resource and approach</div></div>
+        <div><div class="sec-title">Scale, Timeline & Investment Awareness</div><div class="sec-sub">Help us plan — and understand where you stand</div></div>
       </div>
 
-      <div class="field" style="margin-bottom:20px">
+      <div class="field" style="margin-bottom:18px" id="f-quantity">
         <label>Quantity Required <span class="req">*</span></label>
         <div class="radio-group" id="rg-quantity">
           <div class="radio-opt" onclick="selectRadio('quantity','1 unit (Prototype)',this)"><div class="dot-ind"></div>1 unit</div>
@@ -569,32 +585,25 @@ footer{
         <span class="field-err" id="err-quantity">Please select quantity</span>
       </div>
 
-      <div class="field-grid" style="margin-bottom:20px">
-        <div class="field">
-          <label>When Do You Need This? <span class="req">*</span></label>
-          <div class="radio-group" id="rg-timeline">
-            <div class="radio-opt" onclick="selectRadio('timeline','ASAP (within 1 week)',this)"><div class="dot-ind"></div>ASAP — 1 week</div>
-            <div class="radio-opt" onclick="selectRadio('timeline','2–4 weeks',this)"><div class="dot-ind"></div>2–4 weeks</div>
-            <div class="radio-opt" onclick="selectRadio('timeline','1–3 months',this)"><div class="dot-ind"></div>1–3 months</div>
-            <div class="radio-opt" onclick="selectRadio('timeline','Flexible / Planning',this)"><div class="dot-ind"></div>Flexible</div>
-          </div>
-          <input type="hidden" id="timeline"/>
-          <span class="field-err" id="err-timeline">Please select timeline</span>
+      <div class="field" style="margin-bottom:18px" id="f-timeline">
+        <label>When Do You Expect to Need This? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-timeline">
+          <div class="radio-opt" onclick="selectRadio('timeline','Within 1 month',this)"><div class="dot-ind"></div>Within 1 month</div>
+          <div class="radio-opt" onclick="selectRadio('timeline','1–3 months',this)"><div class="dot-ind"></div>1–3 months</div>
+          <div class="radio-opt" onclick="selectRadio('timeline','3–6 months',this)"><div class="dot-ind"></div>3–6 months</div>
+          <div class="radio-opt" onclick="selectRadio('timeline','6+ months / Planning stage',this)"><div class="dot-ind"></div>6+ months / Planning</div>
         </div>
-        <div class="field">
-          <label>Estimated Budget (INR)</label>
-          <div class="radio-group" id="rg-budget">
-            <div class="radio-opt" onclick="selectRadio('budget','Under ₹5,000',this)"><div class="dot-ind"></div>Under ₹5K</div>
-            <div class="radio-opt" onclick="selectRadio('budget','₹5,000–₹20,000',this)"><div class="dot-ind"></div>₹5K–20K</div>
-            <div class="radio-opt" onclick="selectRadio('budget','₹20,000–₹50,000',this)"><div class="dot-ind"></div>₹20K–50K</div>
-            <div class="radio-opt" onclick="selectRadio('budget','₹50,000+',this)"><div class="dot-ind"></div>₹50K+</div>
-          </div>
-          <input type="hidden" id="budget"/>
+        <input type="hidden" id="timeline"/>
+        <span class="field-err" id="err-timeline">Please select expected timeline</span>
+        <!-- ASAP Warning (shown if within 1 month selected) -->
+        <div class="asap-warn" id="asapWarn">
+          <div class="asap-warn-title">⚠️ Please Note — Facility Under Development</div>
+          <p>The EE Lab SMT assembly facility is currently under procurement. Basic reflow assembly is targeted for <strong>Q3 2026 (September)</strong> and full pick-and-place capability for <strong>Q4 2026</strong>. We cannot guarantee any turnaround timeline at this stage. Your assessment will be logged and you will be contacted once the relevant capability is operational.</p>
         </div>
       </div>
 
-      <div class="field" style="margin-bottom:20px">
-        <label>Service(s) Required <span class="req">*</span></label>
+      <div class="field" style="margin-bottom:18px" id="f-services">
+        <label>Service(s) of Interest <span class="req">*</span></label>
         <div class="check-group" id="cg-services">
           <div class="check-opt" onclick="toggleCheck('services','PCB Fabrication',this)">PCB Fabrication</div>
           <div class="check-opt" onclick="toggleCheck('services','SMT Reflow Assembly',this)">SMT Reflow Assembly</div>
@@ -603,239 +612,315 @@ footer{
           <div class="check-opt" onclick="toggleCheck('services','DFM Review',this)">DFM Review</div>
           <div class="check-opt" onclick="toggleCheck('services','Component Sourcing',this)">Component Sourcing</div>
           <div class="check-opt" onclick="toggleCheck('services','Vendor Referral',this)">Vendor Referral</div>
-          <div class="check-opt" onclick="toggleCheck('services','Equipment Access',this)">Equipment Access</div>
+          <div class="check-opt" onclick="toggleCheck('services','Equipment Access / Training',this)">Equipment Access / Training</div>
           <div class="check-opt" onclick="toggleCheck('services','Full Consultation',this)">Full Consultation</div>
         </div>
         <input type="hidden" id="services"/>
         <span class="field-err" id="err-services">Please select at least one service</span>
       </div>
 
-      <div class="field">
+      <!-- Investment Awareness (replaces budget field) -->
+      <div class="field" style="margin-bottom:18px">
+        <label>Investment & Facility Awareness <span class="req">*</span></label>
+        <div class="awareness-box">
+          <div class="aw-title">📌 Please read before selecting</div>
+          <div class="awareness-row"><span class="aw-icon">🏗️</span><span>The EE Lab SMT facility is currently being <strong>procured and set up</strong>. It is not yet operational for commercial assembly services.</span></div>
+          <div class="awareness-row"><span class="aw-icon">📅</span><span>Basic reflow capability is targeted for <strong>Q3 2026</strong>. Pick-and-place capability is planned for <strong>Q4 2026</strong>.</span></div>
+          <div class="awareness-row"><span class="aw-icon">💰</span><span>Service charges, once operational, will be communicated separately. Pricing will be <strong>institutional and reasonable</strong> — not market-rate commercial.</span></div>
+          <div class="awareness-row"><span class="aw-icon">🎯</span><span>This assessment helps us prioritise equipment procurement based on actual community needs.</span></div>
+        </div>
+        <div class="radio-group" id="rg-investment_aware" style="margin-top:10px">
+          <div class="radio-opt" onclick="selectRadio('investment_aware','Yes — I understand the facility is under development',this)"><div class="dot-ind"></div>Yes — I understand and still wish to register my requirement</div>
+          <div class="radio-opt" onclick="selectRadio('investment_aware','I need immediate assembly — please suggest alternatives',this)"><div class="dot-ind"></div>I need immediate assembly — please suggest alternatives</div>
+        </div>
+        <input type="hidden" id="investment_aware"/>
+        <span class="field-err" id="err-investment_aware">Please select one</span>
+      </div>
+
+      <div class="field" style="margin-bottom:20px">
         <label>Additional Notes / Special Requirements</label>
-        <textarea id="notes" placeholder="Any specific requirements, constraints, or questions you have for the EE Lab team…"></textarea>
+        <textarea id="notes" placeholder="Any specific requirements, constraints, or questions for the EE Lab team…"></textarea>
+      </div>
+
+      <!-- T&C -->
+      <div class="tnc-wrap">
+        <div class="tnc-header" onclick="toggleTNC()">
+          <span>📄 Terms & Conditions — Please Read Before Submitting</span>
+          <span class="tnc-toggle" id="tncToggle">▼</span>
+        </div>
+        <div class="tnc-body" id="tncBody">
+          <div class="tnc-clause"><strong>1. Nature of Submission</strong><br>This form is a needs assessment only. Submission does not constitute a service booking, purchase order, work order, or any guarantee of service delivery by KLE-CTiE or EE Lab.</div>
+          <div class="tnc-clause"><strong>2. Facility Development Status</strong><br>The EE Lab SMT assembly facility at KLE-CTiE is currently under procurement and development. Equipment availability, operational readiness, and service commencement are subject to institutional procurement timelines and management approvals.</div>
+          <div class="tnc-clause"><strong>3. Service Availability Timeline</strong><br>Basic reflow assembly capability is targeted for Q3 2026 (September). Pick-and-place capability is planned for Q4 2026. These timelines are indicative and subject to change without prior notice. KLE-CTiE bears no liability for delays.</div>
+          <div class="tnc-clause"><strong>4. No Pricing Commitment</strong><br>No pricing, quotation, or cost estimate implied or stated in this form constitutes a binding offer. Final service charges will be communicated separately and officially upon facility readiness and management approval.</div>
+          <div class="tnc-clause"><strong>5. Turnaround Time</strong><br>No turnaround time commitments can be made at this stage. ASAP or urgent requests noted in this assessment are for planning purposes only and cannot be guaranteed. All turnaround commitments, if any, will be made in writing only after facility operational readiness is confirmed.</div>
+          <div class="tnc-clause"><strong>6. Confidentiality of Design Files</strong><br>Design files (Gerber, BOM, CPL, schematics) shared subsequently with the EE Lab will be treated as confidential and proprietary to the submitter. Files will be used solely for assessment and assembly purposes and will not be shared with any third party without explicit written consent of the submitter.</div>
+          <div class="tnc-clause"><strong>7. Acknowledgement of Assessment</strong><br>You will receive an email acknowledgement within 1 working day of submission. This acknowledgement confirms receipt of your assessment only — it does not constitute a service agreement, work order, or any form of commitment by KLE-CTiE.</div>
+          <div class="tnc-clause"><strong>8. Contact & Grievances</strong><br>For queries or clarifications: rakesh.chheda@kletech.ac.in — EE Lab, KLE-CTiE, KLE Technological University, Hubballi – 580031. KLE-CTiE reserves the right to decline any request at its sole discretion without stating reasons.</div>
+        </div>
+        <div class="tnc-accept">
+          <input type="checkbox" id="tncCheck" onchange="clearTNCErr()"/>
+          <label for="tncCheck">I have read and understood the above Terms & Conditions. I acknowledge that this is a <strong>needs assessment only</strong> and does not guarantee any service, timeline, or pricing from KLE-CTiE EE Lab.</label>
+        </div>
+        <div class="tnc-err" id="tncErr">Please read and accept the Terms & Conditions before submitting</div>
       </div>
     </div>
 
     <div class="info-strip">
-      <span style="font-size:20px">🔐</span>
-      <span>Your information is stored securely in the KLE-CTiE EE Lab system and used solely for assessing and responding to your PCB assembly requirements. All files shared subsequently will be treated as confidential.</span>
+      <span style="font-size:18px">🔐</span>
+      <span>Your information is stored securely in the KLE-CTiE EE Lab system and used solely for assessing PCB assembly requirements. All design files shared subsequently will be treated as confidential.</span>
     </div>
 
     <div class="nav-btns">
       <button class="btn-back" onclick="prevSection(4)">← Back</button>
       <button class="btn-submit" id="submitBtn" onclick="submitForm()">
-        <span id="submitText">Submit Assessment ✓</span>
+        <span id="submitText">Submit Assessment</span>
         <span id="submitLoader" class="loader" style="display:none"></span>
       </button>
     </div>
   </div>
 
-  <!-- SUCCESS -->
+  <!-- ── SUCCESS ─────────────────────────────────── -->
   <div id="success">
-    <div class="success-icon">✅</div>
-    <div class="success-title">Assessment Submitted!</div>
-    <div class="success-sub">Thank you. Our EE Lab team will review your PCB assembly requirements and reach out within <strong>1 working day</strong>. Check your email for a confirmation.</div>
-    <div class="success-card">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Your Reference Number</div>
-      <div class="ref-num" id="refNum">EEL-2026-XXXX</div>
-      <div style="margin-top:14px;font-size:13px;color:var(--muted)">Keep this for follow-up with the EE Lab team.</div>
+    <!-- Smoke -->
+    <div class="smoke-container">
+      <div class="smoke smoke-1"></div>
+      <div class="smoke smoke-2"></div>
+      <div class="smoke smoke-3"></div>
     </div>
-    <a href="mailto:rakesh.chheda@kletech.ac.in" class="success-btn">📧 Contact EE Lab Directly</a>
+    <!-- Sparks -->
+    <div class="spark-container">
+      <div class="spark sp1"></div>
+      <div class="spark sp2"></div>
+      <div class="spark sp3"></div>
+      <div class="spark sp4"></div>
+      <div class="spark sp5"></div>
+      <div class="spark sp6"></div>
+    </div>
+    <!-- Content -->
+    <div class="success-inner">
+      <div class="success-check">
+        <svg viewBox="0 0 40 40"><polyline class="check-path" points="8,20 16,28 32,12"/></svg>
+      </div>
+      <div class="success-title">Assessment Submitted!</div>
+      <div class="success-sub">Thank you for registering your PCB assembly requirement with the EE Lab. This is an assessment — our team will review and reach out within 1 working day.</div>
+
+      <div class="ref-card">
+        <div class="ref-label">Your Assessment Reference Number</div>
+        <div class="ref-num" id="refNum">EEL-2026-••••</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Please quote this in all future communications with the EE Lab team.</div>
+      </div>
+
+      <div class="timeline-notice">
+        <strong>📅 When will you hear from us?</strong><br>
+        We will acknowledge your submission at <strong id="respondentEmail">your email</strong> within <strong>1 working day</strong>.<br><br>
+        <strong>🏗️ Service Availability:</strong> Basic reflow assembly is targeted for <strong>Q3 2026 (September)</strong>. Full pick-and-place capability is planned for <strong>Q4 2026</strong>. Our team will advise on the earliest applicable service date based on your requirement and facility readiness.<br><br>
+        <em>Note: This acknowledgement confirms receipt of your assessment only — not a service commitment.</em>
+      </div>
+
+      <div class="next-steps">
+        <div class="next-title">What Happens Next</div>
+        <div class="next-item">
+          <div class="next-dot">1</div>
+          <div class="next-text"><strong>Assessment Review</strong> — Our EE Lab team reviews your PCB specifications and requirement within 1 working day</div>
+        </div>
+        <div class="next-item">
+          <div class="next-dot">2</div>
+          <div class="next-text"><strong>Capability Matching</strong> — We match your board requirements against in-house capability and planned equipment procurement</div>
+        </div>
+        <div class="next-item">
+          <div class="next-dot">3</div>
+          <div class="next-text"><strong>Response & Guidance</strong> — You receive a personalised response with capability status, any vendor referral if needed, and estimated service availability</div>
+        </div>
+        <div class="next-item">
+          <div class="next-dot">4</div>
+          <div class="next-text"><strong>Service Notification</strong> — Once facility is operational, registered assessments are notified first with service details and charges</div>
+        </div>
+      </div>
+
+      <div class="success-cta">
+        <a href="mailto:rakesh.chheda@kletech.ac.in?subject=Query on Assessment [REPLACE_REF]" class="cta-btn cta-primary" id="emailCTA">📧 Email EE Lab</a>
+        <a href="survey_form.html" class="cta-btn cta-secondary">📝 Submit Another</a>
+      </div>
+    </div>
   </div>
 
 </div><!-- /form-wrap -->
 
 <footer>
-  <div style="display:flex;align-items:center;gap:8px">
-    <span class="heart">❤</span>
-    <span class="f-text">Made with love ~rhc · EE Lab, KLE-CTiE · KLE Technological University, Hubballi – 580031</span>
-  </div>
-  <span class="f-right">PCB Assembly Needs Assessment · 2026</span>
+  <span class="heart">❤</span>
+  <span class="f-text">Made with love &nbsp;~rhc &nbsp;·&nbsp; EE Lab, KLE-CTiE &nbsp;·&nbsp; KLE Technological University, Hubballi – 580031</span>
 </footer>
 
 <script>
-// ══════════════════════════════════════════════════
-// CONFIG — replace with your GAS Web App URL
-// ══════════════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzfdTA6KpDLgjCjgcuKOowhp3eRJCmFCd9CW9_mZeWRHqTdE5p932UVH6wE_CJ61kSl/exec';
+const GAS_URL='YOUR_GAS_WEBAPP_URL';
+let currentSection=1;
+const radioValues={};
+const checkValues={};
 
-// ── State ─────────────────────────────────────────
-let currentSection = 1;
-const totalSections = 4;
-const radioValues = {};
-const checkValues = {};
-
-// ── Radio select ──────────────────────────────────
-function selectRadio(field, value, el) {
-  radioValues[field] = value;
-  document.getElementById(field).value = value;
-  const group = el.closest('.radio-group');
-  group.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+// Radio
+function selectRadio(field,value,el){
+  radioValues[field]=value;
+  document.getElementById(field).value=value;
+  el.closest('.radio-group').querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
-  const errEl = document.getElementById('err-' + field);
-  if (errEl) errEl.style.display = 'none';
+  const err=document.getElementById('err-'+field);
+  if(err) err.style.display='none';
+  // ASAP warning
+  if(field==='timeline'){
+    const warn=document.getElementById('asapWarn');
+    if(value==='Within 1 month') warn.classList.add('visible');
+    else warn.classList.remove('visible');
+  }
 }
 
-// ── Checkbox toggle ───────────────────────────────
-function toggleCheck(field, value, el) {
-  if (!checkValues[field]) checkValues[field] = [];
-  const idx = checkValues[field].indexOf(value);
-  if (idx === -1) { checkValues[field].push(value); el.classList.add('selected'); }
-  else { checkValues[field].splice(idx, 1); el.classList.remove('selected'); }
-  document.getElementById(field).value = checkValues[field].join(', ');
-  const errEl = document.getElementById('err-' + field);
-  if (errEl && checkValues[field].length > 0) errEl.style.display = 'none';
+// Checkbox
+function toggleCheck(field,value,el){
+  if(!checkValues[field]) checkValues[field]=[];
+  const idx=checkValues[field].indexOf(value);
+  if(idx===-1){checkValues[field].push(value);el.classList.add('selected');}
+  else{checkValues[field].splice(idx,1);el.classList.remove('selected');}
+  document.getElementById(field).value=checkValues[field].join(', ');
+  const err=document.getElementById('err-'+field);
+  if(err&&checkValues[field].length>0) err.style.display='none';
 }
 
-// ── Component size visual selector ────────────────
-function selectComp(value, mm, el) {
-  document.getElementById('min_component').value = value;
-  document.querySelectorAll('.comp-opt').forEach(o => o.classList.remove('selected'));
+// Component
+function selectComp(value,mm,el){
+  document.getElementById('min_component').value=value;
+  document.querySelectorAll('.comp-opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById('err-min_component').style.display = 'none';
+  document.getElementById('err-min_component').style.display='none';
 }
 
-// ── Validation per section ────────────────────────
-function validateSection(sec) {
-  let valid = true;
-  if (sec === 1) {
-    const name = document.getElementById('name').value.trim();
-    const org = document.getElementById('org').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const incubatee = document.getElementById('incubatee').value;
-    if (!name) { document.getElementById('f-name').classList.add('error'); valid = false; }
-    else document.getElementById('f-name').classList.remove('error');
-    if (!org) { document.getElementById('f-org').classList.add('error'); valid = false; }
-    else document.getElementById('f-org').classList.remove('error');
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      document.getElementById('f-email').classList.add('error'); valid = false;
-    } else document.getElementById('f-email').classList.remove('error');
-    if (!incubatee) {
-      document.getElementById('err-incubatee').style.display = 'block'; valid = false;
-    }
+// T&C
+function toggleTNC(){
+  const body=document.getElementById('tncBody');
+  const toggle=document.getElementById('tncToggle');
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+function clearTNCErr(){document.getElementById('tncErr').style.display='none';}
+
+// Validation
+function validateSection(sec){
+  let valid=true;
+  const req=(id,fid,errid)=>{
+    const el=document.getElementById(id);
+    const f=document.getElementById(fid||('f-'+id));
+    const err=document.getElementById(errid||('err-'+id));
+    const v=el?el.value.trim():'';
+    if(!v){if(f)f.classList.add('error');if(err)err.style.display='block';valid=false;}
+    else{if(f)f.classList.remove('error');if(err)err.style.display='none';}
+  };
+  if(sec===1){
+    req('name','f-name');
+    req('org','f-org');
+    const em=document.getElementById('email').value.trim();
+    const ef=document.getElementById('f-email');
+    if(!em||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ef.classList.add('error');valid=false;}
+    else ef.classList.remove('error');
+    req('domain','f-domain','err-domain');
+    req('incubatee','f-incubatee','err-incubatee');
   }
-  if (sec === 2) {
-    const project = document.getElementById('project').value.trim();
-    const device = document.getElementById('device_type').value;
-    if (!project) { document.getElementById('f-project').classList.add('error'); valid = false; }
-    else document.getElementById('f-project').classList.remove('error');
-    if (!device) { document.getElementById('err-device_type').style.display = 'block'; valid = false; }
+  if(sec===2){
+    req('project','f-project');
+    req('device_type',null,'err-device_type');
   }
-  if (sec === 3) {
-    if (!document.getElementById('min_component').value) {
-      document.getElementById('err-min_component').style.display = 'block'; valid = false;
-    }
-    if (!document.getElementById('solder_type').value) {
-      document.getElementById('err-solder_type').style.display = 'block'; valid = false;
-    }
+  if(sec===3){
+    req('min_component',null,'err-min_component');
+    req('solder_type',null,'err-solder_type');
   }
-  if (sec === 4) {
-    if (!document.getElementById('quantity').value) {
-      document.getElementById('err-quantity').style.display = 'block'; valid = false;
-    }
-    if (!document.getElementById('timeline').value) {
-      document.getElementById('err-timeline').style.display = 'block'; valid = false;
-    }
-    if (!document.getElementById('services').value) {
-      document.getElementById('err-services').style.display = 'block'; valid = false;
+  if(sec===4){
+    req('quantity','f-quantity','err-quantity');
+    req('timeline','f-timeline','err-timeline');
+    req('services','f-services','err-services');
+    req('investment_aware',null,'err-investment_aware');
+    if(!document.getElementById('tncCheck').checked){
+      document.getElementById('tncErr').style.display='block';valid=false;
     }
   }
   return valid;
 }
 
-// ── Navigation ────────────────────────────────────
-function nextSection(from) {
-  if (!validateSection(from)) return;
-  document.getElementById('sec' + from).classList.remove('active');
-  currentSection = from + 1;
-  document.getElementById('sec' + currentSection).classList.add('active');
+function nextSection(from){
+  if(!validateSection(from)) return;
+  document.getElementById('sec'+from).classList.remove('active');
+  currentSection=from+1;
+  document.getElementById('sec'+currentSection).classList.add('active');
   updateProgress();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function prevSection(from) {
-  document.getElementById('sec' + from).classList.remove('active');
-  currentSection = from - 1;
-  document.getElementById('sec' + currentSection).classList.add('active');
+function prevSection(from){
+  document.getElementById('sec'+from).classList.remove('active');
+  currentSection=from-1;
+  document.getElementById('sec'+currentSection).classList.add('active');
   updateProgress();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function updateProgress() {
-  const pct = (currentSection / totalSections) * 100;
-  document.getElementById('progressBar').style.width = pct + '%';
-  for (let i = 1; i <= totalSections; i++) {
-    const el = document.getElementById('step' + i);
-    el.classList.remove('active', 'done');
-    if (i < currentSection) el.classList.add('done');
-    else if (i === currentSection) el.classList.add('active');
+function updateProgress(){
+  document.getElementById('progressBar').style.width=(currentSection/4*100)+'%';
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('step'+i);
+    el.classList.remove('active','done');
+    if(i<currentSection) el.classList.add('done');
+    else if(i===currentSection) el.classList.add('active');
   }
 }
 
-// ── Generate Reference Number ─────────────────────
-function genRef() {
-  const d = new Date();
-  const yr = d.getFullYear();
-  const rnd = Math.floor(1000 + Math.random() * 9000);
-  return `EEL-${yr}-${rnd}`;
+function genRef(){
+  return'EEL-'+new Date().getFullYear()+'-'+Math.floor(1000+Math.random()*9000);
 }
 
-// ── Submit ────────────────────────────────────────
-async function submitForm() {
-  if (!validateSection(4)) return;
-  const btn = document.getElementById('submitBtn');
-  document.getElementById('submitText').style.display = 'none';
-  document.getElementById('submitLoader').style.display = 'inline-block';
-  btn.disabled = true;
-
-  const ref = genRef();
-  const ts = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-
-  const payload = {
-    ref, ts,
-    name: document.getElementById('name').value.trim(),
-    org: document.getElementById('org').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    phone: document.getElementById('phone').value.trim(),
-    visitor_id: document.getElementById('visitor_id').value.trim(),
-    incubatee: document.getElementById('incubatee').value,
-    project: document.getElementById('project').value.trim(),
-    device_type: document.getElementById('device_type').value,
-    pcb_size: document.getElementById('pcb_size').value.trim(),
-    layers: document.getElementById('layers').value,
-    comp_count: document.getElementById('comp_count').value,
-    board_shape: document.getElementById('board_shape').value,
-    main_ic: document.getElementById('main_ic').value.trim(),
-    min_component: document.getElementById('min_component').value,
-    has_qfn: document.getElementById('has_qfn').value,
-    solder_type: document.getElementById('solder_type').value,
-    placement_side: document.getElementById('placement_side').value,
-    files_ready: document.getElementById('files_ready').value,
-    stencil_ready: document.getElementById('stencil_ready').value,
-    parts_ready: document.getElementById('parts_ready').value,
-    quantity: document.getElementById('quantity').value,
-    timeline: document.getElementById('timeline').value,
-    budget: document.getElementById('budget').value,
-    services: document.getElementById('services').value,
-    notes: document.getElementById('notes').value.trim(),
+async function submitForm(){
+  if(!validateSection(4)) return;
+  const btn=document.getElementById('submitBtn');
+  document.getElementById('submitText').style.display='none';
+  document.getElementById('submitLoader').style.display='inline-block';
+  btn.disabled=true;
+  const ref=genRef();
+  const email=document.getElementById('email').value.trim();
+  const payload={
+    ref,ts:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    name:document.getElementById('name').value.trim(),
+    org:document.getElementById('org').value.trim(),
+    email,phone:document.getElementById('phone').value.trim(),
+    domain:document.getElementById('domain').value,
+    incubatee:document.getElementById('incubatee').value,
+    project:document.getElementById('project').value.trim(),
+    device_type:document.getElementById('device_type').value,
+    pcb_size:document.getElementById('pcb_size').value.trim(),
+    layers:document.getElementById('layers').value,
+    comp_count:document.getElementById('comp_count').value,
+    board_shape:document.getElementById('board_shape').value,
+    main_ic:document.getElementById('main_ic').value.trim(),
+    min_component:document.getElementById('min_component').value,
+    has_qfn:document.getElementById('has_qfn').value,
+    solder_type:document.getElementById('solder_type').value,
+    placement_side:document.getElementById('placement_side').value,
+    files_ready:document.getElementById('files_ready').value,
+    stencil_ready:document.getElementById('stencil_ready').value,
+    parts_ready:document.getElementById('parts_ready').value,
+    quantity:document.getElementById('quantity').value,
+    timeline:document.getElementById('timeline').value,
+    investment_aware:document.getElementById('investment_aware').value,
+    services:document.getElementById('services').value,
+    notes:document.getElementById('notes').value.trim(),
+    tnc_accepted:'Yes',
   };
-
-  try {
-    if (GAS_URL !== 'YOUR_GAS_WEBAPP_URL') {
-      await fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+  try{
+    if(GAS_URL!=='YOUR_GAS_WEBAPP_URL'){
+      await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     }
-  } catch (e) { console.warn('GAS submission error:', e); }
-
+  }catch(e){console.warn('Submit error:',e);}
   // Show success
   document.getElementById('sec4').classList.remove('active');
-  document.getElementById('success').style.display = 'block';
-  document.getElementById('refNum').textContent = ref;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const s=document.getElementById('success');
+  s.style.display='block';
+  document.getElementById('refNum').textContent=ref;
+  document.getElementById('respondentEmail').textContent=email;
+  document.getElementById('emailCTA').href=`mailto:rakesh.chheda@kletech.ac.in?subject=Query on Assessment ${ref}`;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
 </body>
