@@ -413,7 +413,7 @@ footer{
 // ══════════════════════════════════════════════════
 // CONFIG — replace YOUR_SHEET_ID after import
 // ══════════════════════════════════════════════════
-const SHEET_ID = 'YOUR_SHEET_ID';
+const SHEET_ID = '1AlokZIxOTkdFETPVmh5LzL4qt0mUuqk-0-QTEhNmtlc';
 const BASE = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
 const SHEETS = ['Existing','Gaps','Procurement','Phases','ROI','Skills','Brands','KPI','Carousel_Pre','Carousel_Post','Meta'];
 
@@ -762,7 +762,7 @@ async function loadAllData(){
 
   // Try live fetch
   let live={};
-  const isConfigured=SHEET_ID!=='https://docs.google.com/spreadsheets/d/e/2PACX-1vTpzTF4GM2EGCh35nPNsWEWQwrfTUU7afIG2JOkgkEg872e_tK4B6JQGXRTW5Lgg04Bz9bZsc4yVEXL/pub?output=csv';
+  const isConfigured=SHEET_ID!=='YOUR_SHEET_ID';
   if(isConfigured){
     const results=await Promise.all(SHEETS.map(s=>fetchSheet(s)));
     SHEETS.forEach((s,i)=>{if(results[i])live[s]=results[i];});
