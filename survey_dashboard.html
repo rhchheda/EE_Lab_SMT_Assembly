@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>EE Lab · Survey Response Dashboard · KLE-CTiE</title>
+<style>
+:root{
+  --navy:#0C2D6B;--navy-d:#081e4a;--navy-l:#1a3f8f;
+  --gold:#C8960C;--gold-l:#f0b90b;--gold-bg:#fdf3dc;
+  --green:#1a7a4a;--green-bg:#e8f5ee;
+  --red:#e74c3c;--red-bg:#fef2f2;
+  --purple:#5e35b1;--purple-bg:#ede7f6;
+  --blue:#1565c0;--blue-bg:#e3f2fd;
+  --bg:#f4f6fb;--card:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#dde3f0;
+  --r:12px;--rs:8px;
+  --sh:0 2px 16px rgba(12,45,107,.10);--sh2:0 8px 32px rgba(12,45,107,.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;padding-bottom:64px}
+a{color:var(--navy)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.35)}28%{transform:scale(1)}42%{transform:scale(1.2)}70%{transform:scale(1)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes countUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.fu{animation:fadeUp .45s ease both}
+
+/* ── GATE ─────────────────────────────────────────── */
+#gate{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy) 60%,var(--navy-l) 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.gate-wrap{text-align:center;animation:fadeUp .5s ease}
+.gate-logo{
+  width:72px;height:72px;background:rgba(255,255,255,.12);
+  border:2px solid rgba(200,150,12,.4);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:28px;font-weight:900;color:var(--gold-l);
+  backdrop-filter:blur(8px);
+}
+.gate-title{font-size:24px;font-weight:900;color:#fff;margin-bottom:6px}
+.gate-sub{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:32px}
+.gate-card{
+  background:rgba(255,255,255,.97);border-radius:16px;
+  padding:36px 32px;width:340px;box-shadow:0 24px 60px rgba(0,0,0,.35);
+}
+.gate-input{
+  width:100%;padding:12px 16px;border:2px solid var(--border);
+  border-radius:var(--rs);font-size:15px;outline:none;transition:.2s;
+  color:var(--text);letter-spacing:3px;text-align:center;margin-bottom:10px;
+}
+.gate-input:focus{border-color:var(--navy)}
+.gate-btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  color:#fff;border:none;border-radius:var(--rs);
+  font-size:14px;font-weight:800;cursor:pointer;transition:.2s;
+}
+.gate-btn:hover{opacity:.9}
+.gate-err{color:var(--red);font-size:12px;margin-top:8px;display:none}
+
+/* ── MAIN ─────────────────────────────────────────── */
+#main{display:none}
+
+/* ── HEADER ───────────────────────────────────────── */
+.header{
+  background:linear-gradient(135deg,var(--navy-d),var(--navy));
+  padding:0;
+}
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 40px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.logo-block{display:flex;align-items:center;gap:10px}
+.logo-img{width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,.12);padding:3px;object-fit:contain}
+.logo-text .ln{font-size:12px;font-weight:800;color:#fff}
+.logo-text .ls{font-size:10px;color:rgba(255,255,255,.55)}
+.header-mid{text-align:center;flex:1;padding:0 16px}
+.h-badge{display:inline-block;background:rgba(200,150,12,.2);border:1px solid var(--gold);color:var(--gold-l);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 12px;border-radius:16px;margin-bottom:6px}
+.h-title{font-size:clamp(15px,2.5vw,22px);font-weight:900;color:#fff}
+.h-title span{color:var(--gold-l)}
+
+/* Header actions */
+.header-actions{display:flex;gap:8px;align-items:center}
+.hdr-btn{
+  padding:7px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.2s;
+  display:flex;align-items:center;gap:5px;
+}
+.hdr-btn.outline{background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2)}
+.hdr-btn.outline:hover{background:rgba(255,255,255,.2)}
+.hdr-btn.gold{background:var(--gold);color:var(--navy-d)}
+
+/* Live dot */
+.live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 1.8s infinite;display:inline-block}
+
+/* ── KPI BAR ──────────────────────────────────────── */
+.kpi-bar{
+  background:var(--navy);padding:16px 40px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:0;border-bottom:3px solid var(--gold);
+}
+.kpi-cell{
+  text-align:center;padding:10px 12px;
+  border-right:1px solid rgba(255,255,255,.1);
+  animation:countUp .6s ease both;
+}
+.kpi-cell:last-child{border-right:none}
+.kpi-v{font-size:20px;font-weight:900;color:var(--gold-l);display:block}
+.kpi-l{font-size:9.5px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;margin-top:3px;display:block}
+
+/* ── TABS ─────────────────────────────────────────── */
+.tabs{
+  background:#fff;border-bottom:2px solid var(--border);
+  padding:0 40px;display:flex;gap:2px;overflow-x:auto;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(12,45,107,.07);
+}
+.tab{
+  padding:12px 16px;font-size:12.5px;font-weight:600;
+  color:var(--muted);border:none;background:none;cursor:pointer;
+  white-space:nowrap;border-bottom:3px solid transparent;transition:.2s;
+}
+.tab:hover{color:var(--navy)}
+.tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.badge{display:inline-block;background:var(--navy);color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:5px;vertical-align:middle}
+
+/* ── SECTION ──────────────────────────────────────── */
+.section{display:none;padding:28px 40px;max-width:1400px;margin:0 auto}
+.section.active{display:block;animation:fadeUp .4s ease}
+.sec-title{font-size:19px;font-weight:800;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.sec-title::before{content:'';display:inline-block;width:4px;height:20px;background:linear-gradient(var(--gold),var(--gold-l));border-radius:2px}
+.sec-sub{color:var(--muted);font-size:13px;margin-bottom:24px;padding-left:14px}
+
+/* ── KPI CARDS ────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.kpi-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px 22px;box-shadow:var(--sh);animation:countUp .5s ease both;
+  position:relative;overflow:hidden;
+}
+.kpi-card::before{
+  content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+  border-radius:0 var(--r) 0 60px;opacity:.07;
+}
+.kc-red::before{background:var(--red)}
+.kc-gold::before{background:var(--gold)}
+.kc-green::before{background:var(--green)}
+.kc-blue::before{background:var(--blue)}
+.kc-purple::before{background:var(--purple)}
+.kpi-card-val{font-size:28px;font-weight:900;margin-bottom:4px}
+.kpi-card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.kpi-card-note{font-size:12px;color:var(--muted)}
+.kpi-trend{font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px}
+.trend-up{background:var(--green-bg);color:var(--green)}
+.trend-new{background:var(--blue-bg);color:var(--blue)}
+
+/* ── CHART PLACEHOLDERS ───────────────────────────── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh)}
+.chart-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:16px}
+
+/* Bar chart simple */
+.bar-list{display:flex;flex-direction:column;gap:10px}
+.bar-item{display:flex;align-items:center;gap:10px;font-size:12px}
+.bar-label{width:100px;flex-shrink:0;color:var(--text);font-weight:500}
+.bar-track{flex:1;height:10px;background:#f0f2f8;border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;transition:width 1s ease;background:linear-gradient(90deg,var(--navy),var(--gold))}
+.bar-count{width:30px;text-align:right;font-weight:700;color:var(--navy);flex-shrink:0}
+
+/* ── RESPONSE TABLE ───────────────────────────────── */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.table-header{
+  padding:16px 20px;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--border);
+}
+.table-header-title{font-size:14px;font-weight:700;color:var(--navy)}
+.search-input{
+  padding:8px 14px;border:1.5px solid var(--border);border-radius:6px;
+  font-size:12px;outline:none;width:220px;transition:.2s;
+}
+.search-input:focus{border-color:var(--navy)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{
+  background:var(--navy);color:#fff;padding:10px 12px;
+  text-align:left;font-size:11px;font-weight:700;
+  letter-spacing:.5px;white-space:nowrap;
+}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:hover td{background:#f8f9fd}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:nth-child(even) td{background:#fafbff}
+
+/* Status / badges */
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.tag-new{background:var(--blue-bg);color:var(--blue)}
+.tag-progress{background:var(--gold-bg);color:#7c5c00}
+.tag-done{background:var(--green-bg);color:var(--green)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* Comp size flag */
+.comp-flag{font-weight:800}
+.comp-flag.warn{color:var(--red)}
+.comp-flag.ok{color:var(--green)}
+
+/* Pagination */
+.pagination{
+  padding:12px 20px;display:flex;align-items:center;
+  justify-content:space-between;border-top:1px solid var(--border);
+}
+.page-info{font-size:12px;color:var(--muted)}
+.page-btns{display:flex;gap:6px}
+.page-btn{
+  padding:5px 12px;border:1.5px solid var(--border);background:#fff;
+  border-radius:6px;font-size:12px;cursor:pointer;transition:.2s;font-weight:600;
+}
+.page-btn:hover{border-color:var(--navy);color:var(--navy)}
+.page-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* ── FILTERS ──────────────────────────────────────── */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filter-select{
+  padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;
+  font-size:12px;outline:none;color:var(--text);background:#fff;cursor:pointer;
+}
+.filter-select:focus{border-color:var(--navy)}
+.filter-badge{
+  padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;
+  cursor:pointer;border:1.5px solid var(--border);background:#fff;
+  color:var(--muted);transition:.2s;
+}
+.filter-badge.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.clear-filters{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline}
+
+/* ── DATA STATUS ──────────────────────────────────── */
+#dstatus{text-align:right;padding:7px 40px;font-size:11px;color:var(--muted);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.loader{display:inline-block;width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite}
+
+/* ── FOOTER ───────────────────────────────────────── */
+footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:linear-gradient(90deg,var(--navy-d),var(--navy));
+  padding:9px 28px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 -3px 18px rgba(12,45,107,.25);
+}
+.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c}
+.f-brand{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.9)}
+.f-ts{font-size:10.5px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:6px}
+
+@media(max-width:700px){
+  .header-inner{padding:12px 16px}.tabs,.section{padding-left:16px;padding-right:16px}
+  .kpi-grid{grid-template-columns:1fr 1fr}.charts-grid{grid-template-columns:1fr}
+  .search-input{width:140px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── GATE ────────────────────────────────────────── -->
+<div id="gate">
+  <div class="gate-wrap">
+    <div class="gate-logo">EE</div>
+    <div class="gate-title">EE Lab · Response Dashboard</div>
+    <div class="gate-sub">KLE-CTiE Internal Access Only</div>
+    <div class="gate-card">
+      <input id="pwd" class="gate-input" type="password" placeholder="Enter password" maxlength="20"
+        onkeydown="if(event.key==='Enter')checkPwd()"/>
+      <button class="gate-btn" onclick="checkPwd()">Access Dashboard →</button>
+      <div class="gate-err" id="gate-err">Incorrect password</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ────────────────────────────────────────── -->
+<div id="main">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <img class="logo-img" src="https://raw.githubusercontent.com/rhchheda/rhchheda/main/klectie_logo.png"
+          onerror="this.style.display='none'" alt="KLE-CTiE"/>
+        <div class="logo-text"><div class="ln">KLE-CTiE</div><div class="ls">EE Lab</div></div>
+      </div>
+      <div class="header-mid">
+        <div class="h-badge"><span class="live-dot"></span> &nbsp;LIVE DASHBOARD</div>
+        <div class="h-title">Survey Response <span>Analytics</span></div>
+      </div>
+      <div class="header-actions">
+        <img class="logo-img" src="https://raw.githubusercontent.com/rhchheda/rhchheda/main/kletu_logo.png"
+          onerror="this.style.display='none'" alt="KLE-TU"/>
+        <button class="hdr-btn outline" onclick="loadAllData()">🔄 Refresh</button>
+        <a href="survey_form.html" target="_blank" class="hdr-btn gold">📝 Open Form</a>
+      </div>
+    </div>
+    <!-- KPI Bar -->
+    <div class="kpi-bar" id="kpiBar">
+      <div class="kpi-cell"><span class="kpi-v" id="k-total">—</span><span class="kpi-l">Total Submissions</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-today">—</span><span class="kpi-l">Today</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-topcomp">—</span><span class="kpi-l">Top Component</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-topdev">—</span><span class="kpi-l">Top Device</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-filesready">—</span><span class="kpi-l">Files Ready %</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-lf">—</span><span class="kpi-l">Lead-Free %</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-incubatee">—</span><span class="kpi-l">Incubatee %</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-asap">—</span><span class="kpi-l">ASAP Requests</span></div>
+    </div>
+  </div>
+
+  <!-- DATA STATUS -->
+  <div id="dstatus"><span class="loader"></span>&nbsp;Loading from Google Sheets…</div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview',this)">📊 Overview</button>
+    <button class="tab" onclick="showTab('responses',this)">📋 All Responses <span class="badge" id="respBadge">0</span></button>
+    <button class="tab" onclick="showTab('analytics',this)">📈 Analytics</button>
+    <button class="tab" onclick="showTab('flags',this)">⚠️ Flagged <span class="badge" id="flagBadge" style="background:var(--red)">0</span></button>
+  </div>
+
+  <!-- ── OVERVIEW ──────────────────────────────────── -->
+  <div class="section active" id="sec-overview">
+    <div class="sec-title">Dashboard Overview</div>
+    <p class="sec-sub">Real-time summary of all PCB assembly assessment submissions</p>
+
+    <div class="kpi-grid" id="kpi-cards"></div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Component Size Distribution</div>
+        <div class="bar-list" id="chart-comp"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Device / Application Type</div>
+        <div class="bar-list" id="chart-device"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Services Requested</div>
+        <div class="bar-list" id="chart-services"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Quantity Range</div>
+        <div class="bar-list" id="chart-qty"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESPONSES ─────────────────────────────────── -->
+  <div class="section" id="sec-responses">
+    <div class="sec-title">All Submissions</div>
+    <p class="sec-sub">Full response log — click any row to expand details</p>
+
+    <div class="filters">
+      <select class="filter-select" id="filter-comp" onchange="applyFilters()">
+        <option value="">All Component Sizes</option>
+        <option>01005</option><option>0201</option><option>0402</option>
+        <option>0603</option><option>0805</option><option>1206+</option><option>PTH</option>
+      </select>
+      <select class="filter-select" id="filter-device" onchange="applyFilters()">
+        <option value="">All Device Types</option>
+        <option>Wearable</option><option>IoT / Embedded</option><option>Medical</option>
+        <option>Industrial</option><option>Consumer Electronics</option><option>R&D / Academic</option>
+      </select>
+      <select class="filter-select" id="filter-incubatee" onchange="applyFilters()">
+        <option value="">All Respondents</option>
+        <option>Yes — Incubatee</option><option>No — External Visitor</option><option>KLE Student</option>
+      </select>
+      <span class="filter-badge active" id="fb-all" onclick="setStatusFilter('all',this)">All</span>
+      <span class="filter-badge" id="fb-new" onclick="setStatusFilter('new',this)">🔵 New</span>
+      <span class="filter-badge" id="fb-flag" onclick="setStatusFilter('flag',this)">🔴 Flagged</span>
+      <span class="clear-filters" onclick="clearFilters()">Clear filters</span>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-header-title">Responses</div>
+        <input class="search-input" id="searchInput" placeholder="🔍 Search name, project, ref…" oninput="applyFilters()"/>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Ref No</th><th>Date</th><th>Name</th><th>Organisation</th>
+              <th>Project</th><th>Device</th><th>Min Comp</th><th>Qty</th>
+              <th>Timeline</th><th>Files?</th><th>Parts?</th><th>Services</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="resp-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="page-info">Showing 0 of 0</div>
+        <div class="page-btns" id="page-btns"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ANALYTICS ──────────────────────────────────── -->
+  <div class="section" id="sec-analytics">
+    <div class="sec-title">Analytics</div>
+    <p class="sec-sub">Aggregated insights from all submissions</p>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Timeline Urgency</div>
+        <div class="bar-list" id="chart-timeline"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Budget Range</div>
+        <div class="bar-list" id="chart-budget"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Solder Process</div>
+        <div class="bar-list" id="chart-solder"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Incubatee vs External</div>
+        <div class="bar-list" id="chart-incubatee"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FLAGGED ────────────────────────────────────── -->
+  <div class="section" id="sec-flags">
+    <div class="sec-title">Flagged Submissions</div>
+    <p class="sec-sub">Boards with 0201 or 01005 components — require Neoden 4 / YY1 or JLCPCB outsourcing</p>
+    <div class="table-wrap">
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr><th>Ref</th><th>Name</th><th>Project</th><th>Min Comp</th><th>Qty</th><th>Timeline</th><th>Action Required</th></tr>
+          </thead>
+          <tbody id="flag-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<footer>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="heart">❤</span>
+    <span class="f-brand">Made with love ~rhc · EE Lab, KLE-CTiE · KLE Technological University, Hubballi – 580031</span>
+  </div>
+  <div class="f-ts" id="footer-ts">
+    <span class="loader" style="width:11px;height:11px;border-width:2px"></span>Last updated: loading…
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════
+const SHEET_ID  = 'YOUR_SHEET_ID';
+const BASE      = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+const PWD_HASH  = 'REPLACE_WITH_SHA256_OF_Ctie2026';
+const FORM_URL  = 'survey_form.html';
+
+// ── Auth ──────────────────────────────────────────
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function checkPwd(){
+  const v=document.getElementById('pwd').value;
+  const h=await sha256(v);
+  if(v==='Ctie2026'||h===PWD_HASH){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('main').style.display='block';
+    loadAllData();
+  }else{
+    const e=document.getElementById('gate-err');
+    e.style.display='block';
+    setTimeout(()=>e.style.display='none',3000);
+    document.getElementById('pwd').value='';
+  }
+}
+
+// ── CSV parser ────────────────────────────────────
+function parseCSV(text){
+  const lines=text.trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1).filter(l=>l.trim()).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(let c of line){if(c==='"'){inQ=!inQ}else if(c===','&&!inQ){vals.push(cur.trim());cur=''}else cur+=c;}
+    vals.push(cur.trim());
+    return Object.fromEntries(headers.map((h,i)=>[h,(vals[i]||'').replace(/^"|"$/g,'')]));
+  });
+}
+
+async function fetchSheet(name){
+  if(SHEET_ID==='YOUR_SHEET_ID') return null;
+  try{
+    const r=await fetch(BASE+encodeURIComponent(name));
+    if(!r.ok) throw new Error();
+    return parseCSV(await r.text());
+  }catch{return null;}
+}
+
+// ── Tabs ──────────────────────────────────────────
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sec-'+id).classList.add('active');
+}
+
+// ── State ─────────────────────────────────────────
+let allRows=[], filteredRows=[], currentPage=1;
+const PAGE_SIZE=15;
+let statusFilter='all';
+
+// ── Helpers ───────────────────────────────────────
+function freq(arr, key){
+  const f={};
+  arr.forEach(r=>{const v=(r[key]||'Unknown').split(',')[0].trim();f[v]=(f[v]||0)+1;});
+  return Object.entries(f).sort((a,b)=>b[1]-a[1]);
+}
+function pct(n,total){return total>0?Math.round((n/total)*100)+'%':'0%';}
+function todayCount(rows){
+  const td=new Date().toLocaleDateString('en-IN');
+  return rows.filter(r=>r['Timestamp']&&r['Timestamp'].includes(new Date().getDate().toString().padStart(2,'0'))).length;
+}
+
+// ── Bar chart ─────────────────────────────────────
+function renderBarChart(containerId, data, total){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  const max=data[0]?data[0][1]:1;
+  el.innerHTML=data.slice(0,6).map(([label,count])=>`
+    <div class="bar-item">
+      <div class="bar-label" title="${label}">${label.substring(0,14)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round((count/max)*100)}%"></div></div>
+      <div class="bar-count">${count}</div>
+    </div>`).join('');
+}
+
+// ── KPI Cards ─────────────────────────────────────
+function renderKPICards(rows){
+  const total=rows.length;
+  const today=rows.filter(r=>{
+    const ts=r['Timestamp']||'';
+    const d=new Date();
+    return ts.includes(d.getDate()+'/'+(d.getMonth()+1));
+  }).length;
+  const topComp=freq(rows,'Min Component')[0]||['—',0];
+  const topDev=freq(rows,'Device Type')[0]||['—',0];
+  const filesYes=rows.filter(r=>(r['Files Ready?']||'').toLowerCase().includes('yes')).length;
+  const lfCount=rows.filter(r=>(r['Solder Type']||'').includes('SAC305')||(r['Solder Type']||'').toLowerCase().includes('lead-free')).length;
+  const incuCount=rows.filter(r=>(r['Incubatee?']||'').toLowerCase().includes('yes')).length;
+  const asapCount=rows.filter(r=>(r['Timeline']||'').toLowerCase().includes('asap')).length;
+  const flagCount=rows.filter(r=>['01005','0201'].includes(r['Min Component']||'')).length;
+
+  // Header KPIs
+  document.getElementById('k-total').textContent=total;
+  document.getElementById('k-today').textContent=today;
+  document.getElementById('k-topcomp').textContent=topComp[0];
+  document.getElementById('k-topdev').textContent=(topDev[0]||'—').substring(0,12);
+  document.getElementById('k-filesready').textContent=pct(filesYes,total);
+  document.getElementById('k-lf').textContent=pct(lfCount,total);
+  document.getElementById('k-incubatee').textContent=pct(incuCount,total);
+  document.getElementById('k-asap').textContent=asapCount;
+
+  // Badges
+  document.getElementById('respBadge').textContent=total;
+  document.getElementById('flagBadge').textContent=flagCount;
+
+  // Cards
+  const cards=[
+    {val:total,label:'Total Submissions',note:'All time',color:'kc-blue',trend:today>0?`+${today} today`:'No new today',trendClass:today>0?'trend-up':'trend-new'},
+    {val:today,label:'New Today',note:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'}),color:'kc-green',trend:'Real-time',trendClass:'trend-new'},
+    {val:flagCount,label:'Flagged (0201/01005)',note:'Need Neoden 4 or outsource',color:'kc-red',trend:pct(flagCount,total)+' of total',trendClass:'trend-up'},
+    {val:pct(filesYes,total),label:'Files Ready',note:filesYes+' submissions have all files',color:'kc-purple',trend:'Gerber+BOM+CPL',trendClass:'trend-new'},
+    {val:pct(lfCount,total),label:'Lead-Free Required',note:'SAC305 / RoHS submissions',color:'kc-gold',trend:lfCount+' of '+total,trendClass:'trend-new'},
+    {val:pct(incuCount,total),label:'KLE-CTiE Incubatees',note:incuCount+' incubatees vs '+(total-incuCount)+' external',color:'kc-blue',trend:'vs external visitors',trendClass:'trend-new'},
+    {val:asapCount,label:'ASAP Requests',note:'Turnaround < 1 week required',color:'kc-red',trend:pct(asapCount,total)+' urgent',trendClass:'trend-up'},
+    {val:topComp[0],label:'Most Common Component',note:topComp[1]+' boards use this package',color:'kc-purple',trend:'Dominant package size',trendClass:'trend-new'},
+  ];
+
+  document.getElementById('kpi-cards').innerHTML=cards.map((c,i)=>`
+    <div class="kpi-card ${c.color} fu" style="animation-delay:${i*.06}s">
+      <div class="kpi-card-val" style="color:var(--${c.color.replace('kc-','').replace('gold','gold').replace('red','red').replace('purple','purple').replace('green','green').replace('blue','navy')})">${c.val}</div>
+      <div class="kpi-card-label">${c.label}</div>
+      <div class="kpi-card-note">${c.note}</div>
+      <div style="margin-top:8px"><span class="kpi-trend ${c.trendClass}">${c.trend}</span></div>
+    </div>`).join('');
+}
+
+// ── Response table ────────────────────────────────
+function compTag(v){
+  const warn=['0201','01005'].includes(v);
+  return`<span class="comp-flag ${warn?'warn':'ok'}">${v||'—'}${warn?' ⚠️':''}</span>`;
+}
+function statusTag(s){
+  const m={'New':'tag-new','In Progress':'tag-progress','Done':'tag-done'};
+  return`<span class="tag ${m[s]||'tag-new'}">${s||'New'}</span>`;
+}
+
+function renderTable(rows){
+  const start=(currentPage-1)*PAGE_SIZE;
+  const pageRows=rows.slice(start,start+PAGE_SIZE);
+  document.getElementById('resp-tbody').innerHTML=pageRows.length?pageRows.map(r=>`
+    <tr>
+      <td><strong style="color:var(--navy);font-family:monospace">${r['Ref No']||'—'}</strong></td>
+      <td style="white-space:nowrap;color:var(--muted)">${(r['Timestamp']||'').substring(0,16)}</td>
+      <td><strong>${r['Name']||'—'}</strong><br><span style="font-size:10px;color:var(--muted)">${r['Organisation']||''}</span></td>
+      <td>${r['Organisation']||'—'}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r['Project Name']||''}">${r['Project Name']||'—'}</td>
+      <td><span class="tag tag-purple">${(r['Device Type']||'—').substring(0,12)}</span></td>
+      <td>${compTag(r['Min Component'])}</td>
+      <td style="white-space:nowrap">${r['Quantity']||'—'}</td>
+      <td><span class="tag ${(r['Timeline']||'').includes('ASAP')?'tag-red':'tag-new'}">${(r['Timeline']||'—').substring(0,15)}</span></td>
+      <td><span class="tag ${(r['Files Ready?']||'').includes('Yes')?'tag-done':'tag-progress'}">${(r['Files Ready?']||'—').substring(0,8)}</span></td>
+      <td><span class="tag ${(r['Parts Ready?']||'').includes('Yes')?'tag-done':'tag-progress'}">${(r['Parts Ready?']||'—').substring(0,8)}</span></td>
+      <td style="max-width:160px;font-size:11px">${(r['Services Required']||'—').substring(0,40)}${r['Services Required']&&r['Services Required'].length>40?'…':''}</td>
+      <td>${statusTag(r['Status'])}</td>
+    </tr>`).join('')
+    :`<tr><td colspan="13" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No responses found</td></tr>`;
+
+  // Pagination
+  const total=rows.length;
+  const totalPages=Math.ceil(total/PAGE_SIZE);
+  document.getElementById('page-info').textContent=`Showing ${Math.min(start+1,total)}–${Math.min(start+PAGE_SIZE,total)} of ${total}`;
+  const btns=document.getElementById('page-btns');
+  btns.innerHTML='';
+  for(let i=1;i<=Math.min(totalPages,8);i++){
+    const b=document.createElement('button');
+    b.className='page-btn'+(i===currentPage?' active':'');
+    b.textContent=i;
+    b.onclick=(()=>{const p=i;return()=>{currentPage=p;renderTable(filteredRows);}})();
+    btns.appendChild(b);
+  }
+}
+
+// ── Flagged table ─────────────────────────────────
+function renderFlagged(rows){
+  const flagged=rows.filter(r=>['0201','01005'].includes(r['Min Component']||''));
+  document.getElementById('flag-tbody').innerHTML=flagged.length?flagged.map(r=>`
+    <tr>
+      <td><strong style="font-family:monospace;color:var(--navy)">${r['Ref No']||'—'}</strong></td>
+      <td>${r['Name']||'—'}</td>
+      <td>${r['Project Name']||'—'}</td>
+      <td><span class="comp-flag warn">${r['Min Component']}</span></td>
+      <td>${r['Quantity']||'—'}</td>
+      <td><span class="tag ${(r['Timeline']||'').includes('ASAP')?'tag-red':'tag-new'}">${r['Timeline']||'—'}</span></td>
+      <td style="font-size:11px;color:var(--red)">
+        ${r['Min Component']==='01005'?'⚠️ Requires Neoden YY1 — only in-house option. Else: JLCPCB PCBA turnkey.'
+          :'📌 Requires Neoden 4 or JLCPCB PCBA. PlaceStation handles 0402+ only.'}
+      </td>
+    </tr>`).join('')
+    :`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--green);font-weight:700">✅ No flagged submissions — all boards compatible with in-house equipment</td></tr>`;
+}
+
+// ── Filters ───────────────────────────────────────
+function applyFilters(){
+  const comp=document.getElementById('filter-comp').value;
+  const dev=document.getElementById('filter-device').value;
+  const incu=document.getElementById('filter-incubatee').value;
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  filteredRows=allRows.filter(r=>{
+    if(comp && r['Min Component']!==comp) return false;
+    if(dev && r['Device Type']!==dev) return false;
+    if(incu && r['Incubatee?']!==incu) return false;
+    if(statusFilter==='new' && r['Status']!=='New') return false;
+    if(statusFilter==='flag' && !['0201','01005'].includes(r['Min Component']||'')) return false;
+    if(search && !JSON.stringify(r).toLowerCase().includes(search)) return false;
+    return true;
+  });
+  currentPage=1;
+  renderTable(filteredRows);
+}
+
+function setStatusFilter(val,btn){
+  statusFilter=val;
+  document.querySelectorAll('.filter-badge').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function clearFilters(){
+  document.getElementById('filter-comp').value='';
+  document.getElementById('filter-device').value='';
+  document.getElementById('filter-incubatee').value='';
+  document.getElementById('searchInput').value='';
+  statusFilter='all';
+  document.getElementById('fb-all').click();
+}
+
+// ── Load all ──────────────────────────────────────
+async function loadAllData(){
+  document.getElementById('dstatus').innerHTML='<span class="loader"></span>&nbsp;Refreshing data…';
+  const isLive=SHEET_ID!=='YOUR_SHEET_ID';
+
+  // Demo data when Sheet not configured
+  const demoRows=isLive?null:[
+    {Timestamp:'22/07/2026, 10:32','Ref No':'EEL-2026-4821',Name:'Irshad Hussain',Organisation:'Guardia Technologies','Project Name':'Guardia V1 Wearable Safety Device','Device Type':'Wearable','Min Component':'0201','Has QFN/BGA?':'Yes','Solder Type':'Lead-free (SAC305 / RoHS)','Placement Side':'Top side only','Files Ready?':'Yes — all files ready','Stencil Ready?':'Yes','Parts Ready?':'Yes — all in hand',Quantity:'6–10 units (Validation)',Timeline:'ASAP (within 1 week)',Budget:'₹5,000–₹20,000','Services Required':'SMT Reflow Assembly, Pick & Place',Notes:'22mm circular PCB. Have all files, stencil and components.',Status:'New','Incubatee?':'No — External Visitor'},
+    {Timestamp:'21/07/2026, 14:15','Ref No':'EEL-2026-3742',Name:'Priya Kulkarni',Organisation:'MedSense IoT','Project Name':'Patient Monitoring Patch v2','Device Type':'Medical','Min Component':'0402','Has QFN/BGA?':'No','Solder Type':'Lead-free (SAC305 / RoHS)','Placement Side':'Top side only','Files Ready?':'Yes — all files ready','Stencil Ready?':'No','Parts Ready?':'Partially sourced',Quantity:'2–5 units',Timeline:'2–4 weeks',Budget:'₹5,000–₹20,000','Services Required':'SMT Reflow Assembly, DFM Review',Notes:'Need stencil procurement assistance.',Status:'In Progress','Incubatee?':'Yes — Incubatee'},
+    {Timestamp:'20/07/2026, 11:05','Ref No':'EEL-2026-2219',Name:'Arjun Desai',Organisation:'AgroTech Labs','Project Name':'Soil Sensor Node Mk3','Device Type':'IoT / Embedded','Min Component':'0603','Has QFN/BGA?':'No','Solder Type':'Leaded (Sn63Pb37)','Placement Side':'Both sides','Files Ready?':'Partially ready','Stencil Ready?':'No','Parts Ready?':'No — need sourcing',Quantity:'11–50 units',Timeline:'1–3 months',Budget:'₹20,000–₹50,000','Services Required':'Component Sourcing, SMT Reflow Assembly, Pick & Place',Notes:'Looking for turnkey support including BOM sourcing.',Status:'New','Incubatee?':'Yes — Incubatee'},
+    {Timestamp:'19/07/2026, 16:48','Ref No':'EEL-2026-1105',Name:'Sneha Patil',Organisation:'KLE BioMed',  'Project Name':'Pulse Oximeter PCB','Device Type':'Medical','Min Component':'0201','Has QFN/BGA?':'Yes','Solder Type':'Lead-free (SAC305 / RoHS)','Placement Side':'Top side only','Files Ready?':'Yes — all files ready','Stencil Ready?':'Yes','Parts Ready?':'Yes — all in hand',Quantity:'1 unit (Prototype)',Timeline:'ASAP (within 1 week)',Budget:'Under ₹5,000','Services Required':'SMT Reflow Assembly',Notes:'Critical prototype for demo. Extremely urgent.',Status:'New','Incubatee?':'KLE Student'},
+  ];
+
+  if(isLive){
+    const data=await fetchSheet('Responses');
+    allRows=data||demoRows;
+  } else {
+    allRows=demoRows;
+  }
+
+  filteredRows=[...allRows];
+
+  // Render
+  renderKPICards(allRows);
+  renderTable(filteredRows);
+  renderFlagged(allRows);
+
+  // Charts
+  renderBarChart('chart-comp',freq(allRows,'Min Component'),allRows.length);
+  renderBarChart('chart-device',freq(allRows,'Device Type'),allRows.length);
+  renderBarChart('chart-timeline',freq(allRows,'Timeline'),allRows.length);
+  renderBarChart('chart-budget',freq(allRows,'Budget'),allRows.length);
+  renderBarChart('chart-solder',freq(allRows,'Solder Type'),allRows.length);
+  renderBarChart('chart-incubatee',freq(allRows,'Incubatee?'),allRows.length);
+  renderBarChart('chart-services',freq(allRows,'Services Required'),allRows.length);
+  renderBarChart('chart-qty',freq(allRows,'Quantity'),allRows.length);
+
+  // Fetch meta timestamp
+  const meta=isLive?await fetchSheet('Meta'):null;
+  const ts=meta?((meta[0]||{}).value||new Date().toLocaleString('en-IN')):new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  document.getElementById('footer-ts').textContent='Last updated: '+ts;
+  document.getElementById('dstatus').innerHTML=isLive
+    ?`<span class="live-dot"></span>&nbsp;<span style="color:var(--green)">Live — Google Sheets</span>&nbsp;·&nbsp;${allRows.length} total responses`
+    :`<span style="color:var(--gold)">📄 Demo data — replace SHEET_ID to go live</span>`;
+}
+</script>
+</body>
+</html>
