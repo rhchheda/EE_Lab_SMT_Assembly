@@ -411,7 +411,7 @@ footer{position:fixed;bottom:0;left:0;right:0;z-index:200;background:linear-grad
 <!-- FOOTER -->
 <footer>
   <span class="heart">❤</span>
-  <span class="f-brand">Made with ❤ &nbsp;~rhc &nbsp;·&nbsp; EE Lab, KLE-CTiE &nbsp;·&nbsp; KLE Technological University, Hubballi – 580031</span>
+  <span class="f-brand">Made with love &nbsp;~rhc &nbsp;·&nbsp; EE Lab, KLE-CTiE &nbsp;·&nbsp; KLE Technological University, Hubballi – 580031</span>
 </footer>
 
 <script>
@@ -476,8 +476,21 @@ function parseCSV(text){
 }
 async function fetchSheet(name){
   if(SHEET_ID==='YOUR_SHEET_ID') return null;
-  try{const r=await fetch(BASE+encodeURIComponent(name));if(!r.ok)throw new Error();return parseCSV(await r.text());}
-  catch{return null;}
+  try{
+    const url=BASE+encodeURIComponent(name);
+    const r=await fetch(url,{cache:'no-store'});
+    const text=await r.text();
+    // Detect redirect to login page (sheet not published)
+    if(text.includes('accounts.google.com')||text.includes('ServiceLogin')||text.includes('<!DOCTYPE html')){
+      console.error('Sheet "'+name+'" not published as CSV. Go to: File → Share → Publish to web → '+name+' → CSV');
+      return null;
+    }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return parseCSV(text);
+  }catch(e){
+    console.error('fetchSheet("'+name+'") failed:',e.message);
+    return null;
+  }
 }
 
 // ── State ─────────────────────────────────────────
@@ -888,13 +901,25 @@ async function loadAllData(){
   const isLive=SHEET_ID!=='YOUR_SHEET_ID';
 
   if(isLive){
+    document.getElementById('dstatus').innerHTML='<span class="loader"></span>&nbsp;Fetching from Google Sheets…';
     const [resp,kt,meta]=await Promise.all([
       fetchSheet('Responses'),fetchSheet('KT_Checklist'),fetchSheet('Meta')
     ]);
     allRows=resp||[];
     ktData=kt||[];
-    const ts=(meta&&meta[0])?meta[0].value||'—':'—';
-    document.getElementById('footer-ts')||(() => {})();
+
+    // Diagnose what failed
+    const problems=[];
+    if(!resp) problems.push('"Responses" tab not published as CSV');
+    if(!kt)   problems.push('"KT_Checklist" tab not published as CSV');
+    if(!meta) problems.push('"Meta" tab not published as CSV');
+
+    if(problems.length){
+      document.getElementById('dstatus').innerHTML=
+        '<span style="color:var(--red)">⚠️ Sheet connected but '+problems.length+' tab(s) not published: '+problems.join(' · ')+
+        '</span> &nbsp;·&nbsp; <a href="https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/edit" target="_blank" style="color:var(--gold)">Open Sheet →</a>'+
+        ' &nbsp;·&nbsp; <span style="color:var(--muted)">File → Share → Publish to web → each tab → CSV</span>';
+    }
   } else {
     allRows=[];
     ktData=[];
@@ -952,9 +977,13 @@ async function loadAllData(){
   renderBar('chart-solder',freq(allRows,'Solder Type'));
   renderBar('chart-invest',freq(allRows,'Investment Aware'));
 
-  document.getElementById('dstatus').innerHTML=isLive
-    ?`<span class="live-dot"></span>&nbsp;<span style="color:var(--green)">Live — Google Sheets</span>&nbsp;·&nbsp;${allRows.length} responses`
-    :'<span style="color:var(--gold)">Set SHEET_ID in HTML to go live</span>';
+  if(!isLive){
+    document.getElementById('dstatus').innerHTML=
+      '<span style="color:var(--gold)">📄 SHEET_ID not set — replace YOUR_SHEET_ID in HTML with your actual Google Sheet ID</span>';
+  } else if(allRows.length>0){
+    document.getElementById('dstatus').innerHTML=
+      '<span class="live-dot"></span>&nbsp;<span style="color:var(--green)">✅ Live — Google Sheets</span>&nbsp;·&nbsp;'+allRows.length+' responses';
+  }
 }
 
 // Init
