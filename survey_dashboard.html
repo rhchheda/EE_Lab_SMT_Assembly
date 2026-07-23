@@ -12,6 +12,7 @@
   --red:#e74c3c;--red-bg:#fef2f2;
   --purple:#5e35b1;--purple-bg:#ede7f6;
   --blue:#1565c0;--blue-bg:#e3f2fd;
+  --orange:#e65100;--orange-bg:#fff3e0;
   --bg:#f4f6fb;--card:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#dde3f0;
   --r:12px;--rs:8px;
   --sh:0 2px 16px rgba(12,45,107,.10);--sh2:0 8px 32px rgba(12,45,107,.18);
@@ -25,41 +26,19 @@ a{color:var(--navy)}
 @keyframes heartbeat{0%,100%{transform:scale(1)}14%{transform:scale(1.35)}28%{transform:scale(1)}42%{transform:scale(1.2)}70%{transform:scale(1)}}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
 @keyframes countUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-
-.fu{animation:fadeUp .45s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+@keyframes fillBar{from{width:0}to{width:var(--target-width)}}
 
 /* ── GATE ─────────────────────────────────────────── */
-#gate{
-  position:fixed;inset:0;z-index:9999;
-  background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy) 60%,var(--navy-l) 100%);
-  display:flex;align-items:center;justify-content:center;
-}
+#gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,var(--navy-d) 0%,var(--navy) 60%,var(--navy-l) 100%);display:flex;align-items:center;justify-content:center}
 .gate-wrap{text-align:center;animation:fadeUp .5s ease}
-.gate-logo{
-  width:72px;height:72px;background:rgba(255,255,255,.12);
-  border:2px solid rgba(200,150,12,.4);border-radius:18px;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 20px;font-size:28px;font-weight:900;color:var(--gold-l);
-  backdrop-filter:blur(8px);
-}
+.gate-logo{width:72px;height:72px;background:rgba(255,255,255,.12);border:2px solid rgba(200,150,12,.4);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;font-weight:900;color:var(--gold-l);backdrop-filter:blur(8px)}
 .gate-title{font-size:24px;font-weight:900;color:#fff;margin-bottom:6px}
 .gate-sub{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:32px}
-.gate-card{
-  background:rgba(255,255,255,.97);border-radius:16px;
-  padding:36px 32px;width:340px;box-shadow:0 24px 60px rgba(0,0,0,.35);
-}
-.gate-input{
-  width:100%;padding:12px 16px;border:2px solid var(--border);
-  border-radius:var(--rs);font-size:15px;outline:none;transition:.2s;
-  color:var(--text);letter-spacing:3px;text-align:center;margin-bottom:10px;
-}
+.gate-card{background:rgba(255,255,255,.97);border-radius:16px;padding:36px 32px;width:340px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.gate-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:var(--rs);font-size:15px;outline:none;transition:.2s;color:var(--text);letter-spacing:3px;text-align:center;margin-bottom:10px}
 .gate-input:focus{border-color:var(--navy)}
-.gate-btn{
-  width:100%;padding:13px;
-  background:linear-gradient(135deg,var(--navy),var(--navy-l));
-  color:#fff;border:none;border-radius:var(--rs);
-  font-size:14px;font-weight:800;cursor:pointer;transition:.2s;
-}
+.gate-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--navy),var(--navy-l));color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer;transition:.2s}
 .gate-btn:hover{opacity:.9}
 .gate-err{color:var(--red);font-size:12px;margin-top:8px;display:none}
 
@@ -67,14 +46,8 @@ a{color:var(--navy)}
 #main{display:none}
 
 /* ── HEADER ───────────────────────────────────────── */
-.header{
-  background:linear-gradient(135deg,var(--navy-d),var(--navy));
-  padding:0;
-}
-.header-inner{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 40px;border-bottom:1px solid rgba(255,255,255,.1);
-}
+.header{background:linear-gradient(135deg,var(--navy-d),var(--navy));padding:0}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid rgba(255,255,255,.1)}
 .logo-block{display:flex;align-items:center;gap:10px}
 .logo-img{width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,.12);padding:3px;object-fit:contain}
 .logo-text .ln{font-size:12px;font-weight:800;color:#fff}
@@ -83,46 +56,25 @@ a{color:var(--navy)}
 .h-badge{display:inline-block;background:rgba(200,150,12,.2);border:1px solid var(--gold);color:var(--gold-l);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 12px;border-radius:16px;margin-bottom:6px}
 .h-title{font-size:clamp(15px,2.5vw,22px);font-weight:900;color:#fff}
 .h-title span{color:var(--gold-l)}
-
-/* Header actions */
 .header-actions{display:flex;gap:8px;align-items:center}
-.hdr-btn{
-  padding:7px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.2s;
-  display:flex;align-items:center;gap:5px;
-}
+.hdr-btn{padding:7px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.2s;display:flex;align-items:center;gap:5px}
 .hdr-btn.outline{background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2)}
 .hdr-btn.outline:hover{background:rgba(255,255,255,.2)}
 .hdr-btn.gold{background:var(--gold);color:var(--navy-d)}
-
-/* Live dot */
+.hdr-btn.danger{background:rgba(231,76,60,.2);color:#ff8a80;border:1px solid rgba(231,76,60,.3)}
+.hdr-btn.danger:hover{background:rgba(231,76,60,.35)}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 1.8s infinite;display:inline-block}
 
 /* ── KPI BAR ──────────────────────────────────────── */
-.kpi-bar{
-  background:var(--navy);padding:16px 40px;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:0;border-bottom:3px solid var(--gold);
-}
-.kpi-cell{
-  text-align:center;padding:10px 12px;
-  border-right:1px solid rgba(255,255,255,.1);
-  animation:countUp .6s ease both;
-}
+.kpi-bar{background:var(--navy);padding:16px 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:0;border-bottom:3px solid var(--gold)}
+.kpi-cell{text-align:center;padding:10px 12px;border-right:1px solid rgba(255,255,255,.1);animation:countUp .6s ease both}
 .kpi-cell:last-child{border-right:none}
-.kpi-v{font-size:20px;font-weight:900;color:var(--gold-l);display:block}
-.kpi-l{font-size:9.5px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;margin-top:3px;display:block}
+.kpi-v{font-size:19px;font-weight:900;color:var(--gold-l);display:block}
+.kpi-l{font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;margin-top:3px;display:block}
 
 /* ── TABS ─────────────────────────────────────────── */
-.tabs{
-  background:#fff;border-bottom:2px solid var(--border);
-  padding:0 40px;display:flex;gap:2px;overflow-x:auto;
-  position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(12,45,107,.07);
-}
-.tab{
-  padding:12px 16px;font-size:12.5px;font-weight:600;
-  color:var(--muted);border:none;background:none;cursor:pointer;
-  white-space:nowrap;border-bottom:3px solid transparent;transition:.2s;
-}
+.tabs{background:#fff;border-bottom:2px solid var(--border);padding:0 40px;display:flex;gap:2px;overflow-x:auto;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(12,45,107,.07)}
+.tab{padding:12px 16px;font-size:12.5px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:.2s}
 .tab:hover{color:var(--navy)}
 .tab.active{color:var(--navy);border-bottom-color:var(--gold)}
 .badge{display:inline-block;background:var(--navy);color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:5px;vertical-align:middle}
@@ -135,125 +87,116 @@ a{color:var(--navy)}
 .sec-sub{color:var(--muted);font-size:13px;margin-bottom:24px;padding-left:14px}
 
 /* ── KPI CARDS ────────────────────────────────────── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px}
-.kpi-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:20px 22px;box-shadow:var(--sh);animation:countUp .5s ease both;
-  position:relative;overflow:hidden;
-}
-.kpi-card::before{
-  content:'';position:absolute;top:0;right:0;width:60px;height:60px;
-  border-radius:0 var(--r) 0 60px;opacity:.07;
-}
-.kc-red::before{background:var(--red)}
-.kc-gold::before{background:var(--gold)}
-.kc-green::before{background:var(--green)}
-.kc-blue::before{background:var(--blue)}
-.kc-purple::before{background:var(--purple)}
-.kpi-card-val{font-size:28px;font-weight:900;margin-bottom:4px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;margin-bottom:28px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh);animation:countUp .5s ease both;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 var(--r) 0 60px;opacity:.07}
+.kpi-card-val{font-size:27px;font-weight:900;margin-bottom:4px}
 .kpi-card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
 .kpi-card-note{font-size:12px;color:var(--muted)}
-.kpi-trend{font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px}
+.kpi-trend{font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;margin-top:6px}
 .trend-up{background:var(--green-bg);color:var(--green)}
 .trend-new{background:var(--blue-bg);color:var(--blue)}
+.trend-warn{background:var(--red-bg);color:var(--red)}
 
-/* ── CHART PLACEHOLDERS ───────────────────────────── */
+/* ── CHARTS ───────────────────────────────────────── */
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
 .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--sh)}
-.chart-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:16px}
-
-/* Bar chart simple */
+.chart-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:16px;border-bottom:2px solid var(--gold-bg);padding-bottom:8px}
 .bar-list{display:flex;flex-direction:column;gap:10px}
 .bar-item{display:flex;align-items:center;gap:10px;font-size:12px}
-.bar-label{width:100px;flex-shrink:0;color:var(--text);font-weight:500}
+.bar-label{width:110px;flex-shrink:0;color:var(--text);font-weight:500;font-size:11px}
 .bar-track{flex:1;height:10px;background:#f0f2f8;border-radius:5px;overflow:hidden}
-.bar-fill{height:100%;border-radius:5px;transition:width 1s ease;background:linear-gradient(90deg,var(--navy),var(--gold))}
-.bar-count{width:30px;text-align:right;font-weight:700;color:var(--navy);flex-shrink:0}
+.bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--navy),var(--gold))}
+.bar-count{width:28px;text-align:right;font-weight:700;color:var(--navy);flex-shrink:0;font-size:12px}
+
+/* ── EMPTY STATE ──────────────────────────────────── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:52px;margin-bottom:16px;opacity:.5}
+.empty-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.empty-sub{font-size:13px;line-height:1.7;margin-bottom:20px}
+.empty-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;background:var(--navy);color:#fff;border-radius:var(--rs);font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;border:none;transition:.2s}
+.empty-btn:hover{background:var(--navy-l);color:#fff}
 
 /* ── RESPONSE TABLE ───────────────────────────────── */
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.table-header{
-  padding:16px 20px;display:flex;align-items:center;
-  justify-content:space-between;border-bottom:1px solid var(--border);
-}
+.table-header{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
 .table-header-title{font-size:14px;font-weight:700;color:var(--navy)}
-.search-input{
-  padding:8px 14px;border:1.5px solid var(--border);border-radius:6px;
-  font-size:12px;outline:none;width:220px;transition:.2s;
-}
+.search-input{padding:8px 13px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;outline:none;width:210px;transition:.2s}
 .search-input:focus{border-color:var(--navy)}
 .tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{
-  background:var(--navy);color:#fff;padding:10px 12px;
-  text-align:left;font-size:11px;font-weight:700;
-  letter-spacing:.5px;white-space:nowrap;
-}
-.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl th{background:var(--navy);color:#fff;padding:10px 11px;text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.tbl td{padding:10px 11px;border-bottom:1px solid var(--border);vertical-align:top}
 .tbl tr:hover td{background:#f8f9fd}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:nth-child(even) td{background:#fafbff}
-
-/* Status / badges */
 .tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
 .tag-new{background:var(--blue-bg);color:var(--blue)}
 .tag-progress{background:var(--gold-bg);color:#7c5c00}
 .tag-done{background:var(--green-bg);color:var(--green)}
 .tag-red{background:var(--red-bg);color:var(--red)}
 .tag-purple{background:var(--purple-bg);color:var(--purple)}
-
-/* Comp size flag */
+.tag-orange{background:var(--orange-bg);color:var(--orange)}
 .comp-flag{font-weight:800}
 .comp-flag.warn{color:var(--red)}
 .comp-flag.ok{color:var(--green)}
-
-/* Pagination */
-.pagination{
-  padding:12px 20px;display:flex;align-items:center;
-  justify-content:space-between;border-top:1px solid var(--border);
-}
+.pagination{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
 .page-info{font-size:12px;color:var(--muted)}
-.page-btns{display:flex;gap:6px}
-.page-btn{
-  padding:5px 12px;border:1.5px solid var(--border);background:#fff;
-  border-radius:6px;font-size:12px;cursor:pointer;transition:.2s;font-weight:600;
-}
+.page-btns{display:flex;gap:5px}
+.page-btn{padding:5px 11px;border:1.5px solid var(--border);background:#fff;border-radius:6px;font-size:12px;cursor:pointer;transition:.2s;font-weight:600}
 .page-btn:hover{border-color:var(--navy);color:var(--navy)}
 .page-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 
 /* ── FILTERS ──────────────────────────────────────── */
-.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
-.filter-select{
-  padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;
-  font-size:12px;outline:none;color:var(--text);background:#fff;cursor:pointer;
-}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.filter-select{padding:7px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;outline:none;color:var(--text);background:#fff;cursor:pointer}
 .filter-select:focus{border-color:var(--navy)}
-.filter-badge{
-  padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;
-  cursor:pointer;border:1.5px solid var(--border);background:#fff;
-  color:var(--muted);transition:.2s;
-}
+.filter-badge{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);transition:.2s}
 .filter-badge.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.clear-filters{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline}
+.clear-btn{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none}
+
+/* ── KT CHECKLIST ────────────────────────────────── */
+.kt-signin{background:var(--card);border:2px solid var(--gold);border-radius:var(--r);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.kt-signin label{font-size:13px;font-weight:700;color:var(--navy);white-space:nowrap}
+.kt-signin select,.kt-signin input{padding:9px 13px;border:2px solid var(--border);border-radius:var(--rs);font-size:13px;outline:none;transition:.2s;min-width:220px}
+.kt-signin select:focus,.kt-signin input:focus{border-color:var(--navy)}
+.kt-signin-btn{padding:9px 20px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.kt-signin-btn:hover{background:var(--navy-l)}
+.kt-progress{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 22px;margin-bottom:24px;box-shadow:var(--sh)}
+.kt-progress-bar{height:10px;background:#e5e7eb;border-radius:5px;margin:10px 0;overflow:hidden}
+.kt-progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--green),#2d9e6e);transition:width 1s ease}
+.kt-section{margin-bottom:24px}
+.kt-section-title{font-size:13px;font-weight:800;color:var(--navy);padding:10px 16px;border-radius:var(--rs);margin-bottom:12px;border-left:4px solid var(--gold)}
+.kt-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:8px;transition:.2s;cursor:pointer}
+.kt-item:hover{border-color:var(--navy);box-shadow:var(--sh)}
+.kt-item.checked{background:var(--green-bg);border-color:var(--green)}
+.kt-checkbox{width:20px;height:20px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s;margin-top:1px}
+.kt-item.checked .kt-checkbox{background:var(--green);border-color:var(--green);color:#fff}
+.kt-item-text{flex:1}
+.kt-item-label{font-size:13px;font-weight:600;color:var(--text);line-height:1.5}
+.kt-item.checked .kt-item-label{color:var(--green)}
+.kt-item-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.kt-signature{background:linear-gradient(135deg,var(--gold-bg),#fffbeb);border:2px solid var(--gold);border-radius:var(--r);padding:24px;margin-top:24px}
+.kt-sig-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:16px}
+.kt-sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.kt-sig-field label{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
+.kt-sig-field input{width:100%;padding:9px 12px;border:2px solid var(--border);border-radius:var(--rs);font-size:13px;outline:none;transition:.2s}
+.kt-sig-field input:focus{border-color:var(--navy)}
+.kt-sig-btn{margin-top:16px;padding:11px 28px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.kt-sig-btn:hover{background:var(--navy-l)}
 
 /* ── DATA STATUS ──────────────────────────────────── */
-#dstatus{text-align:right;padding:7px 40px;font-size:11px;color:var(--muted);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:8px}
+#dstatus{text-align:right;padding:7px 40px;font-size:11px;color:var(--muted);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:flex-end;gap:6px}
 .loader{display:inline-block;width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite}
 
 /* ── FOOTER ───────────────────────────────────────── */
-footer{
-  position:fixed;bottom:0;left:0;right:0;z-index:200;
-  background:linear-gradient(90deg,var(--navy-d),var(--navy));
-  padding:9px 28px;display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 -3px 18px rgba(12,45,107,.25);
-}
-.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c}
+footer{position:fixed;bottom:0;left:0;right:0;z-index:200;background:linear-gradient(90deg,var(--navy-d),var(--navy));padding:9px 28px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 -3px 18px rgba(12,45,107,.25)}
+.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c;font-size:13px}
 .f-brand{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.9)}
-.f-ts{font-size:10.5px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:6px}
 
 @media(max-width:700px){
   .header-inner{padding:12px 16px}.tabs,.section{padding-left:16px;padding-right:16px}
   .kpi-grid{grid-template-columns:1fr 1fr}.charts-grid{grid-template-columns:1fr}
-  .search-input{width:140px}
+  .search-input{width:140px}.kt-sig-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -286,7 +229,7 @@ footer{
         <div class="logo-text"><div class="ln">KLE-CTiE</div><div class="ls">EE Lab</div></div>
       </div>
       <div class="header-mid">
-        <div class="h-badge"><span class="live-dot"></span> &nbsp;LIVE DASHBOARD</div>
+        <div class="h-badge"><span class="live-dot"></span>&nbsp;LIVE DASHBOARD</div>
         <div class="h-title">Survey Response <span>Analytics</span></div>
       </div>
       <div class="header-actions">
@@ -294,6 +237,7 @@ footer{
           onerror="this.style.display='none'" alt="KLE-TU"/>
         <button class="hdr-btn outline" onclick="loadAllData()">🔄 Refresh</button>
         <a href="survey_form.html" target="_blank" class="hdr-btn gold">📝 Open Form</a>
+        <button class="hdr-btn danger" onclick="logout()">⏻ Logout</button>
       </div>
     </div>
     <!-- KPI Bar -->
@@ -302,10 +246,11 @@ footer{
       <div class="kpi-cell"><span class="kpi-v" id="k-today">—</span><span class="kpi-l">Today</span></div>
       <div class="kpi-cell"><span class="kpi-v" id="k-topcomp">—</span><span class="kpi-l">Top Component</span></div>
       <div class="kpi-cell"><span class="kpi-v" id="k-topdev">—</span><span class="kpi-l">Top Device</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-topdom">—</span><span class="kpi-l">Top Domain</span></div>
       <div class="kpi-cell"><span class="kpi-v" id="k-filesready">—</span><span class="kpi-l">Files Ready %</span></div>
       <div class="kpi-cell"><span class="kpi-v" id="k-lf">—</span><span class="kpi-l">Lead-Free %</span></div>
-      <div class="kpi-cell"><span class="kpi-v" id="k-incubatee">—</span><span class="kpi-l">Incubatee %</span></div>
-      <div class="kpi-cell"><span class="kpi-v" id="k-asap">—</span><span class="kpi-l">ASAP Requests</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-flagged">—</span><span class="kpi-l">Flagged</span></div>
+      <div class="kpi-cell"><span class="kpi-v" id="k-kt">—</span><span class="kpi-l">KT Progress</span></div>
     </div>
   </div>
 
@@ -315,64 +260,54 @@ footer{
   <!-- TABS -->
   <div class="tabs">
     <button class="tab active" onclick="showTab('overview',this)">📊 Overview</button>
-    <button class="tab" onclick="showTab('responses',this)">📋 All Responses <span class="badge" id="respBadge">0</span></button>
+    <button class="tab" onclick="showTab('responses',this)">📋 Responses <span class="badge" id="respBadge">0</span></button>
     <button class="tab" onclick="showTab('analytics',this)">📈 Analytics</button>
     <button class="tab" onclick="showTab('flags',this)">⚠️ Flagged <span class="badge" id="flagBadge" style="background:var(--red)">0</span></button>
+    <button class="tab" onclick="showTab('kt',this)">📘 KT Handover</button>
   </div>
 
   <!-- ── OVERVIEW ──────────────────────────────────── -->
   <div class="section active" id="sec-overview">
     <div class="sec-title">Dashboard Overview</div>
     <p class="sec-sub">Real-time summary of all PCB assembly assessment submissions</p>
-
     <div class="kpi-grid" id="kpi-cards"></div>
-
     <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-title">Component Size Distribution</div>
-        <div class="bar-list" id="chart-comp"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Device / Application Type</div>
-        <div class="bar-list" id="chart-device"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Services Requested</div>
-        <div class="bar-list" id="chart-services"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Quantity Range</div>
-        <div class="bar-list" id="chart-qty"></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Component Size Distribution</div><div class="bar-list" id="chart-comp"></div></div>
+      <div class="chart-card"><div class="chart-title">Device / Application Type</div><div class="bar-list" id="chart-device"></div></div>
+      <div class="chart-card"><div class="chart-title">Applicant Domain / Sector</div><div class="bar-list" id="chart-domain"></div></div>
+      <div class="chart-card"><div class="chart-title">Services Requested</div><div class="bar-list" id="chart-services"></div></div>
     </div>
   </div>
 
   <!-- ── RESPONSES ─────────────────────────────────── -->
   <div class="section" id="sec-responses">
     <div class="sec-title">All Submissions</div>
-    <p class="sec-sub">Full response log — click any row to expand details</p>
-
+    <p class="sec-sub">Full response log — filterable and searchable</p>
     <div class="filters">
       <select class="filter-select" id="filter-comp" onchange="applyFilters()">
         <option value="">All Component Sizes</option>
         <option>01005</option><option>0201</option><option>0402</option>
-        <option>0603</option><option>0805</option><option>1206+</option><option>PTH</option>
+        <option>0603</option><option>0805</option><option>1206+</option><option>Through-hole only</option>
+      </select>
+      <select class="filter-select" id="filter-domain" onchange="applyFilters()">
+        <option value="">All Domains</option>
+        <option>KLE-CTiE Incubatee</option><option>KLE Student / Faculty</option>
+        <option>Startup — External</option><option>Academic / Research</option>
+        <option>Industry / Corporate / SME</option><option>Medical / HealthTech</option>
+        <option>Defence / Aerospace</option><option>Government / PSU</option>
+        <option>NGO / Social Enterprise</option><option>Individual / Hobbyist</option>
       </select>
       <select class="filter-select" id="filter-device" onchange="applyFilters()">
         <option value="">All Device Types</option>
-        <option>Wearable</option><option>IoT / Embedded</option><option>Medical</option>
-        <option>Industrial</option><option>Consumer Electronics</option><option>R&D / Academic</option>
-      </select>
-      <select class="filter-select" id="filter-incubatee" onchange="applyFilters()">
-        <option value="">All Respondents</option>
-        <option>Yes — Incubatee</option><option>No — External Visitor</option><option>KLE Student</option>
+        <option>Wearable</option><option>IoT / Embedded</option><option>Medical Device</option>
+        <option>Industrial</option><option>Consumer Electronics</option>
+        <option>Defence / Aerospace</option><option>R&D / Academic</option>
       </select>
       <span class="filter-badge active" id="fb-all" onclick="setStatusFilter('all',this)">All</span>
       <span class="filter-badge" id="fb-new" onclick="setStatusFilter('new',this)">🔵 New</span>
       <span class="filter-badge" id="fb-flag" onclick="setStatusFilter('flag',this)">🔴 Flagged</span>
-      <span class="clear-filters" onclick="clearFilters()">Clear filters</span>
+      <button class="clear-btn" onclick="clearFilters()">Clear filters</button>
     </div>
-
     <div class="table-wrap">
       <div class="table-header">
         <div class="table-header-title">Responses</div>
@@ -380,13 +315,11 @@ footer{
       </div>
       <div style="overflow-x:auto">
         <table class="tbl">
-          <thead>
-            <tr>
-              <th>Ref No</th><th>Date</th><th>Name</th><th>Organisation</th>
-              <th>Project</th><th>Device</th><th>Min Comp</th><th>Qty</th>
-              <th>Timeline</th><th>Files?</th><th>Parts?</th><th>Services</th><th>Status</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>Ref No</th><th>Date</th><th>Name</th><th>Domain</th>
+            <th>Project</th><th>Device</th><th>Min Comp</th><th>Qty</th>
+            <th>Timeline</th><th>Files?</th><th>Parts?</th><th>Services</th><th>Flag</th><th>Status</th>
+          </tr></thead>
           <tbody id="resp-tbody"></tbody>
         </table>
       </div>
@@ -402,61 +335,92 @@ footer{
     <div class="sec-title">Analytics</div>
     <p class="sec-sub">Aggregated insights from all submissions</p>
     <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-title">Timeline Urgency</div>
-        <div class="bar-list" id="chart-timeline"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Budget Range</div>
-        <div class="bar-list" id="chart-budget"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Solder Process</div>
-        <div class="bar-list" id="chart-solder"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Incubatee vs External</div>
-        <div class="bar-list" id="chart-incubatee"></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Timeline Expected</div><div class="bar-list" id="chart-timeline"></div></div>
+      <div class="chart-card"><div class="chart-title">Quantity Range</div><div class="bar-list" id="chart-qty"></div></div>
+      <div class="chart-card"><div class="chart-title">Solder Process</div><div class="bar-list" id="chart-solder"></div></div>
+      <div class="chart-card"><div class="chart-title">Investment Awareness</div><div class="bar-list" id="chart-invest"></div></div>
     </div>
   </div>
 
   <!-- ── FLAGGED ────────────────────────────────────── -->
   <div class="section" id="sec-flags">
     <div class="sec-title">Flagged Submissions</div>
-    <p class="sec-sub">Boards with 0201 or 01005 components — require Neoden 4 / YY1 or JLCPCB outsourcing</p>
+    <p class="sec-sub">0201 / 01005 components + Medical / HealthTech + Defence / Aerospace — all require special handling</p>
     <div class="table-wrap">
       <div style="overflow-x:auto">
         <table class="tbl">
-          <thead>
-            <tr><th>Ref</th><th>Name</th><th>Project</th><th>Min Comp</th><th>Qty</th><th>Timeline</th><th>Action Required</th></tr>
-          </thead>
+          <thead><tr>
+            <th>Ref</th><th>Name</th><th>Domain</th><th>Project</th>
+            <th>Min Comp</th><th>Device</th><th>Timeline</th><th>Flag</th><th>Action Required</th>
+          </tr></thead>
           <tbody id="flag-tbody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
+  <!-- ── KT HANDOVER ────────────────────────────────── -->
+  <div class="section" id="sec-kt">
+    <div class="sec-title">KT Handover Checklist</div>
+    <p class="sec-sub">Sheet-persisted — every tick is timestamped and logged to Google Sheets</p>
+
+    <!-- Sign In As -->
+    <div class="kt-signin" id="ktSignin">
+      <span style="font-size:22px">👤</span>
+      <label>Who is completing this checklist?</label>
+      <select id="ktRole">
+        <option value="">Select role…</option>
+        <option>Rakesh Chheda (Outgoing Lab Assistant)</option>
+        <option>Incoming Lab Assistant</option>
+        <option>Centre Director / Supervisor</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="ktName" placeholder="Your full name" style="min-width:200px"/>
+      <button class="kt-signin-btn" onclick="setKTUser()">Set →</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="kt-progress" id="ktProgress" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:13px;font-weight:700;color:var(--navy)">Handover Progress</div>
+        <div style="font-size:20px;font-weight:900;color:var(--green)" id="ktPctLabel">0%</div>
+      </div>
+      <div class="kt-progress-bar"><div class="kt-progress-fill" id="ktProgressFill" style="width:0%"></div></div>
+      <div style="font-size:12px;color:var(--muted)" id="ktProgressNote">0 of 32 items complete</div>
+      <div style="font-size:12px;color:var(--navy);margin-top:6px" id="ktCurrentUser"></div>
+    </div>
+
+    <!-- Checklist -->
+    <div id="ktChecklist"></div>
+
+    <!-- Digital Signature -->
+    <div class="kt-signature" id="ktSig" style="display:none">
+      <div class="kt-sig-title">📝 Digital Acknowledgement — Handover Sign-off</div>
+      <div class="kt-sig-grid">
+        <div class="kt-sig-field"><label>Outgoing Lab Assistant</label><input type="text" id="sig-out" placeholder="Full name"/></div>
+        <div class="kt-sig-field"><label>Incoming Lab Assistant</label><input type="text" id="sig-in" placeholder="Full name"/></div>
+        <div class="kt-sig-field"><label>Centre Director / Supervisor</label><input type="text" id="sig-dir" placeholder="Full name + designation"/></div>
+        <div class="kt-sig-field"><label>Date of Completion</label><input type="date" id="sig-date"/></div>
+      </div>
+      <button class="kt-sig-btn" onclick="submitSignature()">✅ Submit Digital Sign-off</button>
+    </div>
+  </div>
+
 </div><!-- /main -->
 
+<!-- FOOTER -->
 <footer>
-  <div style="display:flex;align-items:center;gap:8px">
-    <span class="heart">❤</span>
-    <span class="f-brand">Made with ❤ ~rhc · EE Lab, KLE-CTiE · KLE Technological University, Hubballi – 580031</span>
-  </div>
-  <div class="f-ts" id="footer-ts">
-    <span class="loader" style="width:11px;height:11px;border-width:2px"></span>Last updated: loading…
-  </div>
+  <span class="heart">❤</span>
+  <span class="f-brand">Made with ❤ &nbsp;~rhc &nbsp;·&nbsp; EE Lab, KLE-CTiE &nbsp;·&nbsp; KLE Technological University, Hubballi – 580031</span>
 </footer>
 
 <script>
 // ══════════════════════════════════════════════════
 // CONFIG
-// ══════════════════════════════════════════════════
-const SHEET_ID  = '1AlokZIxOTkdFETPVmh5LzL4qt0mUuqk-0-QTEhNmtlc';
-const BASE      = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
-const PWD_HASH  = 'REPLACE_WITH_SHA256_OF_Ctie2026';
-const FORM_URL  = 'survey_form.html';
+const SHEET_ID = '1AlokZIxOTkdFETPVmh5LzL4qt0mUuqk-0-QTEhNmtlc';
+const GAS_URL  = 'https://script.google.com/macros/s/AKfycbzfdTA6KpDLgjCjgcuKOowhp3eRJCmFCd9CW9_mZeWRHqTdE5p932UVH6wE_CJ61kSl/exec';
+const BASE     = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+const PWD_HASH = 'REPLACE_WITH_SHA256_OF_Ctie2026';
 
 // ── Auth ──────────────────────────────────────────
 async function sha256(s){
@@ -467,6 +431,7 @@ async function checkPwd(){
   const v=document.getElementById('pwd').value;
   const h=await sha256(v);
   if(v==='Ctie2026'||h===PWD_HASH){
+    sessionStorage.setItem('eelab_auth','1');
     document.getElementById('gate').style.display='none';
     document.getElementById('main').style.display='block';
     loadAllData();
@@ -477,8 +442,28 @@ async function checkPwd(){
     document.getElementById('pwd').value='';
   }
 }
+function logout(){
+  sessionStorage.removeItem('eelab_auth');
+  document.getElementById('main').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('pwd').value='';
+}
+// Auto-restore session
+if(sessionStorage.getItem('eelab_auth')==='1'){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('main').style.display='block';
+}
 
-// ── CSV parser ────────────────────────────────────
+// ── Tabs ─────────────────────────────────────────
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sec-'+id).classList.add('active');
+  if(id==='kt') renderKT();
+}
+
+// ── CSV Parser ───────────────────────────────────
 function parseCSV(text){
   const lines=text.trim().split('\n');
   const headers=lines[0].split(',').map(h=>h.replace(/^"|"$/g,'').trim());
@@ -489,49 +474,63 @@ function parseCSV(text){
     return Object.fromEntries(headers.map((h,i)=>[h,(vals[i]||'').replace(/^"|"$/g,'')]));
   });
 }
-
 async function fetchSheet(name){
   if(SHEET_ID==='YOUR_SHEET_ID') return null;
-  try{
-    const r=await fetch(BASE+encodeURIComponent(name));
-    if(!r.ok) throw new Error();
-    return parseCSV(await r.text());
-  }catch{return null;}
-}
-
-// ── Tabs ──────────────────────────────────────────
-function showTab(id,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('sec-'+id).classList.add('active');
+  try{const r=await fetch(BASE+encodeURIComponent(name));if(!r.ok)throw new Error();return parseCSV(await r.text());}
+  catch{return null;}
 }
 
 // ── State ─────────────────────────────────────────
-let allRows=[], filteredRows=[], currentPage=1;
+let allRows=[],filteredRows=[],currentPage=1,statusFilter='all';
+let ktData=[],ktUser='',ktRole='';
 const PAGE_SIZE=15;
-let statusFilter='all';
 
 // ── Helpers ───────────────────────────────────────
-function freq(arr, key){
+function freq(arr,key){
   const f={};
   arr.forEach(r=>{const v=(r[key]||'Unknown').split(',')[0].trim();f[v]=(f[v]||0)+1;});
   return Object.entries(f).sort((a,b)=>b[1]-a[1]);
 }
-function pct(n,total){return total>0?Math.round((n/total)*100)+'%':'0%';}
-function todayCount(rows){
-  const td=new Date().toLocaleDateString('en-IN');
-  return rows.filter(r=>r['Timestamp']&&r['Timestamp'].includes(new Date().getDate().toString().padStart(2,'0'))).length;
+function pct(n,t){return t>0?Math.round((n/t)*100)+'%':'0%';}
+function isFlagged(r){
+  const comp=r['Min Component']||'';
+  const dom=r['Domain']||'';
+  const dev=r['Device Type']||'';
+  return['01005','0201'].includes(comp)||
+    dom.includes('Medical')||dom.includes('Defence')||
+    dev.includes('Medical')||dev.includes('Defence');
+}
+function flagReason(r){
+  const reasons=[];
+  const comp=r['Min Component']||'';
+  const dom=r['Domain']||'';
+  const dev=r['Device Type']||'';
+  if(comp==='01005') reasons.push('01005 — Neoden YY1 only');
+  if(comp==='0201') reasons.push('0201 — Neoden 4 / JLCPCB');
+  if(dom.includes('Medical')||dev.includes('Medical')) reasons.push('Medical — RoHS + traceability required');
+  if(dom.includes('Defence')||dev.includes('Defence')) reasons.push('Defence — Senior review required');
+  return reasons.join(' | ');
+}
+function actionRequired(r){
+  const comp=r['Min Component']||'';
+  const dom=r['Domain']||'';
+  const dev=r['Device Type']||'';
+  if(comp==='01005') return'Requires Neoden YY1 (01005 capable). Refer to JLCPCB PCBA or Deshpande ESDM.';
+  if(comp==='0201') return'Requires Neoden 4 or JLCPCB PCBA. PlaceStation handles 0402+ only.';
+  if(dom.includes('Defence')||dev.includes('Defence')) return'Senior review mandatory. Do NOT share files with external vendors without written approval.';
+  if(dom.includes('Medical')||dev.includes('Medical')) return'RoHS mandatory. Component traceability required. IPC-A-610 Class 3 preferred.';
+  return'Review required';
 }
 
 // ── Bar chart ─────────────────────────────────────
-function renderBarChart(containerId, data, total){
-  const el=document.getElementById(containerId);
+function renderBar(id,data){
+  const el=document.getElementById(id);
   if(!el) return;
   const max=data[0]?data[0][1]:1;
-  el.innerHTML=data.slice(0,6).map(([label,count])=>`
+  if(!data.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;font-style:italic;padding:8px 0">No data yet</div>';return;}
+  el.innerHTML=data.slice(0,7).map(([label,count])=>`
     <div class="bar-item">
-      <div class="bar-label" title="${label}">${label.substring(0,14)}</div>
+      <div class="bar-label" title="${label}">${label.substring(0,16)}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round((count/max)*100)}%"></div></div>
       <div class="bar-count">${count}</div>
     </div>`).join('');
@@ -540,51 +539,58 @@ function renderBarChart(containerId, data, total){
 // ── KPI Cards ─────────────────────────────────────
 function renderKPICards(rows){
   const total=rows.length;
-  const today=rows.filter(r=>{
-    const ts=r['Timestamp']||'';
-    const d=new Date();
-    return ts.includes(d.getDate()+'/'+(d.getMonth()+1));
-  }).length;
+  const flagCount=rows.filter(isFlagged).length;
+  const filesYes=rows.filter(r=>(r['Files Ready?']||'').includes('Yes')).length;
+  const lfCount=rows.filter(r=>(r['Solder Type']||'').includes('SAC305')||(r['Solder Type']||'').includes('Lead-free')).length;
+  const incuCount=rows.filter(r=>(r['Incubatee?']||'').includes('Yes')||(r['Domain']||'').includes('Incubatee')).length;
+  const medCount=rows.filter(r=>(r['Domain']||'').includes('Medical')||(r['Device Type']||'').includes('Medical')).length;
+  const defCount=rows.filter(r=>(r['Domain']||'').includes('Defence')||(r['Device Type']||'').includes('Defence')).length;
   const topComp=freq(rows,'Min Component')[0]||['—',0];
   const topDev=freq(rows,'Device Type')[0]||['—',0];
-  const filesYes=rows.filter(r=>(r['Files Ready?']||'').toLowerCase().includes('yes')).length;
-  const lfCount=rows.filter(r=>(r['Solder Type']||'').includes('SAC305')||(r['Solder Type']||'').toLowerCase().includes('lead-free')).length;
-  const incuCount=rows.filter(r=>(r['Incubatee?']||'').toLowerCase().includes('yes')).length;
-  const asapCount=rows.filter(r=>(r['Timeline']||'').toLowerCase().includes('asap')).length;
-  const flagCount=rows.filter(r=>['01005','0201'].includes(r['Min Component']||'')).length;
+  const topDom=freq(rows,'Domain')[0]||['—',0];
 
   // Header KPIs
   document.getElementById('k-total').textContent=total;
-  document.getElementById('k-today').textContent=today;
   document.getElementById('k-topcomp').textContent=topComp[0];
   document.getElementById('k-topdev').textContent=(topDev[0]||'—').substring(0,12);
+  document.getElementById('k-topdom').textContent=(topDom[0]||'—').substring(0,12);
   document.getElementById('k-filesready').textContent=pct(filesYes,total);
   document.getElementById('k-lf').textContent=pct(lfCount,total);
-  document.getElementById('k-incubatee').textContent=pct(incuCount,total);
-  document.getElementById('k-asap').textContent=asapCount;
+  document.getElementById('k-flagged').textContent=flagCount;
 
-  // Badges
+  // Today count
+  const today=new Date();
+  const todayCount=rows.filter(r=>{
+    const ts=r['Timestamp']||'';
+    return ts.includes(today.getDate()+'/'+( today.getMonth()+1));
+  }).length;
+  document.getElementById('k-today').textContent=todayCount;
+
+  // KT progress from ktData
+  const ktDone=ktData.filter(d=>String(d.checked||'').toUpperCase()==='TRUE').length;
+  const ktTotal=ktData.length||32;
+  document.getElementById('k-kt').textContent=ktDone+'/'+ktTotal;
+
   document.getElementById('respBadge').textContent=total;
   document.getElementById('flagBadge').textContent=flagCount;
 
-  // Cards
   const cards=[
-    {val:total,label:'Total Submissions',note:'All time',color:'kc-blue',trend:today>0?`+${today} today`:'No new today',trendClass:today>0?'trend-up':'trend-new'},
-    {val:today,label:'New Today',note:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'}),color:'kc-green',trend:'Real-time',trendClass:'trend-new'},
-    {val:flagCount,label:'Flagged (0201/01005)',note:'Need Neoden 4 or outsource',color:'kc-red',trend:pct(flagCount,total)+' of total',trendClass:'trend-up'},
-    {val:pct(filesYes,total),label:'Files Ready',note:filesYes+' submissions have all files',color:'kc-purple',trend:'Gerber+BOM+CPL',trendClass:'trend-new'},
-    {val:pct(lfCount,total),label:'Lead-Free Required',note:'SAC305 / RoHS submissions',color:'kc-gold',trend:lfCount+' of '+total,trendClass:'trend-new'},
-    {val:pct(incuCount,total),label:'KLE-CTiE Incubatees',note:incuCount+' incubatees vs '+(total-incuCount)+' external',color:'kc-blue',trend:'vs external visitors',trendClass:'trend-new'},
-    {val:asapCount,label:'ASAP Requests',note:'Turnaround < 1 week required',color:'kc-red',trend:pct(asapCount,total)+' urgent',trendClass:'trend-up'},
-    {val:topComp[0],label:'Most Common Component',note:topComp[1]+' boards use this package',color:'kc-purple',trend:'Dominant package size',trendClass:'trend-new'},
+    {val:total,label:'Total Submissions',note:'All time',color:'#0C2D6B',trend:'Live',tc:'trend-new'},
+    {val:todayCount,label:'New Today',note:today.toLocaleDateString('en-IN',{day:'numeric',month:'short'}),color:'#1a7a4a',trend:'Real-time',tc:'trend-up'},
+    {val:flagCount,label:'Flagged',note:'0201 / 01005 / Medical / Defence',color:'#e74c3c',trend:pct(flagCount,total)+' of total',tc:'trend-warn'},
+    {val:pct(filesYes,total),label:'Files Ready',note:filesYes+' submissions with all files',color:'#5e35b1',trend:'Gerber + BOM + CPL',tc:'trend-new'},
+    {val:pct(lfCount,total),label:'Lead-Free Required',note:'SAC305 / RoHS submissions',color:'#C8960C',trend:lfCount+' of '+total,tc:'trend-new'},
+    {val:pct(incuCount,total),label:'KLE-CTiE Incubatees',note:incuCount+' incubatee vs '+(total-incuCount)+' external',color:'#1565c0',trend:'vs external',tc:'trend-new'},
+    {val:medCount,label:'Medical / HealthTech',note:'RoHS + traceability required',color:'#5e35b1',trend:'Special handling',tc:'trend-warn'},
+    {val:defCount,label:'Defence / Aerospace',note:'Senior review mandatory',color:'#e74c3c',trend:'Do not share externally',tc:'trend-warn'},
   ];
 
   document.getElementById('kpi-cards').innerHTML=cards.map((c,i)=>`
-    <div class="kpi-card ${c.color} fu" style="animation-delay:${i*.06}s">
-      <div class="kpi-card-val" style="color:var(--${c.color.replace('kc-','').replace('gold','gold').replace('red','red').replace('purple','purple').replace('green','green').replace('blue','navy')})">${c.val}</div>
+    <div class="kpi-card fu" style="animation-delay:${i*.06}s">
+      <div class="kpi-card-val" style="color:${c.color}">${c.val}</div>
       <div class="kpi-card-label">${c.label}</div>
       <div class="kpi-card-note">${c.note}</div>
-      <div style="margin-top:8px"><span class="kpi-trend ${c.trendClass}">${c.trend}</span></div>
+      <div><span class="kpi-trend ${c.tc}">${c.trend}</span></div>
     </div>`).join('');
 }
 
@@ -593,33 +599,49 @@ function compTag(v){
   const warn=['0201','01005'].includes(v);
   return`<span class="comp-flag ${warn?'warn':'ok'}">${v||'—'}${warn?' ⚠️':''}</span>`;
 }
-function statusTag(s){
-  const m={'New':'tag-new','In Progress':'tag-progress','Done':'tag-done'};
-  return`<span class="tag ${m[s]||'tag-new'}">${s||'New'}</span>`;
+function domainTag(d){
+  if((d||'').includes('Medical')) return`<span class="tag tag-purple">🏥 ${(d||'').substring(0,14)}</span>`;
+  if((d||'').includes('Defence')) return`<span class="tag tag-red">🛡️ ${(d||'').substring(0,14)}</span>`;
+  if((d||'').includes('Incubatee')) return`<span class="tag tag-new">${(d||'').substring(0,14)}</span>`;
+  return`<span class="tag" style="background:#f3f4f6;color:#374151">${(d||'—').substring(0,14)}</span>`;
 }
 
 function renderTable(rows){
   const start=(currentPage-1)*PAGE_SIZE;
   const pageRows=rows.slice(start,start+PAGE_SIZE);
-  document.getElementById('resp-tbody').innerHTML=pageRows.length?pageRows.map(r=>`
-    <tr>
-      <td><strong style="color:var(--navy);font-family:monospace">${r['Ref No']||'—'}</strong></td>
-      <td style="white-space:nowrap;color:var(--muted)">${(r['Timestamp']||'').substring(0,16)}</td>
-      <td><strong>${r['Name']||'—'}</strong><br><span style="font-size:10px;color:var(--muted)">${r['Organisation']||''}</span></td>
-      <td>${r['Organisation']||'—'}</td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r['Project Name']||''}">${r['Project Name']||'—'}</td>
-      <td><span class="tag tag-purple">${(r['Device Type']||'—').substring(0,12)}</span></td>
-      <td>${compTag(r['Min Component'])}</td>
-      <td style="white-space:nowrap">${r['Quantity']||'—'}</td>
-      <td><span class="tag ${(r['Timeline']||'').includes('ASAP')?'tag-red':'tag-new'}">${(r['Timeline']||'—').substring(0,15)}</span></td>
-      <td><span class="tag ${(r['Files Ready?']||'').includes('Yes')?'tag-done':'tag-progress'}">${(r['Files Ready?']||'—').substring(0,8)}</span></td>
-      <td><span class="tag ${(r['Parts Ready?']||'').includes('Yes')?'tag-done':'tag-progress'}">${(r['Parts Ready?']||'—').substring(0,8)}</span></td>
-      <td style="max-width:160px;font-size:11px">${(r['Services Required']||'—').substring(0,40)}${r['Services Required']&&r['Services Required'].length>40?'…':''}</td>
-      <td>${statusTag(r['Status'])}</td>
-    </tr>`).join('')
-    :`<tr><td colspan="13" style="text-align:center;padding:32px;color:var(--muted);font-style:italic">No responses found</td></tr>`;
+  const tbody=document.getElementById('resp-tbody');
 
-  // Pagination
+  if(!rows.length){
+    tbody.innerHTML=`<tr><td colspan="14">
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No submissions found</div>
+        <div class="empty-sub">No responses match your current filters.<br>Clear filters or share the survey form to collect assessments.</div>
+        <button class="empty-btn" onclick="clearFilters()">Clear Filters</button>
+      </div></td></tr>`;
+    document.getElementById('page-info').textContent='No results';
+    document.getElementById('page-btns').innerHTML='';
+    return;
+  }
+
+  tbody.innerHTML=pageRows.map(r=>`
+    <tr>
+      <td><strong style="color:var(--navy);font-family:monospace;font-size:11px">${r['Ref No']||'—'}</strong></td>
+      <td style="white-space:nowrap;color:var(--muted);font-size:11px">${(r['Timestamp']||'').substring(0,14)}</td>
+      <td><strong style="font-size:12px">${r['Name']||'—'}</strong><br><span style="font-size:10px;color:var(--muted)">${r['Organisation']||''}</span></td>
+      <td>${domainTag(r['Domain'])}</td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px" title="${r['Project Name']||''}">${r['Project Name']||'—'}</td>
+      <td><span class="tag tag-purple" style="font-size:10px">${(r['Device Type']||'—').substring(0,12)}</span></td>
+      <td>${compTag(r['Min Component'])}</td>
+      <td style="font-size:11px;white-space:nowrap">${(r['Quantity']||'—').substring(0,12)}</td>
+      <td><span class="tag ${(r['Timeline']||'').includes('1 month')?'tag-red':'tag-new'}" style="font-size:10px">${(r['Timeline']||'—').substring(0,16)}</span></td>
+      <td><span class="tag ${(r['Files Ready?']||'').includes('Yes')?'tag-done':'tag-progress'}" style="font-size:10px">${(r['Files Ready?']||'—').substring(0,8)}</span></td>
+      <td><span class="tag ${(r['Parts Ready?']||'').includes('Yes')?'tag-done':'tag-progress'}" style="font-size:10px">${(r['Parts Ready?']||'—').substring(0,8)}</span></td>
+      <td style="max-width:150px;font-size:10px;color:var(--muted)">${(r['Services Required']||'—').substring(0,35)}${(r['Services Required']||'').length>35?'…':''}</td>
+      <td style="font-size:10px;color:var(--red);font-weight:700">${isFlagged(r)?'⚠️ '+flagReason(r).substring(0,20):''}</td>
+      <td><span class="tag ${r['Status']==='Done'?'tag-done':r['Status']==='In Progress'?'tag-progress':'tag-new'}">${r['Status']||'New'}</span></td>
+    </tr>`).join('');
+
   const total=rows.length;
   const totalPages=Math.ceil(total/PAGE_SIZE);
   document.getElementById('page-info').textContent=`Showing ${Math.min(start+1,total)}–${Math.min(start+PAGE_SIZE,total)} of ${total}`;
@@ -629,110 +651,314 @@ function renderTable(rows){
     const b=document.createElement('button');
     b.className='page-btn'+(i===currentPage?' active':'');
     b.textContent=i;
-    b.onclick=(()=>{const p=i;return()=>{currentPage=p;renderTable(filteredRows);}})();
+    const p=i;
+    b.onclick=()=>{currentPage=p;renderTable(filteredRows);};
     btns.appendChild(b);
   }
 }
 
 // ── Flagged table ─────────────────────────────────
 function renderFlagged(rows){
-  const flagged=rows.filter(r=>['0201','01005'].includes(r['Min Component']||''));
-  document.getElementById('flag-tbody').innerHTML=flagged.length?flagged.map(r=>`
+  const flagged=rows.filter(isFlagged);
+  const tbody=document.getElementById('flag-tbody');
+  if(!flagged.length){
+    tbody.innerHTML=`<tr><td colspan="9">
+      <div class="empty-state">
+        <div class="empty-icon">✅</div>
+        <div class="empty-title">No flagged submissions</div>
+        <div class="empty-sub">All current submissions are compatible with standard in-house equipment.</div>
+      </div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=flagged.map(r=>`
     <tr>
-      <td><strong style="font-family:monospace;color:var(--navy)">${r['Ref No']||'—'}</strong></td>
-      <td>${r['Name']||'—'}</td>
-      <td>${r['Project Name']||'—'}</td>
-      <td><span class="comp-flag warn">${r['Min Component']}</span></td>
-      <td>${r['Quantity']||'—'}</td>
-      <td><span class="tag ${(r['Timeline']||'').includes('ASAP')?'tag-red':'tag-new'}">${r['Timeline']||'—'}</span></td>
-      <td style="font-size:11px;color:var(--red)">
-        ${r['Min Component']==='01005'?'⚠️ Requires Neoden YY1 — only in-house option. Else: JLCPCB PCBA turnkey.'
-          :'📌 Requires Neoden 4 or JLCPCB PCBA. PlaceStation handles 0402+ only.'}
-      </td>
-    </tr>`).join('')
-    :`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--green);font-weight:700">✅ No flagged submissions — all boards compatible with in-house equipment</td></tr>`;
+      <td><strong style="font-family:monospace;font-size:11px;color:var(--navy)">${r['Ref No']||'—'}</strong></td>
+      <td style="font-size:12px">${r['Name']||'—'}</td>
+      <td>${domainTag(r['Domain'])}</td>
+      <td style="font-size:11px;max-width:120px">${(r['Project Name']||'—').substring(0,20)}</td>
+      <td><span class="comp-flag warn">${r['Min Component']||'—'}</span></td>
+      <td style="font-size:11px">${r['Device Type']||'—'}</td>
+      <td><span class="tag ${(r['Timeline']||'').includes('1 month')?'tag-red':'tag-new'}" style="font-size:10px">${(r['Timeline']||'—').substring(0,18)}</span></td>
+      <td style="font-size:10px;color:var(--red);font-weight:700">${flagReason(r)}</td>
+      <td style="font-size:11px;color:#374151">${actionRequired(r)}</td>
+    </tr>`).join('');
 }
 
 // ── Filters ───────────────────────────────────────
 function applyFilters(){
   const comp=document.getElementById('filter-comp').value;
+  const domain=document.getElementById('filter-domain').value;
   const dev=document.getElementById('filter-device').value;
-  const incu=document.getElementById('filter-incubatee').value;
   const search=document.getElementById('searchInput').value.toLowerCase();
   filteredRows=allRows.filter(r=>{
-    if(comp && r['Min Component']!==comp) return false;
-    if(dev && r['Device Type']!==dev) return false;
-    if(incu && r['Incubatee?']!==incu) return false;
-    if(statusFilter==='new' && r['Status']!=='New') return false;
-    if(statusFilter==='flag' && !['0201','01005'].includes(r['Min Component']||'')) return false;
-    if(search && !JSON.stringify(r).toLowerCase().includes(search)) return false;
+    if(comp&&r['Min Component']!==comp) return false;
+    if(domain&&r['Domain']!==domain) return false;
+    if(dev&&r['Device Type']!==dev) return false;
+    if(statusFilter==='new'&&r['Status']!=='New') return false;
+    if(statusFilter==='flag'&&!isFlagged(r)) return false;
+    if(search&&!JSON.stringify(r).toLowerCase().includes(search)) return false;
     return true;
   });
   currentPage=1;
   renderTable(filteredRows);
 }
-
 function setStatusFilter(val,btn){
   statusFilter=val;
   document.querySelectorAll('.filter-badge').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   applyFilters();
 }
-
 function clearFilters(){
   document.getElementById('filter-comp').value='';
+  document.getElementById('filter-domain').value='';
   document.getElementById('filter-device').value='';
-  document.getElementById('filter-incubatee').value='';
   document.getElementById('searchInput').value='';
   statusFilter='all';
-  document.getElementById('fb-all').click();
+  document.getElementById('fb-all').classList.add('active');
+  document.getElementById('fb-new').classList.remove('active');
+  document.getElementById('fb-flag').classList.remove('active');
+  applyFilters();
 }
 
-// ── Load all ──────────────────────────────────────
+// ── KT Checklist ─────────────────────────────────
+const KT_SECTIONS={
+  'A — Digital Systems':{color:'#E3F2FD',border:'#1565c0',items:[
+    {id:'KT-A01',text:'GitHub repositories transferred to KLE-CTiE org or incoming Lab Assistant added as admin'},
+    {id:'KT-A02',text:'All GAS Web Apps re-deployed under new / institutional account'},
+    {id:'KT-A03',text:'New GAS Web App URLs updated in all HTML files and pushed to GitHub'},
+    {id:'KT-A04',text:'Google Sheets ownership transferred to institutional account (eelab.klectie@gmail.com)'},
+    {id:'KT-A05',text:'All Sheet IDs verified and documented in KT document'},
+    {id:'KT-A06',text:'GitHub Pages verified live for all portals after repo transfer'},
+    {id:'KT-A07',text:'All dashboard passwords updated and new SHA-256 hashes in HTML files pushed to GitHub'},
+    {id:'KT-A08',text:'GAS triggers verified — onEdit timestamp, 6PM EOD digest, Monday 9AM weekly digest, hourly KPI'},
+  ]},
+  'B — Credentials':{color:'#FEF2F2',border:'#e74c3c',items:[
+    {id:'KT-B01',text:'Institutional Google account password changed after handover'},
+    {id:'KT-B02',text:'GitHub account password changed or repo ownership transferred'},
+    {id:'KT-B03',text:'All dashboard passwords communicated to incoming Lab Assistant in person'},
+    {id:'KT-B04',text:'2FA recovery codes transferred for all institutional accounts'},
+    {id:'KT-B05',text:'Any API keys or tokens rotated and new values placed in GAS Script Properties'},
+  ]},
+  'C — Physical Lab':{color:'#E8F5EE',border:'#1a7a4a',items:[
+    {id:'KT-C01',text:'All equipment logged in equipment register with current condition and location'},
+    {id:'KT-C02',text:'Equipment manuals confirmed present in lab cupboard shelf 2'},
+    {id:'KT-C03',text:'Weller WSA350EU carbon filter stock checked — minimum 3 spare filters'},
+    {id:'KT-C04',text:'ESD grounded mat operational — wrist monitor procured or on order'},
+    {id:'KT-C05',text:'SAC305 solder paste stock checked and refrigerator temperature verified (4–10°C)'},
+    {id:'KT-C06',text:'Room temperature and humidity monitor calibrated (20–25°C, 30–60% RH target)'},
+    {id:'KT-C07',text:'Lab keys / access cards handed to centre management or incoming Lab Assistant'},
+  ]},
+  'D — KT Sessions':{color:'#FDF3DC',border:'#C8960C',items:[
+    {id:'KT-D01',text:'Session 1: System architecture — GAS + Sheets + GitHub Pages walkthrough (1 hr)'},
+    {id:'KT-D02',text:'Session 2: Booking Portal — bookings, billing, invoicing walkthrough (1 hr)'},
+    {id:'KT-D03',text:'Session 3: Survey Form + Response Dashboard + KT tab walkthrough (30 min)'},
+    {id:'KT-D04',text:'Session 4: PCB Assembly Support workflow — decision tree, vendors, file handling (1 hr)'},
+    {id:'KT-D05',text:'Session 5: Training Programme — session structure, presentation files, certificate system (1 hr)'},
+    {id:'KT-D06',text:'Session 6: Troubleshooting — most common issues and fixes (1 hr)'},
+  ]},
+  'E — Documentation':{color:'#EDE7F6',border:'#5e35b1',items:[
+    {id:'KT-E01',text:'KT document completed, signed, and submitted to Centre Director'},
+    {id:'KT-E02',text:'All sensitive credentials transferred in person — zero credentials in any document'},
+    {id:'KT-E03',text:'Vendor contacts verified and updated in KT document Section 7'},
+    {id:'KT-E04',text:'All active incubatee cases briefed to incoming Lab Assistant'},
+    {id:'KT-E05',text:'Final week report submitted before last working day'},
+    {id:'KT-E06',text:'Signature block completed digitally in this dashboard KT tab by all parties'},
+  ]},
+};
+
+function setKTUser(){
+  const role=document.getElementById('ktRole').value;
+  const name=document.getElementById('ktName').value.trim();
+  if(!role||!name){alert('Please select role and enter your name');return;}
+  ktUser=name; ktRole=role;
+  document.getElementById('ktSignin').style.display='none';
+  document.getElementById('ktProgress').style.display='block';
+  document.getElementById('ktSig').style.display='block';
+  document.getElementById('ktCurrentUser').textContent='Signed in as: '+name+' ('+role+')';
+  renderKT();
+}
+
+function renderKT(){
+  const container=document.getElementById('ktChecklist');
+  let html='';
+  let doneCount=0; let totalCount=0;
+
+  Object.entries(KT_SECTIONS).forEach(([secTitle,sec])=>{
+    html+=`<div class="kt-section">
+      <div class="kt-section-title" style="background:${sec.color};border-left-color:${sec.border}">${secTitle}</div>`;
+    sec.items.forEach(item=>{
+      const ktRow=ktData.find(d=>d.item_id===item.id)||{};
+      const checked=String(ktRow.checked||'').toUpperCase()==='TRUE';
+      if(checked) doneCount++;
+      totalCount++;
+      const meta=checked?`Ticked by ${ktRow.checked_by||'—'} on ${ktRow.checked_at||'—'}`:'';
+      html+=`<div class="kt-item${checked?' checked':''}" id="kt-${item.id}" onclick="toggleKT('${item.id}',this)">
+        <div class="kt-checkbox">${checked?'✓':''}</div>
+        <div class="kt-item-text">
+          <div class="kt-item-label">${item.text}</div>
+          ${meta?`<div class="kt-item-meta">${meta}</div>`:''}
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  container.innerHTML=html;
+
+  // Update progress
+  const pct=totalCount>0?Math.round((doneCount/totalCount)*100):0;
+  document.getElementById('ktProgressFill').style.width=pct+'%';
+  document.getElementById('ktPctLabel').textContent=pct+'%';
+  document.getElementById('ktProgressNote').textContent=doneCount+' of '+totalCount+' items complete';
+  document.getElementById('k-kt').textContent=doneCount+'/'+totalCount;
+
+  // Sig date default
+  if(!document.getElementById('sig-date').value){
+    document.getElementById('sig-date').valueAsDate=new Date();
+  }
+}
+
+async function toggleKT(id,el){
+  if(!ktUser){alert('Please sign in with your name first');return;}
+  const isChecked=el.classList.contains('checked');
+  const newState=!isChecked;
+
+  // Optimistic UI
+  el.classList.toggle('checked',newState);
+  el.querySelector('.kt-checkbox').textContent=newState?'✓':'';
+  if(newState){
+    const meta=el.querySelector('.kt-item-meta')||document.createElement('div');
+    meta.className='kt-item-meta';
+    const ts=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+    meta.textContent=`Ticked by ${ktUser} on ${ts}`;
+    if(!el.querySelector('.kt-item-meta')) el.querySelector('.kt-item-text').appendChild(meta);
+    else el.querySelector('.kt-item-meta').textContent=meta.textContent;
+  }
+
+  // Count progress
+  const done=document.querySelectorAll('.kt-item.checked').length;
+  const tot=document.querySelectorAll('.kt-item').length;
+  const p=Math.round((done/tot)*100);
+  document.getElementById('ktProgressFill').style.width=p+'%';
+  document.getElementById('ktPctLabel').textContent=p+'%';
+  document.getElementById('ktProgressNote').textContent=done+' of '+tot+' items complete';
+  document.getElementById('k-kt').textContent=done+'/'+tot;
+
+  // Save to Sheet via GAS
+  if(GAS_URL!=='YOUR_GAS_WEBAPP_URL'){
+    try{
+      await fetch(GAS_URL,{
+        method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          type:'kt_checklist',item_id:id,
+          checked:newState,checked_by:ktUser,
+          note:ktRole,
+        })
+      });
+    }catch(e){console.warn('KT save error:',e);}
+  }
+}
+
+async function submitSignature(){
+  const out=document.getElementById('sig-out').value.trim();
+  const inc=document.getElementById('sig-in').value.trim();
+  const dir=document.getElementById('sig-dir').value.trim();
+  const date=document.getElementById('sig-date').value;
+  if(!out||!inc||!dir){alert('Please fill all signature fields');return;}
+
+  if(GAS_URL!=='YOUR_GAS_WEBAPP_URL'){
+    try{
+      await fetch(GAS_URL,{
+        method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          type:'kt_signature',
+          outgoing:out,incoming:inc,director:dir,date,
+          ts:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})
+        })
+      });
+    }catch(e){}
+  }
+  alert('✅ Digital sign-off submitted and logged to Google Sheets.\n\nHandover: '+date+'\nOutgoing: '+out+'\nIncoming: '+inc+'\nDirector: '+dir);
+}
+
+// ── Load All Data ──────────────────────────────────
 async function loadAllData(){
-  document.getElementById('dstatus').innerHTML='<span class="loader"></span>&nbsp;Refreshing data…';
+  document.getElementById('dstatus').innerHTML='<span class="loader"></span>&nbsp;Loading from Google Sheets…';
   const isLive=SHEET_ID!=='YOUR_SHEET_ID';
 
-  // Demo data when Sheet not configured
-  const demoRows=isLive?null:[
-    {Timestamp:'22/07/2026, 10:32','Ref No':'EEL-2026-4821',Name:'Irshad Hussain',Organisation:'Guardia Technologies','Project Name':'Guardia V1 Wearable Safety Device','Device Type':'Wearable','Min Component':'0201','Has QFN/BGA?':'Yes','Solder Type':'Lead-free (SAC305 / RoHS)','Placement Side':'Top side only','Files Ready?':'Yes — all files ready','Stencil Ready?':'Yes','Parts Ready?':'Yes — all in hand',Quantity:'6–10 units (Validation)',Timeline:'ASAP (within 1 week)',Budget:'₹5,000–₹20,000','Services Required':'SMT Reflow Assembly, Pick & Place',Notes:'22mm circular PCB. Have all files, stencil and components.',Status:'New','Incubatee?':'No — External Visitor'},
-    {Timestamp:'21/07/2026, 14:15','Ref No':'EEL-2026-3742',Name:'Priya Kulkarni',Organisation:'MedSense IoT','Project Name':'Patient Monitoring Patch v2','Device Type':'Medical','Min Component':'0402','Has QFN/BGA?':'No','Solder Type':'Lead-free (SAC305 / RoHS)','Placement Side':'Top side only','Files Ready?':'Yes — all files ready','Stencil Ready?':'No','Parts Ready?':'Partially sourced',Quantity:'2–5 units',Timeline:'2–4 weeks',Budget:'₹5,000–₹20,000','Services Required':'SMT Reflow Assembly, DFM Review',Notes:'Need stencil procurement assistance.',Status:'In Progress','Incubatee?':'Yes — Incubatee'},
-    {Timestamp:'20/07/2026, 11:05','Ref No':'EEL-2026-2219',Name:'Arjun Desai',Organisation:'AgroTech Labs','Project Name':'Soil Sensor Node Mk3','Device Type':'IoT / Embedded','Min Component':'0603','Has QFN/BGA?':'No','Solder Type':'Leaded (Sn63Pb37)','Placement Side':'Both sides','Files Ready?':'Partially ready','Stencil Ready?':'No','Parts Ready?':'No — need sourcing',Quantity:'11–50 units',Timeline:'1–3 months',Budget:'₹20,000–₹50,000','Services Required':'Component Sourcing, SMT Reflow Assembly, Pick & Place',Notes:'Looking for turnkey support including BOM sourcing.',Status:'New','Incubatee?':'Yes — Incubatee'},
-    {Timestamp:'19/07/2026, 16:48','Ref No':'EEL-2026-1105',Name:'Sneha Patil',Organisation:'KLE BioMed',  'Project Name':'Pulse Oximeter PCB','Device Type':'Medical','Min Component':'0201','Has QFN/BGA?':'Yes','Solder Type':'Lead-free (SAC305 / RoHS)','Placement Side':'Top side only','Files Ready?':'Yes — all files ready','Stencil Ready?':'Yes','Parts Ready?':'Yes — all in hand',Quantity:'1 unit (Prototype)',Timeline:'ASAP (within 1 week)',Budget:'Under ₹5,000','Services Required':'SMT Reflow Assembly',Notes:'Critical prototype for demo. Extremely urgent.',Status:'New','Incubatee?':'KLE Student'},
-  ];
-
   if(isLive){
-    const data=await fetchSheet('Responses');
-    allRows=data||demoRows;
+    const [resp,kt,meta]=await Promise.all([
+      fetchSheet('Responses'),fetchSheet('KT_Checklist'),fetchSheet('Meta')
+    ]);
+    allRows=resp||[];
+    ktData=kt||[];
+    const ts=(meta&&meta[0])?meta[0].value||'—':'—';
+    document.getElementById('footer-ts')||(() => {})();
   } else {
-    allRows=demoRows;
+    allRows=[];
+    ktData=[];
   }
 
   filteredRows=[...allRows];
 
-  // Render
+  // Empty state for overview if no data
+  if(!allRows.length){
+    document.getElementById('kpi-cards').innerHTML=`
+      <div style="grid-column:1/-1">
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <div class="empty-title">No submissions yet</div>
+          <div class="empty-sub">Share the survey form with incubatees, students, and visitors to start collecting PCB assembly requirements.</div>
+          <a href="survey_form.html" target="_blank" class="empty-btn">📝 Open Survey Form</a>
+        </div>
+      </div>`;
+    document.getElementById('chart-comp').innerHTML='<div style="color:var(--muted);font-size:12px;font-style:italic">No data yet</div>';
+    document.getElementById('chart-device').innerHTML='<div style="color:var(--muted);font-size:12px;font-style:italic">No data yet</div>';
+    document.getElementById('chart-domain').innerHTML='<div style="color:var(--muted);font-size:12px;font-style:italic">No data yet</div>';
+    document.getElementById('chart-services').innerHTML='<div style="color:var(--muted);font-size:12px;font-style:italic">No data yet</div>';
+    ['k-total','k-today','k-topcomp','k-topdev','k-topdom','k-filesready','k-lf','k-flagged'].forEach(id=>{
+      document.getElementById(id).textContent='0';
+    });
+    document.getElementById('resp-tbody').innerHTML=`<tr><td colspan="14">
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No submissions yet</div>
+        <div class="empty-sub">Responses will appear here once the survey form is submitted.</div>
+        <a href="survey_form.html" target="_blank" class="empty-btn">📝 Open Survey Form</a>
+      </div></td></tr>`;
+    document.getElementById('flag-tbody').innerHTML=`<tr><td colspan="9">
+      <div class="empty-state">
+        <div class="empty-icon">✅</div>
+        <div class="empty-title">No flagged submissions yet</div>
+        <div class="empty-sub">Flagged submissions will appear here when 0201/01005 boards or Medical/Defence domain submissions arrive.</div>
+      </div></td></tr>`;
+    document.getElementById('dstatus').innerHTML=isLive
+      ?'<span style="color:var(--green)">✅ Connected — No submissions yet</span>'
+      :'<span style="color:var(--gold)">📄 Set SHEET_ID in HTML to connect Google Sheets</span>';
+    return;
+  }
+
   renderKPICards(allRows);
   renderTable(filteredRows);
   renderFlagged(allRows);
 
-  // Charts
-  renderBarChart('chart-comp',freq(allRows,'Min Component'),allRows.length);
-  renderBarChart('chart-device',freq(allRows,'Device Type'),allRows.length);
-  renderBarChart('chart-timeline',freq(allRows,'Timeline'),allRows.length);
-  renderBarChart('chart-budget',freq(allRows,'Budget'),allRows.length);
-  renderBarChart('chart-solder',freq(allRows,'Solder Type'),allRows.length);
-  renderBarChart('chart-incubatee',freq(allRows,'Incubatee?'),allRows.length);
-  renderBarChart('chart-services',freq(allRows,'Services Required'),allRows.length);
-  renderBarChart('chart-qty',freq(allRows,'Quantity'),allRows.length);
+  renderBar('chart-comp',freq(allRows,'Min Component'));
+  renderBar('chart-device',freq(allRows,'Device Type'));
+  renderBar('chart-domain',freq(allRows,'Domain'));
+  renderBar('chart-services',freq(allRows,'Services Required'));
+  renderBar('chart-timeline',freq(allRows,'Timeline'));
+  renderBar('chart-qty',freq(allRows,'Quantity'));
+  renderBar('chart-solder',freq(allRows,'Solder Type'));
+  renderBar('chart-invest',freq(allRows,'Investment Aware'));
 
-  // Fetch meta timestamp
-  const meta=isLive?await fetchSheet('Meta'):null;
-  const ts=meta?((meta[0]||{}).value||new Date().toLocaleString('en-IN')):new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
-  document.getElementById('footer-ts').textContent='Last updated: '+ts;
   document.getElementById('dstatus').innerHTML=isLive
-    ?`<span class="live-dot"></span>&nbsp;<span style="color:var(--green)">Live — Google Sheets</span>&nbsp;·&nbsp;${allRows.length} total responses`
-    :`<span style="color:var(--gold)">📄 Demo data — replace SHEET_ID to go live</span>`;
+    ?`<span class="live-dot"></span>&nbsp;<span style="color:var(--green)">Live — Google Sheets</span>&nbsp;·&nbsp;${allRows.length} responses`
+    :'<span style="color:var(--gold)">Set SHEET_ID in HTML to go live</span>';
 }
+
+// Init
+if(sessionStorage.getItem('eelab_auth')==='1') loadAllData();
 </script>
 </body>
 </html>
