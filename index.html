@@ -251,11 +251,11 @@ footer{
   position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:linear-gradient(90deg,var(--navy-d),var(--navy));
   padding:9px 28px;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;
+  justify-content:center;gap:6px;
   box-shadow:0 -3px 18px rgba(12,45,107,.25);
 }
-.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c;font-size:15px}
-.f-brand{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.4px}
+.heart{animation:heartbeat 1.4s ease infinite;display:inline-block;color:#e74c3c;font-size:13px}
+.f-brand{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.9);text-align:center}
 .f-right{font-size:10.5px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:6px}
 
 @media(max-width:700px){
@@ -325,7 +325,7 @@ footer{
     <button class="tab" onclick="showTab('roi',this)">📈 ROI</button>
     <button class="tab" onclick="showTab('skills',this)">🧑‍🔧 Skills</button>
     <button class="tab" onclick="showTab('brands',this)">🏷️ Brands</button>
-    <button class="tab" onclick="showTab('about',this)">ℹ️ About</button>
+    <button class="tab" onclick="logout()" style="margin-left:auto;color:#ff8a80;border-bottom-color:transparent">⏻ Logout</button>
   </div>
 
   <div class="section active" id="sec-existing">
@@ -344,7 +344,7 @@ footer{
   <div class="section" id="sec-procurement">
     <div class="sec-title">New Equipment — 3 Tiers per Item</div>
     <p class="sec-sub">Premium / Mid / Value — with product images and purchase links</p>
-    <div class="infobox"><strong>0201 Note:</strong> Guardia V1 uses 0201 passives (0.6×0.3 mm). <strong>Neoden 4</strong> (₹3.5L–5L) handles 0201. <strong>Neoden YY1</strong> handles even 01005 — the universal one-machine solution. PlaceStation P&P handles 0402+.</div>
+    <div class="infobox"><strong>0201 Note:</strong> Boards with 0201 passives (0.6×0.3 mm) require <strong>Neoden 4</strong> (₹3.5L–5L) handles 0201. <strong>Neoden YY1</strong> handles even 01005 — the universal one-machine solution. PlaceStation P&P handles 0402+.</div>
     <div id="proc-container"></div>
   </div>
 
@@ -368,7 +368,7 @@ footer{
   <div class="section" id="sec-skills">
     <div class="sec-title">Lab-in-Charge Skill Profile — Rakesh Chheda</div>
     <p class="sec-sub">Hands-on proficiency across PTH soldering, SMD, rework, and SMT automation</p>
-    <div class="infobox"><strong>Summary:</strong> Strong foundation in PTH and SMD hand soldering, daily familiarity with existing lab equipment (Goot, Weller, Soldron), and PCB/Gerber file literacy demonstrated in Guardia V1 review. The three equipment-pending gaps — reflow oven, stencil, and pick-and-place — will bridge within 1–2 sessions on arrival. <strong>The skill profile is ready; the tools are what remain.</strong></div>
+    <div class="infobox"><strong>Summary:</strong> Strong foundation in PTH and SMD hand soldering, daily familiarity with existing lab equipment (Goot, Weller, Soldron), and PCB/Gerber file literacy demonstrated in live project file reviews. The three equipment-pending gaps — reflow oven, stencil, and pick-and-place — will bridge within 1–2 sessions on arrival. <strong>The skill profile is ready; the tools are what remain.</strong></div>
     <div class="skill-grid" id="skill-grid"></div>
   </div>
 
@@ -378,42 +378,20 @@ footer{
     <div class="cards" id="cards-brands"></div>
   </div>
 
-  <div class="section" id="sec-about">
-    <div class="sec-title">About This Portal</div>
-    <p class="sec-sub">Architecture, data source, GAS script, and deployment guide</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
-      <div class="phase" style="margin-bottom:0"><div class="ph-title">🗂️ Data Architecture</div>
-        <div class="ph-items" style="margin-top:10px">All data lives in a <strong>Google Sheet</strong> (12 tabs). HTML fetches each tab as <strong>Published CSV</strong> on every load — no backend, no API keys, no server.<br><br><strong>Flow:</strong> Google Sheet → Publish as CSV → HTML fetches on load → Renders live cards + KPIs + carousels</div>
-      </div>
-      <div class="phase" style="margin-bottom:0"><div class="ph-title">🔐 Security Model</div>
-        <div class="ph-items" style="margin-top:10px">• <strong>Password gate:</strong> SHA-256 client-side hash — prevents casual access<br>• <strong>All data stays in Google Sheets</strong> — Sheet owner controls access<br>• <strong>No credentials in HTML</strong> — Sheets published read-only CSV<br>• <strong>GitHub Pages:</strong> Static hosting only — zero server exposure<br>• <strong>GAS script:</strong> Runs inside Google — no external exposure</div>
-      </div>
-      <div class="phase" style="margin-bottom:0"><div class="ph-title">⚡ GAS Script — One Trigger Only</div>
-        <div class="ph-items" style="margin-top:10px">The only GAS script needed is <code>GAS_Timestamp_Script.js</code> — it auto-updates the <strong>last_updated</strong> cell in the Meta sheet whenever any cell is edited.<br><br>Install: Extensions → Apps Script → Paste script → Save → Triggers → onAnyEdit → On edit</div>
-      </div>
-      <div class="phase" style="margin-bottom:0"><div class="ph-title">🚀 Deployment Steps</div>
-        <div class="ph-items" style="margin-top:10px">1. Import XLSX template to Google Sheets<br>2. File → Publish to Web → each sheet → CSV<br>3. Copy Sheet ID from URL<br>4. Replace <code>YOUR_SHEET_ID</code> in HTML<br>5. Push HTML to GitHub repo<br>6. Settings → Pages → Enable → Done<br>7. Access via <code>rhchheda.github.io/…</code></div>
-      </div>
-    </div>
-  </div>
+
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-    <span class="heart">❤</span>
-    <span class="f-brand">Made with love ~rhc · EE Lab, KLE-CTiE · KLE Technological University, Hubballi – 580031</span>
-  </div>
-  <div class="f-right" id="footer-ts">
-    <span class="loader" style="width:11px;height:11px;border-width:2px"></span>Last updated: loading…
-  </div>
+  <span class="heart">❤</span>
+  <span class="f-brand">Made with love &nbsp;~rhc &nbsp;·&nbsp; EE Lab, KLE-CTiE &nbsp;·&nbsp; KLE Technological University, Hubballi – 580031 &nbsp;·&nbsp; <span id="footer-ts" style="font-weight:400;opacity:.65">Last updated: loading…</span></span>
 </footer>
 
 <script>
 // ══════════════════════════════════════════════════
 // CONFIG — replace YOUR_SHEET_ID after import
 // ══════════════════════════════════════════════════
-const SHEET_ID = '1AlokZIxOTkdFETPVmh5LzL4qt0mUuqk-0-QTEhNmtlc';
+const SHEET_ID = 'YOUR_SHEET_ID';
 const BASE = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
 const SHEETS = ['Existing','Gaps','Procurement','Phases','ROI','Skills','Brands','KPI','Carousel_Pre','Carousel_Post','Meta'];
 
@@ -427,10 +405,20 @@ async function sha256(s){
   const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
   return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
+
+// ── Logout ────────────────────────────────────────
+function logout(){
+  sessionStorage.removeItem('eelab_smt_auth');
+  document.getElementById('main').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('pwd').value='';
+}
+
 async function checkPwd(){
   const v=document.getElementById('pwd').value;
   const h=await sha256(v);
   if(v==='Ctie2026'||h===PWD_HASH){
+    sessionStorage.setItem('eelab_smt_auth','1');
     document.getElementById('gate').style.display='none';
     document.getElementById('main').style.display='block';
     loadAllData();
@@ -508,7 +496,7 @@ const FB={
     {category:'Preheater + Hot Air',name:'Aoyue 866',brand:'Aoyue (China)',tier:'mid',spec:'3-in-1: 400W preheater plate + 400W hot air + 60W iron, 130×130 mm surface, digital control',price:'₹12,000–₹16,000',emoji:'♨️',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=aoyue+866',img:''},
     {category:'Preheater + Hot Air',name:'Quick 861DW',brand:'Quick (China)',tier:'value',spec:'Quartz preheater, programmable, 300W, 130×130 mm',price:'₹8,000–₹14,000',emoji:'♨️',link1_label:'IndiaMART',link1:'https://www.indiamart.com',img:''},
     {category:'Pick & Place',name:'Neoden YY1',brand:'Neoden (China)',tier:'premium',spec:'01005 minimum — UNIVERSAL. 6-10 heads, 16,000-20,000 CPH, flying vision cameras, tray+strip+tube feeders. One machine for all board types.',price:'₹9L–₹14L',emoji:'🤖',link1_label:'Neoden Official',link1:'https://www.neoden.com',img:''},
-    {category:'Pick & Place',name:'Neoden 4',brand:'Neoden (China)',tier:'mid',spec:'0201 minimum — handles Guardia V1 as-is. 4 nozzles, 4000 CPH, vision-assisted, OpenPnP compatible',price:'₹3,50,000–₹5,00,000',emoji:'🤖',link1_label:'IndiaMART',link1:'https://www.indiamart.com/search.mp?ss=neoden+4',img:''},
+    {category:'Pick & Place',name:'Neoden 4',brand:'Neoden (China)',tier:'mid',spec:'0201 minimum — handles wearable and fine-pitch boards. 4 nozzles, 4000 CPH, vision-assisted, OpenPnP compatible',price:'₹3,50,000–₹5,00,000',emoji:'🤖',link1_label:'IndiaMART',link1:'https://www.indiamart.com/search.mp?ss=neoden+4',img:''},
     {category:'Pick & Place',name:'PlaceStation P&P',brand:'PlaceStation / Tejwani (India)',tier:'mid',spec:'0402 minimum, 1200 CPH, dual 1080p cameras, OpenPnP, 77 component types, GST invoice, Made-in-India',price:'₹2,00,000',emoji:'🤖',link1_label:'Buy Direct',link1:'https://www.placestation.in/products/placestation',img:'https://www.placestation.in/cdn/shop/files/PlaceStation_Pick_and_Place_Machine.jpg'},
     {category:'Inspection Microscope',name:'Amscope SM-4TZ',brand:'Amscope (USA)',tier:'premium',spec:'7x–45x stereo zoom, trinocular, boom stand, camera-ready port',price:'₹30,000–₹60,000',emoji:'🔬',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=amscope+stereo+microscope',img:''},
     {category:'Inspection Microscope',name:'Andonstar AD407',brand:'Andonstar (China)',tier:'mid',spec:'3D digital microscope, 7" screen, 270x magnification, HDMI out, stand included',price:'₹8,000–₹14,000',emoji:'🔬',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=andonstar+ad407',img:''},
@@ -516,7 +504,7 @@ const FB={
     {category:'Consumable',name:'SAC305 Lead-Free Solder Paste',brand:'Kester / MG Chemicals / Alpha',tier:'mid',spec:'RoHS SAC305, 500g jar, T3/T4 particle size, 0201-compatible apertures, 6-month shelf life',price:'₹1,200–₹2,500 / jar',emoji:'🧪',link1_label:'Amazon.in',link1:'https://www.amazon.in/s?k=sac305+solder+paste',img:''},
   ],
   Phases:[
-    {phase:'Phase 1 — Essential (Start Now)',timeline:'Month 1–2',items:'PlaceStation SolderStation (Reflow Oven ₹22K) + Aoyue 866 (3-in-1 Preheater+Hot Air ₹14K) + Manual Stencil Frame (₹12K) + Andonstar AD407 Microscope (₹10K) + ESD Kit Mid (₹4K) + SAC305 Solder Paste (₹2K)',cost:'₹45,000–₹70,000',outcome:'In-house reflow for any top-side SMD board. Guardia V1 assembled in-house immediately. No more outsourcing for basic prototypes.'},
+    {phase:'Phase 1 — Essential (Start Now)',timeline:'Month 1–2',items:'PlaceStation SolderStation (Reflow Oven ₹22K) + Aoyue 866 (3-in-1 Preheater+Hot Air ₹14K) + Manual Stencil Frame (₹12K) + Andonstar AD407 Microscope (₹10K) + ESD Kit Mid (₹4K) + SAC305 Solder Paste (₹2K)',cost:'₹45,000–₹70,000',outcome:'In-house reflow for any top-side SMD board. Immediate capability for prototype assembly. No more outsourcing for basic prototypes.'},
     {phase:'Phase 2 — Production Ready',timeline:'Month 3–6',items:'Neoden 4 Pick & Place (₹3.5L–5L, 0201 capable) OR PlaceStation P&P (₹2L, 0402+) + PlaceStation StencilStation (semi-auto paste printer)',cost:'₹2,00,000–₹5,00,000',outcome:'Semi-automated assembly for 10–100 unit validation runs. No outsourcing for any incubatee board. IP stays in-house permanently.'},
     {phase:'Phase 3 — Full SMT Lab',timeline:'Month 6–12',items:'Amscope Stereo Microscope (₹40K) + ESD Monitor Station (₹12K) + Spare tip/nozzle kits + Calibration tools + NAAC/NIRF asset tagging + Neoden YY1 upgrade (optional, 01005 universal)',cost:'₹40,000–₹80,000',outcome:'Production-quality inspection. Full ESD protocol. NAAC/NIRF documented. North Karnataka\'s most capable hardware startup support facility.'},
   ],
@@ -535,7 +523,7 @@ const FB={
     {skill:'SMD Hand Soldering',level:'Proficient',pct:'78',note:'Capable on 0603/0402 range with iron and hot air. Foundational technique established. 0201 is equipment-limited, not skill-limited.'},
     {skill:'Hot Air Rework (WTHA1 + Soldron 878D)',level:'Proficient',pct:'72',note:'Component removal and pad cleaning with in-lab equipment. QFN/BGA rework is the next skill progression.'},
     {skill:'Soldering Station Operation (Goot + Weller WR2002)',level:'Expert',pct:'95',note:'Daily use of PX-501AS and WR2002. Tip selection, temperature profiles, iron maintenance — expert level.'},
-    {skill:'PCB / Gerber / KiCad File Reading',level:'Proficient',pct:'80',note:'Demonstrated in Guardia V1 review — Gerber, BOM, CPL, KiCad. Directly transferable to P&P setup.'},
+    {skill:'PCB / Gerber / KiCad File Reading',level:'Proficient',pct:'80',note:'Demonstrated in live project file reviews — Gerber, BOM, CPL, KiCad. Directly transferable to P&P setup.'},
     {skill:'ESD Handling Protocols',level:'Aware — To Be Formalized',pct:'55',note:'Understands ESD risk for ICs. Full mat+wrist monitor+grounding protocol to be established with Phase 1.'},
     {skill:'Reflow Oven Operation',level:'Theoretical — Equipment Pending',pct:'35',note:'Strong knowledge of preheat/soak/reflow/cooling zone profiles. Ready to operate the day equipment arrives.'},
     {skill:'Stencil + Paste Printing',level:'Theoretical — Equipment Pending',pct:'30',note:'Familiar with stencil printing process from training context. Operational within 1–2 hands-on sessions.'},
@@ -573,8 +561,8 @@ const FB={
   ],
   Carousel_Post:[
     {title:'PlaceStation SolderStation',description:'Phase 1 Reflow Oven — Made-in-India, ₹22,000, Wi-Fi controlled, lead-free profiles',img_url:'https://www.placestation.in/cdn/shop/files/SolderStation_Reflow_Oven_Top_View.jpg'},
-    {title:'Neoden 4 Pick & Place',description:'Phase 2 P&P — 0201 capable, 4000 CPH, vision-assisted, handles Guardia V1 as-is without redesign',img_url:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop'},
-    {title:'Guardia V1 — The Trigger Project',description:'22 mm circular wearable BLE safety device — the project that catalysed this entire lab proposal',img_url:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop'},
+    {title:'Neoden 4 Pick & Place',description:'Phase 2 P&P — 0201 capable, 4000 CPH, vision-assisted — handles wearable and fine-pitch boards',img_url:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop'},
+    {title:'Wearable PCB Assembly',description:'22 mm circular boards, BLE modules, 0201 passives — the most demanding use case, now supportable in-house',img_url:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop'},
     {title:'Aoyue 866 — 3-in-1 Station',description:'Preheater + Hot Air + Soldering Iron in one unit — fills preheater gap at ₹12,000–16,000',img_url:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&auto=format&fit=crop'},
     {title:'Existing Equipment — Already Operational',description:'Weller WR2002 + WTHA1 + WSA350EU + Goot PX-501AS×2 + Soldron 878D — rework bench ready',img_url:'https://images.unsplash.com/photo-1562408590-e32931084e23?w=1200&auto=format&fit=crop'},
   ],
@@ -789,7 +777,7 @@ async function loadAllData(){
   const ts=(meta[0]||{}).value||new Date().toLocaleString('en-IN');
   document.getElementById('footer-ts').textContent='Last updated: '+ts;
   status.innerHTML=isConfigured&&Object.keys(live).length
-    ?`<span style="color:var(--green)">✅ Live data from Google Sheets</span> &nbsp;·&nbsp; ${ts}`
+    ?`<span style="color:var(--green)">✅ Live data from EE Lab</span> &nbsp;·&nbsp; ${ts}`
     :`<span style="color:var(--gold)">📄 Built-in data — connect Google Sheet to go live</span> &nbsp;·&nbsp; Set SHEET_ID in HTML to activate`;
 }
 
